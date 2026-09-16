@@ -1,0 +1,340 @@
+/* =========================
+   Dashboard
+========================= */
+
+.admin-dashboard {
+    width: 100%;
+    padding: 30px;
+    background-color: #f8f9fb;
+    min-height: 100vh;
+    box-sizing: border-box;
+}
+
+/* =========================
+   Dashboard Header
+========================= */
+
+.dashboard-header {
+    margin-bottom: 25px;
+}
+
+.dashboard-header h1 {
+    margin: 0;
+    font-size: 28px;
+    color: #1b263b;
+}
+
+.dashboard-header p {
+    margin: 6px 0 0;
+    color: #6b7280;
+    font-size: 14px;
+}
+
+/* =========================
+   Dashboard Cards
+========================= */
+
+.dashboard-cards {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 20px;
+    margin-bottom: 30px;
+}
+
+.dashboard-card {
+    background-color: #ffffff;
+    border-radius: 12px;
+    padding: 22px;
+    border: 1px solid #e5e7eb;
+    box-sizing: border-box;
+}
+
+.dashboard-card span {
+    display: block;
+    color: #6b7280;
+    font-size: 14px;
+    margin-bottom: 10px;
+}
+
+.dashboard-card h2 {
+    margin: 0;
+    font-size: 28px;
+    color: #1b263b;
+}
+
+.dashboard-card p {
+    margin: 8px 0 0;
+    color: #6b7280;
+    font-size: 13px;
+}
+
+/* =========================
+   Dashboard Sections
+========================= */
+
+.dashboard-section {
+    background-color: #ffffff;
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    padding: 24px;
+    margin-bottom: 25px;
+}
+
+.dashboard-section h2 {
+    margin: 0 0 20px;
+    font-size: 19px;
+    color: #1b263b;
+}
+
+/* =========================
+   Parking Overview
+========================= */
+
+.parking-overview {
+    display: grid;
+    grid-template-columns: 0.8fr 1.5fr;
+    gap: 30px;
+}
+
+/* =========================
+   Parking Status
+========================= */
+
+.parking-status {
+    border: 1px solid #e5e7eb;
+    border-radius: 10px;
+    padding: 20px;
+}
+
+.parking-status h3,
+.parking-areas h3 {
+    margin: 0 0 20px;
+    font-size: 16px;
+    color: #1b263b;
+}
+
+.status-chart {
+    display: flex;
+    justify-content: center;
+    margin: 20px 0 25px;
+}
+
+.chart-circle {
+    width: 160px;
+    height: 160px;
+    border-radius: 50%;
+
+    /* Temporary chart: 65% available / 35% occupied */
+    background: conic-gradient(#67B2E8 0% 65%,
+            #A300A3 65% 100%);
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.chart-center {
+    width: 105px;
+    height: 105px;
+    border-radius: 50%;
+    background-color: #ffffff;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.chart-center strong {
+    font-size: 24px;
+    color: #1b263b;
+}
+
+.chart-center span {
+    font-size: 11px;
+    color: #6b7280;
+    margin-top: 3px;
+}
+
+/* =========================
+   Chart Legend
+========================= */
+
+.status-legend {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.legend-item {
+    display: grid;
+    grid-template-columns: 12px 1fr auto;
+    align-items: center;
+    gap: 8px;
+
+    font-size: 13px;
+    color: #4b5563;
+}
+
+.legend-item strong {
+    color: #1b263b;
+}
+
+.legend-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+}
+
+.legend-dot.available {
+    background-color: #67B2E8;
+}
+
+.legend-dot.occupied {
+    background-color: #A300A3;
+}
+
+/* =========================
+   Parking Areas
+========================= */
+
+.parking-areas {
+    border: 1px solid #e5e7eb;
+    border-radius: 10px;
+    padding: 20px;
+    overflow-x: auto;
+}
+
+.parking-table {
+    width: 100%;
+    min-width: 450px;
+}
+
+.parking-table-row {
+    display: grid;
+    grid-template-columns: 1.5fr 0.8fr 1fr 1fr;
+    gap: 15px;
+
+    padding: 14px 10px;
+    border-bottom: 1px solid #e5e7eb;
+
+    align-items: center;
+}
+
+.parking-table-row:last-child {
+    border-bottom: none;
+}
+
+.parking-table-row span {
+    font-size: 13px;
+    color: #4b5563;
+}
+
+.parking-table-header {
+    background-color: #f8f9fb;
+    border-radius: 8px;
+    border-bottom: none;
+}
+
+.parking-table-header span {
+    font-weight: 600;
+    color: #1b263b;
+    font-size: 12px;
+}
+
+/* =========================
+   Recent Activity Table
+========================= */
+
+.activity-table {
+    width: 100%;
+    overflow-x: auto;
+}
+
+.activity-row {
+    display: grid;
+    grid-template-columns: 1.5fr 1fr 1.5fr 1fr;
+    gap: 15px;
+    padding: 15px 10px;
+    border-bottom: 1px solid #e5e7eb;
+    align-items: center;
+    min-width: 600px;
+}
+
+.activity-row:last-child {
+    border-bottom: none;
+}
+
+.activity-row span {
+    color: #4b5563;
+    font-size: 14px;
+}
+
+.activity-header {
+    background-color: #f8f9fb;
+    border-radius: 8px;
+    border-bottom: none;
+}
+
+.activity-header span {
+    font-weight: 600;
+    color: #1b263b;
+    font-size: 13px;
+}
+
+/* =========================
+   Tablet
+========================= */
+
+@media (max-width: 1000px) {
+
+    .dashboard-cards {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+}
+
+@media (max-width: 900px) {
+
+    .parking-overview {
+        grid-template-columns: 1fr;
+    }
+
+}
+
+/* =========================
+   Mobile
+========================= */
+
+@media (max-width: 600px) {
+
+    .admin-dashboard {
+        padding: 20px 15px;
+    }
+
+    .dashboard-header h1 {
+        font-size: 24px;
+    }
+
+    .dashboard-cards {
+        grid-template-columns: 1fr;
+        gap: 15px;
+    }
+
+    .dashboard-card {
+        padding: 18px;
+    }
+
+    .dashboard-section {
+        padding: 18px;
+    }
+
+    .dashboard-section h2 {
+        font-size: 17px;
+    }
+
+    .overview-placeholder {
+        min-height: 180px;
+    }
+
+}
