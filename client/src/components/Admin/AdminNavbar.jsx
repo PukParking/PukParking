@@ -1,8 +1,10 @@
 import { useState } from "react";
 import { NavLink } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 function AdminNavbar() {
     const [menuOpen, setMenuOpen] = useState(false);
+    const navigate = useNavigate();
 
     const closeMenu = () => {
         setMenuOpen(false);
@@ -61,7 +63,11 @@ function AdminNavbar() {
 
                     </nav>
 
-                    <button className="logout-button">
+                    <button
+
+                        className="logout-button"
+                        onClick={() => navigate("/home")}
+                    >
                         Logout
                     </button>
 
