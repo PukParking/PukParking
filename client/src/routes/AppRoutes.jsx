@@ -1,48 +1,75 @@
 import { Routes, Route } from "react-router-dom";
 
+import Home from "../pages/Home/Home";
+import AboutUs from "../pages/Home/AboutUs";
+import ParkingStats from "../pages/Home/ParkingStats";
+
 import AdminLogin from "../pages/Admin/AdminLogin";
 import Dashboard from "../pages/Admin/Dashboard";
 import Manage from "../pages/Admin/Manage";
 import Reports from "../pages/Admin/Reports";
 import RatingsComments from "../pages/Admin/RatingsComments";
 
-
 import AdminLayout from "../components/Admin/AdminLayout";
 
 function AppRoutes() {
-    return (
-        <Routes>
+  return (
+    <Routes>
 
-            {/* Admin Login */}
-            <Route path="/admin" element={<AdminLogin />} />
+      {/* Public Pages */}
 
-            {/* Admin Pages */}
-            <Route element={<AdminLayout />}>
+      <Route
+        path="/"
+        element={<Home />}
+      />
 
-                <Route
-                    path="/admin/dashboard"
-                    element={<Dashboard />}
-                />
+      <Route
+        path="/about"
+        element={<AboutUs />}
+      />
 
-                <Route
-                    path="/admin/manage"
-                    element={<Manage />}
-                />
+      <Route
+        path="/parking-stats"
+        element={<ParkingStats />}
+      />
 
-                <Route
-                    path="/admin/reports"
-                    element={<Reports />}
-                />
 
-                <Route
-                    path="/admin/ratings"
-                    element={<RatingsComments />}
-                />
+      {/* Admin Login */}
 
-            </Route>
+      <Route
+        path="/admin"
+        element={<AdminLogin />}
+      />
 
-        </Routes>
-    );
+
+      {/* Admin Pages */}
+
+      <Route element={<AdminLayout />}>
+
+        <Route
+          path="/admin/dashboard"
+          element={<Dashboard />}
+        />
+
+        <Route
+          path="/admin/manage"
+          element={<Manage />}
+        />
+
+        <Route
+          path="/admin/reports"
+          element={<Reports />}
+        />
+
+        <Route
+          path="/admin/ratings"
+          element={<RatingsComments />}
+        />
+
+      </Route>
+
+    </Routes>
+  );
 }
 
 export default AppRoutes;
