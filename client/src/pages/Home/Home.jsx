@@ -1,4 +1,5 @@
 import { useRef, useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 import "./Home.css";
 import MenuBar from "../../components/MenuBar";
@@ -14,6 +15,7 @@ import guestIcon from "../../assets/guest-icon.png";
 function Home() {
   const [selectedUserType, setSelectedUserType] = useState("");
   const [menuOpen, setMenuOpen] = useState(false);
+  const navigate = useNavigate();
 
   const featuresRef = useRef(null);
 
@@ -195,11 +197,10 @@ function Home() {
 
             <button
               type="button"
-              className={`user-type-card ${
-                selectedUserType === "Staff"
+              className={`user-type-card ${selectedUserType === "Staff"
                   ? "selected"
                   : ""
-              }`}
+                }`}
               onClick={() => selectUserType("Staff")}
             >
               <img src={staffIcon} alt="Staff" />
@@ -212,11 +213,10 @@ function Home() {
 
             <button
               type="button"
-              className={`user-type-card ${
-                selectedUserType === "Student"
+              className={`user-type-card ${selectedUserType === "Student"
                   ? "selected"
                   : ""
-              }`}
+                }`}
               onClick={() => selectUserType("Student")}
             >
               <img src={studentIcon} alt="Student" />
@@ -229,11 +229,10 @@ function Home() {
 
             <button
               type="button"
-              className={`user-type-card ${
-                selectedUserType === "Guest"
+              className={`user-type-card ${selectedUserType === "Guest"
                   ? "selected"
                   : ""
-              }`}
+                }`}
               onClick={() => selectUserType("Guest")}
             >
               <img src={guestIcon} alt="Guest" />
@@ -270,7 +269,7 @@ function Home() {
               <button
                 className="continue-button"
                 type="button"
-                onClick={handleContinue}
+                onClick={() => navigate("/parking")}
               >
                 Continue
                 <span>→</span>
