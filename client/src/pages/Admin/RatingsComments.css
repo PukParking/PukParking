@@ -1,0 +1,223 @@
+.admin-ratings {
+    width: 100%;
+    min-height: 100vh;
+    padding: 30px;
+    background-color: #f8f9fb;
+    box-sizing: border-box;
+}
+
+/* =========================
+   Header
+========================= */
+
+.ratings-header {
+    margin-bottom: 25px;
+}
+
+.ratings-header h1 {
+    margin: 0;
+    font-size: 28px;
+    color: #1b263b;
+}
+
+.ratings-header p {
+    margin: 6px 0 0;
+    color: #6b7280;
+    font-size: 14px;
+}
+
+/* =========================
+   Filters
+========================= */
+
+.ratings-filters {
+    display: flex;
+    align-items: end;
+    gap: 18px;
+    background-color: #ffffff;
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 25px;
+}
+
+.filter-group {
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+}
+
+.filter-group label {
+    font-size: 12px;
+    font-weight: 600;
+    color: #4b5563;
+}
+
+.filter-group select {
+    min-width: 180px;
+    padding: 10px 12px;
+    border: 1px solid #d1d5db;
+    border-radius: 7px;
+    background-color: #ffffff;
+    color: #374151;
+    font-size: 13px;
+    outline: none;
+}
+
+.filter-group select:focus {
+    border-color: #415f8f;
+}
+
+/* =========================
+   Summary Cards
+========================= */
+
+.rating-summary {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+    margin-bottom: 25px;
+}
+
+.rating-summary-card {
+    background-color: #ffffff;
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    padding: 22px;
+}
+
+.rating-summary-card span {
+    display: block;
+    font-size: 13px;
+    color: #6b7280;
+    margin-bottom: 10px;
+}
+
+.rating-summary-card h2 {
+    margin: 0;
+    font-size: 27px;
+    color: #1b263b;
+}
+
+.rating-summary-card p {
+    margin: 7px 0 0;
+    font-size: 12px;
+    color: #6b7280;
+}
+
+/* =========================
+   Ratings Section
+========================= */
+
+.ratings-section {
+    background-color: #ffffff;
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    padding: 24px;
+}
+
+.section-header {
+    margin-bottom: 20px;
+}
+
+.section-header h2 {
+    margin: 0;
+    font-size: 18px;
+    color: #1b263b;
+}
+
+.section-header p {
+    margin: 5px 0 0;
+    color: #6b7280;
+    font-size: 13px;
+}
+
+/* =========================
+   Ratings Table
+========================= */
+
+.ratings-table {
+    width: 100%;
+    overflow-x: auto;
+}
+
+.ratings-row {
+    display: grid;
+    grid-template-columns: 1.1fr 1fr 1fr 2fr 1.1fr;
+    gap: 15px;
+    align-items: center;
+    padding: 15px 10px;
+    border-bottom: 1px solid #e5e7eb;
+    min-width: 850px;
+}
+
+.ratings-row:last-child {
+    border-bottom: none;
+}
+
+.ratings-row span {
+    font-size: 13px;
+    color: #4b5563;
+}
+
+.ratings-table-header {
+    background-color: #f8f9fb;
+    border-bottom: none;
+    border-radius: 8px;
+}
+
+.ratings-table-header span {
+    font-weight: 600;
+    font-size: 12px;
+    color: #1b263b;
+}
+
+.rating-stars {
+    color: #c89b3c !important;
+    letter-spacing: 2px;
+}
+
+/* =========================
+   Tablet
+========================= */
+
+@media (max-width: 900px) {
+
+    .rating-summary {
+        grid-template-columns: 1fr;
+    }
+
+    .ratings-filters {
+        flex-wrap: wrap;
+    }
+
+}
+
+/* =========================
+   Mobile
+========================= */
+
+@media (max-width: 600px) {
+
+    .admin-ratings {
+        padding: 20px 15px;
+    }
+
+    .ratings-header h1 {
+        font-size: 24px;
+    }
+
+    .ratings-filters {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .filter-group select {
+        width: 100%;
+    }
+
+    .ratings-section {
+        padding: 18px;
+    }
+
+}

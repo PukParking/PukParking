@@ -1,0 +1,111 @@
+/* =========================
+   ADMIN NAVBAR
+========================= */
+.admin-navbar {
+  width: 100%;
+  height: 70px;
+  background-color: #67B2E8;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 20px;
+  position: relative;
+  z-index: 1000;
+}
+
+/* Hamburger Button */
+.menu-button {
+  background: none;
+  border: none;
+  color: white;
+  font-size: 28px;
+  cursor: pointer;
+  padding: 5px;
+  margin-right: 15px;
+}
+
+/* Logo */
+.admin-navbar-logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.admin-navbar-logo h2 {
+  margin: 0;
+  color: white;
+  font-size: 20px;
+  font-weight: 600;
+}
+
+.admin-navbar-logo span {
+  font-size: 11px;
+  letter-spacing: 2px;
+}
+
+/* =========================
+   ADMIN MENU
+========================= */
+.admin-menu {
+  position: absolute;
+  top: 70px;
+  right: 0;
+  width: 260px;
+  background-color: #67B2E8;
+  padding: 20px;
+  z-index: 999;
+  box-shadow: 3px 5px 10px rgba(0, 0, 0, 0.2);
+}
+
+/* Navigation Links */
+.admin-menu nav {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.admin-menu nav a {
+  color: white;
+  text-decoration: none;
+  padding: 12px 15px;
+  border-radius: 6px;
+  transition: background-color 0.2s;
+}
+
+.admin-menu nav a:hover {
+  background-color: #415F8F;
+}
+
+.admin-menu nav a.active {
+  background-color: #415F8F;
+}
+
+/* =========================
+   LOGOUT
+========================= */
+.logout-button {
+  width: 100%;
+  margin-top: 25px;
+  padding: 12px;
+  border: none;
+  border-radius: 6px;
+  background-color: white;
+  color: #1B263B;
+  cursor: pointer;
+  font-size: 15px;
+}
+
+.logout-button:hover {
+  opacity: 0.9;
+}
+
+/* =========================
+   ADMIN CONTENT
+========================= */
+.admin-content {
+  min-height: calc(100vh - 70px);
+  padding: 30px;
+  background-color: white;
+  text-align: left;
+}

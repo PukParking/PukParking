@@ -1,0 +1,38 @@
+:root {
+  --text: #1B263B;
+  --text-h: #1B263B;
+  --bg: #FAF8F2;
+  --border: #D9D9D9;
+
+  --primary: #1B263B;
+  --primary-light: #415F8F;
+  --accent: #C89B3C;
+  --background: #F5E9CD;
+
+  --sans: Arial, Helvetica, sans-serif;
+
+  font-family: var(--sans);
+  color: var(--text);
+  background: var(--bg);
+
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  margin: 0;
+  min-width: 320px;
+  min-height: 100vh;
+}
+
+body {
+  font-family: var(--sans);
+}

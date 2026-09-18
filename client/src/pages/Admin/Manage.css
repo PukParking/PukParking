@@ -1,0 +1,93 @@
+.manage-page {
+    width: 100%;
+    padding: 30px;
+    background-color: #f8f9fb;
+    min-height: 100vh;
+    box-sizing: border-box;
+}
+
+.manage-page h1 {
+    margin-bottom: 10px;
+}
+
+.manage-page h2 {
+    margin-bottom: 25px;
+}
+
+.manage-cards {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+}
+
+.manage-card {
+    background-color: white;
+    border: 1px solid #D9D9D9;
+    border-radius: 10px;
+    padding: 20px;
+}
+
+.manage-card h3 {
+    margin-top: 0;
+    margin-bottom: 20px;
+    color: #1B263B;
+}
+
+.manage-card form {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.manage-card input,
+.manage-card select {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    box-sizing: border-box;
+}
+
+.manage-card button {
+    padding: 10px;
+    border: none;
+    border-radius: 6px;
+    background-color: #415F8F;
+    color: white;
+    cursor: pointer;
+}
+
+.manage-card button:hover {
+    opacity: 0.9;
+}
+
+.parking-details {
+    margin-top: 20px;
+}
+
+.parking-details p {
+    margin: 8px 0;
+}
+
+.delete-button {
+    margin-top: 20px;
+    background-color: #b42318 !important;
+}
+
+.confirmation {
+    margin-top: 15px;
+    padding: 10px;
+    border-radius: 6px;
+    background-color: #e8f5e9;
+    color: #67B2E8;
+}
+
+.building-heading {
+    margin-top: 40px;
+}
+
+@media (max-width: 900px) {
+    .manage-cards {
+        grid-template-columns: 1fr;
+    }
+}
