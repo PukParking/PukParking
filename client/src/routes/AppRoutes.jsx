@@ -4,6 +4,10 @@ import Home from "../pages/Home/Home";
 import AboutUs from "../pages/Home/AboutUs";
 import ParkingStats from "../pages/Home/ParkingStats";
 
+import UserLanding from "../pages/Parking/UserLanding";
+import UserNavigation from "../pages/Parking/UserNavigation";
+import UserConfirmation from "../pages/Parking/UserConfirmation";
+
 import AdminLogin from "../pages/Admin/AdminLogin";
 import Dashboard from "../pages/Admin/Dashboard";
 import Manage from "../pages/Admin/Manage";
@@ -33,8 +37,22 @@ function AppRoutes() {
                 element={<ParkingStats />}
             />
 
+            <Route
+                path="/parking"
+                element={<UserLanding />}
+            />
 
-            {/* Admin Login */}
+            <Route
+                path="/parking/navigation"
+                element={<UserNavigation />}
+            />
+
+            <Route
+                path="/parking/confirmation"
+                element={<UserConfirmation />}
+            />
+
+                {/* Admin Login */}
 
             <Route
                 path="/admin"
