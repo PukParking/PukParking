@@ -1,0 +1,54 @@
+<html>
+<head>
+  <meta charset="UTF-8"/> <!-- sets the character encoding, allowing the use of special character to not appear as just text -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/> <!-- allows for the website to be able to be viewed correctly on mobile devices -->
+  <title>Parking Directions</title> 
+
+  <link rel="stylesheet" href="parking-directions.css"/> <!-- the link to this page's Cascading Style Sheets (CSS) file -->
+  <link href="https://api.mapbox.com/mapbox-gl-js/v3.7.0/mapbox-gl.css" rel="stylesheet"/> <!-- the link to the MapBox API directly -->
+</head>
+<body>
+
+  <div class="modal-card">
+
+    <!-- Header, which contains title and close button -->
+    <header class="modal-header"> 
+      <button id="closeBtn" class="icon-btn" aria-label="Close">&times;</button>
+      <h1>Parking Directions</h1>
+    </header>
+
+    <div id="map" class="map-container"></div>
+
+    <!-- Rules & Restrictions section, which can be found in the JavaScript file-->
+    <section class="rules-section">
+      <h2>Rules &amp; Restrictions</h2>
+      <ul id="rulesList" class="rules-list"> <!-- rules list is retrieved -->
+      </ul>
+
+      <!-- The colour-coded zone legend for showing which colour means which colour on the map for each zone-->
+      <div class="legend">
+        <div class="legend-item">
+          <span class="legend-swatch legend-yellow"></span>
+          <span>Time-limited / Permit Zone</span>
+        </div>
+        <div class="legend-item">
+          <span class="legend-swatch legend-red"></span>
+          <span>Restricted / No Entry Zone</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Report full parking an confirm arrival buttons-->
+    <footer class="modal-footer">
+      <button id="fullBtn" class="btn btn-outline">Parking Full</button>
+      <button id="arrivedBtn" class="btn btn-primary">I have Arrived!</button>
+    </footer>
+  
+  </div>
+
+  <!-- Script tags, indicating the exact order which the JavaScript files load -->
+  <script src="config.js"></script> <!-- defines the API_BASE_URL / MAPBOX_TOKEN -->
+  <script src="https://api.mapbox.com/mapbox-gl-js/v3.7.0/mapbox-gl.js"></script> <!-- defines the "mapboxgl" object -->
+  <script src="parking-directions.js"></script> <!-- defines the page's JavaScript file itself-->
+</body>
+</html>
