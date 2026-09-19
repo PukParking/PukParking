@@ -1,0 +1,140 @@
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: 'Segoe UI', Arial, sans-serif;
+  background-color: #9a9a9a;
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding: 24px 12px;
+}
+
+.modal-card {
+  width: 100%;
+  max-width: 420px;
+  background: #ffffff;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
+  display: flex;
+  flex-direction: column;
+}
+
+.modal-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px 20px;
+  border-bottom: 1px solid #eee;
+}
+
+.modal-header h1 {
+  font-size: 1.1rem;
+  margin: 0;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.icon-btn {
+  background: none;
+  border: none;
+  font-size: 1.6rem;
+  line-height: 1;
+  cursor: pointer;
+  color: #333;
+  padding: 0;
+}
+
+.map-container {
+  width: 100%;
+  height: 320px;
+  background: #e5e5e5;
+}
+
+.rules-section {
+  padding: 20px;
+}
+
+.rules-section h2 {
+  font-size: 1rem;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  margin: 0 0 12px 0;
+}
+
+.rules-list {
+  margin: 0 0 16px 0;
+  padding-left: 20px;
+  font-size: 0.9rem;
+  color: #333;
+  line-height: 1.5;
+}
+
+.rules-list li {
+  margin-bottom: 8px;
+}
+
+.legend {
+  display: flex;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.8rem;
+  color: #444;
+}
+
+.legend-swatch {
+  width: 28px;
+  height: 20px;
+  border-radius: 3px;
+  display: inline-block;
+  flex-shrink: 0;
+}
+
+.legend-yellow { background-color: #f2c14e; }
+.legend-red    { background-color: #e63946; }
+
+.modal-footer {
+  display: flex;
+  gap: 12px;
+  padding: 16px 20px 20px;
+  border-top: 1px solid #eee;
+}
+
+.btn {
+  flex: 1;
+  padding: 12px;
+  border-radius: 6px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  border: 2px solid transparent;
+}
+
+.btn-primary {
+  background-color: #2f80ed;
+  color: #ffffff;
+}
+
+.btn-primary:hover {
+  background-color: #256fd1;
+}
+
+.btn-outline {
+  background-color: #ffffff;
+  color: #e63946;
+  border-color: #e63946;
+}
+
+.btn-outline:hover {
+  background-color: #fdecec;
+}
