@@ -1,0 +1,111 @@
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: 'Segoe UI', Arial, sans-serif;
+  background-color: #9a9a9a;
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding: 40px 12px;
+}
+
+.card {
+  width: 100%;
+  max-width: 420px;
+  background: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
+  padding: 32px 24px;
+  text-align: center;
+}
+
+.logo-circle {
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  background-color: #2f80ed;
+  color: #ffffff;
+  font-size: 0.75rem;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 24px;
+}
+
+h1 {
+  font-size: 1.3rem;
+  margin: 0 0 24px 0;
+}
+
+.rating-card {
+  background-color: #dceafd;
+  border-radius: 10px;
+  padding: 20px;
+  margin-bottom: 24px;
+  text-align: left;
+}
+
+.rating-card h2 {
+  font-size: 1rem;
+  text-align: center;
+  margin: 0 0 16px 0;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.stars {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  margin-bottom: 20px;
+}
+
+.star {
+  background: none;
+  border: none;
+  font-size: 2rem;
+  line-height: 1;
+  cursor: pointer;
+  color: #f2c14e;
+  padding: 0;
+}
+
+.rating-card label {
+  display: block;
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+
+.rating-card textarea {
+  width: 100%;
+  border: 1px solid #bcd4f0;
+  border-radius: 6px;
+  padding: 10px;
+  font-family: inherit;
+  font-size: 0.9rem;
+  resize: vertical;
+}
+
+.btn {
+  width: 100%;
+  padding: 14px;
+  border-radius: 6px;
+  border: none;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.btn-primary {
+  background-color: #2f80ed;
+  color: #ffffff;
+}
+
+.btn-primary:hover {
+  background-color: #256fd1;
+}
