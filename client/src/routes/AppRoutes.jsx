@@ -67,14 +67,12 @@ function AppRoutes() {
                 element={<ParkingConfirmation />}
             />
 
-
             {/* Admin Login */}
 
             <Route
                 path="/admin"
                 element={<AdminLogin />}
             />
-
 
             {/* Admin Pages */}
 

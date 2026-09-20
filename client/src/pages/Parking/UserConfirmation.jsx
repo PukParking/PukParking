@@ -1,4 +1,5 @@
 import { useLocation, useNavigate } from "react-router-dom";
+
 import "./Parking.css";
 
 function UserConfirmation() {
@@ -32,6 +33,7 @@ function UserConfirmation() {
                 href="/parking/navigation"
                 onClick={(e) => {
                     e.preventDefault();
+
                     navigate("/parking/navigation", {
                         state: {
                             start,
@@ -41,7 +43,10 @@ function UserConfirmation() {
                 }}
             >
                 <span className="close-button">
-                    <img src="/Images/exit-icon.png" alt="exit-logo" />
+                    <img
+                        src="/Images/exit-icon.png"
+                        alt="exit-logo"
+                    />
                 </span>
             </a>
 
