@@ -1,4 +1,8 @@
-import { Routes, Route } from "react-router-dom";
+import {
+  Routes,
+  Route,
+  Navigate,
+} from "react-router-dom";
 
 import Home from "../pages/Home/Home";
 import AboutUs from "../pages/Home/AboutUs";
@@ -20,88 +24,96 @@ import RatingsComments from "../pages/Admin/RatingsComments";
 import AdminLayout from "../components/Admin/AdminLayout";
 
 function AppRoutes() {
-    return (
-        <Routes>
+  return (
+    <Routes>
+      {/* Default */}
 
-            {/* Public Pages */}
+      <Route
+        path="/"
+        element={
+          <Navigate
+            to="/home"
+            replace
+          />
+        }
+      />
 
-            <Route
-                path="/home"
-                element={<Home />}
-            />
+      {/* Public Pages */}
 
-            <Route
-                path="/about"
-                element={<AboutUs />}
-            />
+      <Route
+        path="/home"
+        element={<Home />}
+      />
 
-            <Route
-                path="/parking-stats"
-                element={<ParkingStats />}
-            />
+      <Route
+        path="/about"
+        element={<AboutUs />}
+      />
 
-            <Route
-                path="/parking"
-                element={<UserLanding />}
-            />
+      <Route
+        path="/parking-stats"
+        element={<ParkingStats />}
+      />
 
-            <Route
-                path="/parking/navigation"
-                element={<UserNavigation />}
-            />
+      {/* Parking Flow */}
 
-            <Route
-                path="/parking/confirmation"
-                element={<UserConfirmation />}
-            />
+      <Route
+        path="/parking"
+        element={<UserLanding />}
+      />
 
-            {/* Parking Directions Pages */}
+      <Route
+        path="/parking/navigation"
+        element={<UserNavigation />}
+      />
 
-            <Route
-                path="/parking-directions"
-                element={<ParkingDirections />}
-            />
+      <Route
+        path="/parking/confirmation"
+        element={<UserConfirmation />}
+      />
 
-            <Route
-                path="/parking-confirmation"
-                element={<ParkingConfirmation />}
-            />
+      <Route
+        path="/parking-directions"
+        element={<ParkingDirections />}
+      />
 
-            {/* Admin Login */}
+      <Route
+        path="/parking-confirmation"
+        element={<ParkingConfirmation />}
+      />
 
-            <Route
-                path="/admin"
-                element={<AdminLogin />}
-            />
+      {/* Admin Login */}
 
-            {/* Admin Pages */}
+      <Route
+        path="/admin"
+        element={<AdminLogin />}
+      />
 
-            <Route element={<AdminLayout />}>
+      {/* Admin Pages */}
 
-                <Route
-                    path="/admin/dashboard"
-                    element={<Dashboard />}
-                />
+      <Route element={<AdminLayout />}>
+        <Route
+          path="/admin/dashboard"
+          element={<Dashboard />}
+        />
 
-                <Route
-                    path="/admin/manage"
-                    element={<Manage />}
-                />
+        <Route
+          path="/admin/manage"
+          element={<Manage />}
+        />
 
-                <Route
-                    path="/admin/reports"
-                    element={<Reports />}
-                />
+        <Route
+          path="/admin/reports"
+          element={<Reports />}
+        />
 
-                <Route
-                    path="/admin/ratings"
-                    element={<RatingsComments />}
-                />
-
-            </Route>
-
-        </Routes>
-    );
+        <Route
+          path="/admin/ratings"
+          element={<RatingsComments />}
+        />
+      </Route>
+    </Routes>
+  );
 }
 
 export default AppRoutes;

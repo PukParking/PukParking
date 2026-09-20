@@ -45,18 +45,13 @@ body.dark-mode .main-header {
 }
 
 
-/* LOGO BACKGROUND */
+/* Logo */
 
 body.dark-mode .brand-area {
-  padding: 7px 12px;
-
-  border-radius: 16px;
-
-  background:
-    rgba(255, 255, 255, 0.96);
-
-  box-shadow:
-    0 6px 20px rgba(0, 0, 0, 0.15);
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  padding: 0 !important;
 }
 
 
@@ -387,15 +382,6 @@ body.dark-mode .stats-header {
     1px solid rgba(71, 180, 238, 0.13);
 }
 
-body.dark-mode .stats-logo {
-  padding: 7px 12px;
-
-  border-radius: 16px;
-
-  background:
-    rgba(255, 255, 255, 0.96);
-}
-
 body.dark-mode .stats-menu-button {
   background: #112a40;
 
@@ -540,15 +526,6 @@ body.dark-mode .about-header {
 
   border-bottom:
     1px solid rgba(68, 178, 237, 0.13);
-}
-
-body.dark-mode .about-main-logo {
-  padding: 7px 12px;
-
-  border-radius: 16px;
-
-  background:
-    rgba(255, 255, 255, 0.96);
 }
 
 body.dark-mode .about-menu-button {
@@ -795,14 +772,6 @@ body.dark-mode .menu-brand {
     1px solid rgba(103, 190, 238, 0.15);
 }
 
-body.dark-mode .menu-brand img {
-  padding: 6px 10px;
-
-  border-radius: 13px;
-
-  background: #ffffff;
-}
-
 body.dark-mode .close-menu {
   background: #16384f;
 
@@ -895,4 +864,39 @@ body.dark-mode::-webkit-scrollbar-thumb {
 
 body.dark-mode::-webkit-scrollbar-thumb:hover {
   background: #1e6289;
+}
+
+/* Logos */
+
+body.dark-mode .main-logo,
+body.dark-mode .stats-logo,
+body.dark-mode .about-main-logo,
+body.dark-mode .landing-logo,
+body.dark-mode .route-logo,
+body.dark-mode .selection-logo,
+body.dark-mode .directions-logo,
+body.dark-mode .arrival-logo,
+body.dark-mode .admin-login-logo,
+body.dark-mode .admin-navbar-logo img {
+    background: transparent !important;
+    border: none !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+    padding: 0 !important;
+}
+
+/* Home logo */
+
+body.dark-mode .home-page .brand-area {
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+}
+
+body.dark-mode .home-page .main-logo {
+    background: transparent !important;
+    border: none !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+    padding: 0 !important;
 }

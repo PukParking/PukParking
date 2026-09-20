@@ -1,103 +1,176 @@
-import { useNavigate } from 'react-router-dom';
-import { useState } from 'react';
-import './ParkingConfirmation.css';
+import { useLocation, useNavigate } from "react-router-dom";
+import { useState } from "react";
+
+import "./ParkingConfirmation.css";
+
+import logo from "../../assets/pukparking-logo.png";
 
 const fallbackParking = {
-    _id: 'demo-parking-b',
-    name: 'Parking B',
+  _id: "demo-parking",
+  name: "Selected Parking",
 };
 
-// Function that loads the selected parking
-function loadParking() {
-    const stored = sessionStorage.getItem('selectedParking');
-    return stored ? JSON.parse(stored) : fallbackParking;
+function loadParking(routeParking) {
+  if (routeParking) {
+    return routeParking;
+  }
+
+  const stored = sessionStorage.getItem("selectedParking");
+
+  if (!stored) {
+    return fallbackParking;
+  }
+
+  try {
+    return JSON.parse(stored);
+  } catch {
+    return fallbackParking;
+  }
 }
 
-export default function UserParkedConfirmation({ onDone }) {
-    const navigate = useNavigate();
-    const [parking] = useState(loadParking);
-    const [rating, setRating] = useState(0);
-    const [comment, setComment] = useState('');
+function ParkingConfirmation() {
+  const navigate = useNavigate();
+  const location = useLocation();
 
-    function goHome() {
-        sessionStorage.removeItem('selectedParking');
+  const [parking] = useState(() =>
+    loadParking(location.state?.selectedParking)
+  );
 
-        if (onDone) {
-            navigate('/parking-confirmation');
-        } else {
-            // Temporary until React Router navigation is connected
-            window.location.href = '/home';
-        }
-    }
+  const [rating, setRating] = useState(0);
+  const [comment, setComment] = useState("");
 
-    function handleDone() {
-        const feedback = {
-            parkingId: parking._id,
-            rating: rating > 0 ? rating : null,
-            comment: comment.trim(),
-        };
+  const userType =
+    sessionStorage.getItem("selectedUserType") || "Guest";
 
-        // Temporary: save feedback locally until the backend is connected
-        sessionStorage.setItem(
-            'parkingFeedback',
-            JSON.stringify(feedback)
-        );
+  const handleDone = () => {
+    const feedback = {
+      parkingId: parking._id,
+      parkingName: parking.name,
+      rating: rating > 0 ? rating : null,
+      comment: comment.trim(),
+    };
 
-        goHome();
-    }
+    sessionStorage.setItem(
+      "parkingFeedback",
+      JSON.stringify(feedback)
+    );
 
-    return (
-        <div className="card">
+    sessionStorage.removeItem("selectedParking");
 
-            <div className="logo-circle">
-                LOGO
+    navigate("/home");
+  };
+
+  return (
+    <div className="arrival-page">
+
+      <main className="arrival-card">
+
+        <img
+          src={logo}
+          alt="PukParking"
+          className="arrival-logo"
+        />
+
+        <div className="arrival-check">
+          ✓
+        </div>
+
+        <p className="arrival-eyebrow">
+          YOU HAVE ARRIVED
+        </p>
+
+        <h1>
+          Arrived at{" "}
+          <span>
+            {parking.name}
+          </span>
+        </h1>
+
+        <p className="arrival-message">
+          Your parking journey is complete.
+          We would appreciate your feedback
+          about your parking experience.
+        </p>
+
+        <div className="arrival-category">
+          {userType} parking journey
+        </div>
+
+        <section className="arrival-feedback">
+
+          <div className="arrival-feedback-heading">
+
+            <div>
+              <p>
+                YOUR FEEDBACK
+              </p>
+
+              <h2>
+                Rate Parking
+              </h2>
             </div>
 
-            <h1>Arrived at {parking.name}!</h1>
+            {rating > 0 && (
+              <span>
+                {rating}/5
+              </span>
+            )}
 
-            <section className="rating-card">
+          </div>
 
-                <h2>Rate Parking</h2>
+          <div className="arrival-stars">
 
-                <div className="stars">
+            {[1, 2, 3, 4, 5].map((starValue) => (
 
-                    {[1, 2, 3, 4, 5].map((starValue) => (
+              <button
+                key={starValue}
+                type="button"
+                aria-label={`Rate ${starValue} star${
+                  starValue > 1 ? "s" : ""
+                }`}
+                className={
+                  starValue <= rating
+                    ? "arrival-star active"
+                    : "arrival-star"
+                }
+                onClick={() => setRating(starValue)}
+              >
+                ★
+              </button>
 
-                        <button
-                            key={starValue}
-                            className="star"
-                            type="button"
-                            aria-label={`Rate ${starValue} star${starValue > 1 ? 's' : ''}`}
-                            onClick={() => setRating(starValue)}
-                        >
-                            {starValue <= rating ? '★' : '☆'}
-                        </button>
+            ))}
 
-                    ))}
+          </div>
 
-                </div>
+          <label htmlFor="parking-comment">
+            Comment
+          </label>
 
-                <label htmlFor="comment">
-                    Comment:
-                </label>
+          <textarea
+            id="parking-comment"
+            rows="5"
+            placeholder="Anything you'd like to tell us about this parking area?"
+            value={comment}
+            onChange={(event) =>
+              setComment(event.target.value)
+            }
+          />
 
-                <textarea
-                    id="comment"
-                    rows={4}
-                    placeholder="Anything you'd like to tell us about this parking area?"
-                    value={comment}
-                    onChange={(event) => setComment(event.target.value)}
-                />
+        </section>
 
-            </section>
+        <button
+          type="button"
+          className="arrival-done"
+          onClick={handleDone}
+        >
+          Done
+          <span>→</span>
+        </button>
 
-            <button
-                className="btn btn-primary"
-                onClick={handleDone}
-            >
-                Done
-            </button>
+      </main>
 
-        </div>
-    );
+    </div>
+  );
 }
+
+export default ParkingConfirmation;

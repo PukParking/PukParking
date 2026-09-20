@@ -15,9 +15,9 @@ import guestIcon from "../../assets/guest-icon.png";
 function Home() {
   const [selectedUserType, setSelectedUserType] = useState("");
   const [menuOpen, setMenuOpen] = useState(false);
-  const navigate = useNavigate();
 
   const featuresRef = useRef(null);
+  const navigate = useNavigate();
 
   const selectUserType = (userType) => {
     setSelectedUserType(userType);
@@ -30,9 +30,20 @@ function Home() {
   };
 
   const handleContinue = () => {
-    alert(
-      `Continue as ${selectedUserType} will be connected to the User Landing Page during integration.`
+    if (!selectedUserType) {
+      return;
+    }
+
+    sessionStorage.setItem(
+      "selectedUserType",
+      selectedUserType
     );
+
+    navigate("/parking", {
+      state: {
+        userType: selectedUserType,
+      },
+    });
   };
 
   return (
@@ -59,7 +70,9 @@ function Home() {
       </header>
 
       {menuOpen && (
-        <MenuBar onClose={() => setMenuOpen(false)} />
+        <MenuBar
+          onClose={() => setMenuOpen(false)}
+        />
       )}
 
       <main>
@@ -102,9 +115,7 @@ function Home() {
                 </div>
 
                 <div>
-                  <strong>
-                    Find suitable parking
-                  </strong>
+                  <strong>Find suitable parking</strong>
 
                   <p>
                     Discover parking areas near your selected
@@ -119,9 +130,7 @@ function Home() {
                 </div>
 
                 <div>
-                  <strong>
-                    Navigate with confidence
-                  </strong>
+                  <strong>Navigate with confidence</strong>
 
                   <p>
                     Locate suitable parking and continue towards
@@ -136,9 +145,7 @@ function Home() {
                 </div>
 
                 <div>
-                  <strong>
-                    Designed for campus users
-                  </strong>
+                  <strong>Designed for campus users</strong>
 
                   <p>
                     Built for students, staff and visitors.
@@ -175,8 +182,11 @@ function Home() {
           <div className="user-type-grid">
             <button
               type="button"
-              className={`user-type-card ${selectedUserType === "Staff" ? "selected" : ""
-                }`}
+              className={`user-type-card ${
+                selectedUserType === "Staff"
+                  ? "selected"
+                  : ""
+              }`}
               onClick={() => selectUserType("Staff")}
             >
               <img src={staffIcon} alt="Staff" />
@@ -189,8 +199,11 @@ function Home() {
 
             <button
               type="button"
-              className={`user-type-card ${selectedUserType === "Student" ? "selected" : ""
-                }`}
+              className={`user-type-card ${
+                selectedUserType === "Student"
+                  ? "selected"
+                  : ""
+              }`}
               onClick={() => selectUserType("Student")}
             >
               <img src={studentIcon} alt="Student" />
@@ -203,8 +216,11 @@ function Home() {
 
             <button
               type="button"
-              className={`user-type-card ${selectedUserType === "Guest" ? "selected" : ""
-                }`}
+              className={`user-type-card ${
+                selectedUserType === "Guest"
+                  ? "selected"
+                  : ""
+              }`}
               onClick={() => selectUserType("Guest")}
             >
               <img src={guestIcon} alt="Guest" />
@@ -224,20 +240,15 @@ function Home() {
                 </div>
 
                 <div>
-                  <span>
-                    Selected user type
-                  </span>
-
-                  <strong>
-                    {selectedUserType}
-                  </strong>
+                  <span>Selected user type</span>
+                  <strong>{selectedUserType}</strong>
                 </div>
               </div>
 
               <button
                 className="continue-button"
                 type="button"
-                onClick={() => navigate("/parking")}
+                onClick={handleContinue}
               >
                 Continue
                 <span>→</span>
@@ -270,9 +281,7 @@ function Home() {
             <article className="why-card">
               <img src={carIcon} alt="" />
 
-              <h3>
-                Parking Discovery
-              </h3>
+              <h3>Parking Discovery</h3>
 
               <p>
                 Search for suitable parking based on your
@@ -283,9 +292,7 @@ function Home() {
             <article className="why-card">
               <img src={locationIcon} alt="" />
 
-              <h3>
-                Smart Navigation
-              </h3>
+              <h3>Smart Navigation</h3>
 
               <p>
                 Move from your selected parking area towards
@@ -296,9 +303,7 @@ function Home() {
             <article className="why-card">
               <img src={guestIcon} alt="" />
 
-              <h3>
-                Crowd Assistance
-              </h3>
+              <h3>Crowd Assistance</h3>
 
               <p>
                 Parking reports help improve the availability
@@ -312,7 +317,8 @@ function Home() {
       <footer className="home-footer">
         <img
           src={logo}
-          alt="PukParking"
+          alt="PukParking Logo"
+          className="footer-logo"
         />
 
         <p>
