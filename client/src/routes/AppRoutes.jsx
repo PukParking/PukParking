@@ -8,6 +8,9 @@ import UserLanding from "../pages/Parking/UserLanding";
 import UserNavigation from "../pages/Parking/UserNavigation";
 import UserConfirmation from "../pages/Parking/UserConfirmation";
 
+import ParkingDirections from "../pages/ParkingDirections/ParkingDirections";
+import ParkingConfirmation from "../pages/ParkingConfirmation/ParkingConfirmation";
+
 import AdminLogin from "../pages/Admin/AdminLogin";
 import Dashboard from "../pages/Admin/Dashboard";
 import Manage from "../pages/Admin/Manage";
@@ -52,13 +55,24 @@ function AppRoutes() {
                 element={<UserConfirmation />}
             />
 
-                {/* Admin Login */}
+            {/* Parking Directions Pages */}
+
+            <Route
+                path="/parking-directions"
+                element={<ParkingDirections />}
+            />
+
+            <Route
+                path="/parking-confirmation"
+                element={<ParkingConfirmation />}
+            />
+
+            {/* Admin Login */}
 
             <Route
                 path="/admin"
                 element={<AdminLogin />}
             />
-
 
             {/* Admin Pages */}
 
