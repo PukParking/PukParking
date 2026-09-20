@@ -1,149 +1,361 @@
-import { useNavigate } from 'react-router-dom';
-import { useState } from 'react';
-import './ParkingDirections.css';
+import {
+  useLocation,
+  useNavigate,
+} from "react-router-dom";
 
-// Temporary parking data until the backend and Mapbox are connected
+import { useState } from "react";
+
+import "./ParkingDirections.css";
+
+import logo from "../../assets/pukparking-logo.png";
+
 const fallbackParking = {
-    _id: 'demo-parking-b',
-    name: 'Parking B',
-    restrictions: [
-        'Student parking only (valid disc required).',
-        'No parking after 18:00 on weekdays.',
-        'Display your parking disc on the dashboard at all times.',
-        'Accessible bays are reserved - do not park here without a permit.',
-    ],
+  _id: "demo-parking",
+  name: "Selected Parking",
+  description:
+    "Your selected campus parking area.",
 };
 
-// Loads selected parking from the previous page if available
-function loadSelectedParking() {
-    const stored = sessionStorage.getItem('selectedParking');
-    return stored ? JSON.parse(stored) : fallbackParking;
-}
-
-export default function ParkingDirections({ onClose, onArrived }) {
-    const navigate = useNavigate();
-    const [selectedParking, setSelectedParking] = useState(
-        loadSelectedParking
+function loadStoredParking() {
+  const stored =
+    sessionStorage.getItem(
+      "selectedParking"
     );
 
-    function handleClose() {
-        if (onClose) {
-            onClose();
-        }
+  if (!stored) {
+    return fallbackParking;
+  }
+
+  try {
+    return JSON.parse(stored);
+  } catch {
+    return fallbackParking;
+  }
+}
+
+export default function ParkingDirections({
+  onClose,
+  onArrived,
+}) {
+  const location = useLocation();
+  const navigate = useNavigate();
+
+  const selectedParking =
+    location.state?.selectedParking ||
+    loadStoredParking();
+
+  const userType =
+    location.state?.userType ||
+    sessionStorage.getItem(
+      "selectedUserType"
+    ) ||
+    "Guest";
+
+  const start =
+    location.state?.start;
+
+  const destination =
+    location.state?.destination;
+
+  const [
+    fullMessage,
+    setFullMessage,
+  ] = useState("");
+
+  const rules = [
+    `Use parking bays permitted for ${userType.toLowerCase()} users.`,
+    "Follow all campus parking signs and markings.",
+    "Do not use reserved or accessible bays without the required permission.",
+    "Check displayed time restrictions before leaving your vehicle.",
+  ];
+
+  function handleClose() {
+    if (onClose) {
+      onClose();
+      return;
     }
 
-    function handleArrived() {
-        sessionStorage.setItem(
-            'selectedParking',
-            JSON.stringify(selectedParking)
-        );
+    navigate(-1);
+  }
 
-        navigate('/parking-confirmation');
+  function handleArrived() {
+    sessionStorage.setItem(
+      "selectedParking",
+      JSON.stringify(
+        selectedParking
+      )
+    );
+
+    if (onArrived) {
+      onArrived(
+        selectedParking
+      );
     }
 
-    function handleFull() {
-        alert(
-            `${selectedParking.name} has been marked as full. ` +
-            'An alternative parking area will be provided when the backend is connected.'
-        );
-    }
+    navigate(
+      "/parking-confirmation",
+      {
+        state: {
+          selectedParking,
+          userType,
+        },
+      }
+    );
+  }
 
-    return (
-        <div className="modal-card">
+  function handleFull() {
+    setFullMessage(
+      `${selectedParking.name} has been marked as full for this demonstration. Alternative parking will be provided automatically when live backend availability is connected.`
+    );
+  }
 
-            <header className="modal-header">
+  return (
+    <div className="directions-page">
 
-                <button
-                    className="icon-btn"
-                    aria-label="Close"
-                    onClick={handleClose}
-                >
-                    &times;
-                </button>
+      <header className="directions-header">
 
-                <h1>Parking Directions</h1>
+        <button
+          type="button"
+          className="directions-back"
+          onClick={handleClose}
+          aria-label="Go back"
+        >
+          ←
+        </button>
 
-            </header>
+        <img
+          src={logo}
+          alt="PukParking"
+          className="directions-logo"
+        />
 
-            <div className="map-placeholder">
+        <div className="directions-user">
+          {userType}
+        </div>
 
-                <div className="map-placeholder-content">
+      </header>
 
-                    <h2>Map Placeholder</h2>
+      <main className="directions-main">
+
+        <section className="directions-heading">
+
+          <p>
+            PARKING DIRECTIONS
+          </p>
+
+          <h1>
+            Navigate to{" "}
+            <span>
+              {selectedParking.name}
+            </span>
+          </h1>
+
+          <p className="directions-description">
+            Follow the route preview below and
+            review the parking information before
+            you arrive.
+          </p>
+
+        </section>
+
+        <section className="directions-route-summary">
+
+          <div>
+            <span>
+              Starting point
+            </span>
+
+            <strong>
+              {start ||
+                "Current location"}
+            </strong>
+          </div>
+
+          <div className="directions-route-arrow">
+            →
+          </div>
+
+          <div>
+            <span>
+              Campus destination
+            </span>
+
+            <strong>
+              {destination ||
+                "Selected destination"}
+            </strong>
+          </div>
+
+          <div className="directions-route-arrow">
+            →
+          </div>
+
+          <div>
+            <span>
+              Parking
+            </span>
+
+            <strong>
+              {selectedParking.name}
+            </strong>
+          </div>
+
+        </section>
+
+        <section className="directions-map-card">
+
+          <div className="directions-map-header">
+
+            <div>
+              <span>
+                ROUTE PREVIEW
+              </span>
+
+              <h2>
+                Campus map
+              </h2>
+            </div>
+
+            <div>
+              Mapbox pending
+            </div>
+
+          </div>
+
+          <div className="directions-map">
+
+            <img
+              src="/Images/map.jpg"
+              alt="Campus route preview"
+            />
+
+            <div className="directions-map-label">
+              Route to{" "}
+              <strong>
+                {selectedParking.name}
+              </strong>
+            </div>
+
+          </div>
+
+        </section>
+
+        <section className="directions-information">
+
+          <div className="directions-rules">
+
+            <p className="directions-section-label">
+              BEFORE YOU PARK
+            </p>
+
+            <h2>
+              Rules &amp; Restrictions
+            </h2>
+
+            <div className="directions-rule-list">
+
+              {rules.map(
+                (rule, index) => (
+
+                  <div
+                    className="directions-rule"
+                    key={rule}
+                  >
+
+                    <span>
+                      {index + 1}
+                    </span>
 
                     <p>
-                        Walking route to{' '}
-                        <strong>{selectedParking.name}</strong>
+                      {rule}
                     </p>
 
-                    <p>
-                        Mapbox navigation will be connected later.
-                    </p>
+                  </div>
 
-                </div>
+                )
+              )}
 
             </div>
 
-            <section className="rules-section">
+          </div>
 
-                <h2>Rules &amp; Restrictions</h2>
+          <aside className="directions-status-card">
 
-                <ul className="rules-list">
+            <div className="directions-parking-icon">
+              P
+            </div>
 
-                    {selectedParking.restrictions.map(
-                        (ruleText, index) => (
-                            <li key={index}>
-                                {ruleText}
-                            </li>
-                        )
-                    )}
+            <span>
+              SELECTED PARKING
+            </span>
 
-                </ul>
+            <h3>
+              {selectedParking.name}
+            </h3>
 
-                <div className="legend">
+            <p>
+              Live parking availability and
+              restrictions will be loaded from
+              the backend during integration.
+            </p>
 
-                    <div className="legend-item">
+          </aside>
 
-                        <span className="legend-swatch legend-yellow" />
+        </section>
 
-                        <span>
-                            Time-limited / Permit Zone
-                        </span>
+        {fullMessage && (
 
-                    </div>
+          <div className="parking-full-message">
 
-                    <div className="legend-item">
+            <div>
+              <strong>
+                Parking marked as full
+              </strong>
 
-                        <span className="legend-swatch legend-red" />
+              <p>
+                {fullMessage}
+              </p>
+            </div>
 
-                        <span>
-                            Restricted / No Entry Zone
-                        </span>
+            <button
+              type="button"
+              onClick={() =>
+                setFullMessage("")
+              }
+            >
+              ×
+            </button>
 
-                    </div>
+          </div>
 
-                </div>
+        )}
 
-            </section>
+        <section className="directions-actions">
 
-            <footer className="modal-footer">
+          <button
+            type="button"
+            className="directions-full"
+            onClick={handleFull}
+          >
+            Parking Full
+          </button>
 
-                <button
-                    className="btn btn-outline"
-                    onClick={handleFull}
-                >
-                    Parking Full
-                </button>
+          <button
+            type="button"
+            className="directions-arrived"
+            onClick={handleArrived}
+          >
+            I Have Arrived!
 
-                <button
-                    className="btn btn-primary"
-                    onClick={handleArrived}
-                >
-                    I have Arrived!
-                </button>
+            <span>
+              →
+            </span>
+          </button>
 
-            </footer>
+        </section>
 
-        </div>
-    );
+      </main>
+
+    </div>
+  );
 }
