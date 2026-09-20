@@ -37,9 +37,7 @@ function Home() {
 
   return (
     <div className="home-page">
-
       <header className="main-header">
-
         <div className="brand-area">
           <img
             src={logo}
@@ -58,19 +56,14 @@ function Home() {
           <span></span>
           <span></span>
         </button>
-
       </header>
 
       {menuOpen && (
-        <MenuBar
-          onClose={() => setMenuOpen(false)}
-        />
+        <MenuBar onClose={() => setMenuOpen(false)} />
       )}
 
       <main>
-
         <section className="hero-section">
-
           <div className="hero-glow hero-glow-left"></div>
           <div className="hero-glow hero-glow-right"></div>
 
@@ -90,9 +83,7 @@ function Home() {
           </p>
 
           <div className="hero-content">
-
             <div className="parking-photo-card">
-
               <img
                 src={nwuParking}
                 alt="NWU campus parking"
@@ -102,13 +93,10 @@ function Home() {
               <div className="photo-label">
                 NWU Potchefstroom Campus
               </div>
-
             </div>
 
             <div className="hero-features">
-
               <div className="hero-feature">
-
                 <div className="feature-icon-box">
                   <img src={carIcon} alt="" />
                 </div>
@@ -123,11 +111,9 @@ function Home() {
                     destination.
                   </p>
                 </div>
-
               </div>
 
               <div className="hero-feature">
-
                 <div className="feature-icon-box">
                   <img src={locationIcon} alt="" />
                 </div>
@@ -142,11 +128,9 @@ function Home() {
                     your campus destination.
                   </p>
                 </div>
-
               </div>
 
               <div className="hero-feature">
-
                 <div className="feature-icon-box mini-group-icon">
                   <img src={guestIcon} alt="" />
                 </div>
@@ -160,11 +144,8 @@ function Home() {
                     Built for students, staff and visitors.
                   </p>
                 </div>
-
               </div>
-
             </div>
-
           </div>
 
           <button
@@ -175,11 +156,9 @@ function Home() {
             More
             <span>→</span>
           </button>
-
         </section>
 
         <section className="user-type-section">
-
           <p className="section-eyebrow">
             GET STARTED
           </p>
@@ -194,12 +173,9 @@ function Home() {
           </p>
 
           <div className="user-type-grid">
-
             <button
               type="button"
-              className={`user-type-card ${selectedUserType === "Staff"
-                  ? "selected"
-                  : ""
+              className={`user-type-card ${selectedUserType === "Staff" ? "selected" : ""
                 }`}
               onClick={() => selectUserType("Staff")}
             >
@@ -213,9 +189,7 @@ function Home() {
 
             <button
               type="button"
-              className={`user-type-card ${selectedUserType === "Student"
-                  ? "selected"
-                  : ""
+              className={`user-type-card ${selectedUserType === "Student" ? "selected" : ""
                 }`}
               onClick={() => selectUserType("Student")}
             >
@@ -229,9 +203,7 @@ function Home() {
 
             <button
               type="button"
-              className={`user-type-card ${selectedUserType === "Guest"
-                  ? "selected"
-                  : ""
+              className={`user-type-card ${selectedUserType === "Guest" ? "selected" : ""
                 }`}
               onClick={() => selectUserType("Guest")}
             >
@@ -242,14 +214,11 @@ function Home() {
                 <span>Visitors and guests</span>
               </div>
             </button>
-
           </div>
 
           {selectedUserType && (
             <>
-
               <div className="selected-user-box">
-
                 <div className="selected-check">
                   ✓
                 </div>
@@ -263,7 +232,6 @@ function Home() {
                     {selectedUserType}
                   </strong>
                 </div>
-
               </div>
 
               <button
@@ -274,19 +242,15 @@ function Home() {
                 Continue
                 <span>→</span>
               </button>
-
             </>
           )}
-
         </section>
 
         <section
           className="why-section"
           ref={featuresRef}
         >
-
           <div className="why-heading">
-
             <p className="section-eyebrow">
               WHY PUKPARKING?
             </p>
@@ -300,13 +264,10 @@ function Home() {
               availability reporting and navigation together
               in one easy-to-use campus application.
             </p>
-
           </div>
 
           <div className="why-cards">
-
             <article className="why-card">
-
               <img src={carIcon} alt="" />
 
               <h3>
@@ -317,11 +278,9 @@ function Home() {
                 Search for suitable parking based on your
                 campus destination.
               </p>
-
             </article>
 
             <article className="why-card">
-
               <img src={locationIcon} alt="" />
 
               <h3>
@@ -332,11 +291,9 @@ function Home() {
                 Move from your selected parking area towards
                 the destination you need.
               </p>
-
             </article>
 
             <article className="why-card">
-
               <img src={guestIcon} alt="" />
 
               <h3>
@@ -347,17 +304,12 @@ function Home() {
                 Parking reports help improve the availability
                 information shown to other users.
               </p>
-
             </article>
-
           </div>
-
         </section>
-
       </main>
 
       <footer className="home-footer">
-
         <img
           src={logo}
           alt="PukParking"
@@ -366,9 +318,7 @@ function Home() {
         <p>
           Smart parking for the NWU Potchefstroom Campus.
         </p>
-
       </footer>
-
     </div>
   );
 }

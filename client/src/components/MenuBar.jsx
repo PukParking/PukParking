@@ -52,7 +52,7 @@ function MenuBar({ onClose }) {
 
           <button
             type="button"
-            onClick={() => goTo("/")}
+            onClick={() => goTo("/home")}
           >
             <span className="menu-number">01</span>
 

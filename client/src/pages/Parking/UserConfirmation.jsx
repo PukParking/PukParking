@@ -56,7 +56,7 @@ function UserConfirmation() {
 
                 <button
                     className="btn-confirm"
-                    onClick={() => alert(`Confirmed: ${selection?.title}`)}
+                    onClick={() => navigate("/parking-directions")}
                 >
                     Confirm
                 </button>
