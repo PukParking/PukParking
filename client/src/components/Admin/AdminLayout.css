@@ -1,0 +1,38 @@
+.admin-layout {
+    width: 100%;
+    min-height: 100vh;
+
+    background: #f6fbff;
+
+    color: #172033;
+
+    font-family:
+        "Segoe UI",
+        Arial,
+        Helvetica,
+        sans-serif;
+
+    transition:
+        background 0.3s ease,
+        color 0.3s ease;
+}
+
+.admin-content {
+    width: 100%;
+    min-height:
+        calc(
+            100vh - 105px
+        );
+}
+
+/* Dark mode */
+
+body.dark-mode .admin-layout {
+    background: #07111f;
+
+    color: #edf7ff;
+}
+
+body.dark-mode .admin-content {
+    background: #07111f;
+}

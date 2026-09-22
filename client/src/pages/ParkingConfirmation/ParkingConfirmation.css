@@ -1,0 +1,457 @@
+.arrival-page {
+  width: 100%;
+  min-height: 100vh;
+
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+
+  padding: 65px 20px 80px;
+
+  background:
+    radial-gradient(
+      circle at 50% 12%,
+      rgba(22, 170, 235, 0.14),
+      transparent 32%
+    ),
+    linear-gradient(
+      180deg,
+      #ffffff,
+      #edf8ff
+    );
+
+  color: #172033;
+}
+
+/* Card */
+
+.arrival-card {
+  width: min(650px, 100%);
+
+  padding: 42px 45px;
+
+  text-align: center;
+
+  border-radius: 32px;
+
+  background:
+    rgba(255, 255, 255, 0.96);
+
+  border:
+    1px solid #deedf5;
+
+  box-shadow:
+    0 25px 70px rgba(0, 77, 132, 0.14);
+}
+
+/* Logo */
+
+.arrival-logo {
+  width: 175px;
+  height: auto;
+
+  margin: 0 auto 24px;
+
+  display: block;
+
+  object-fit: contain;
+
+  border-radius: 0;
+}
+
+/* Arrival icon */
+
+.arrival-check {
+  width: 67px;
+  height: 67px;
+
+  margin: 0 auto 20px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 20px;
+
+  background:
+    linear-gradient(
+      145deg,
+      #25b9ef,
+      #0877da
+    );
+
+  color: #ffffff;
+
+  font-size: 30px;
+  font-weight: 900;
+
+  box-shadow:
+    0 13px 30px rgba(0, 111, 190, 0.22);
+}
+
+/* Heading */
+
+.arrival-eyebrow {
+  margin: 0 0 9px;
+
+  color: #0a92d5;
+
+  font-size: 10px;
+  font-weight: 900;
+
+  letter-spacing: 3px;
+}
+
+.arrival-card h1 {
+  margin: 0;
+
+  color: #073b70;
+
+  font-size: 37px;
+
+  line-height: 1.2;
+}
+
+.arrival-card h1 span {
+  color: #13a3e5;
+}
+
+.arrival-message {
+  max-width: 500px;
+
+  margin: 15px auto 0;
+
+  color: #728092;
+
+  font-size: 14px;
+
+  line-height: 1.65;
+}
+
+.arrival-category {
+  width: fit-content;
+
+  margin: 20px auto 30px;
+
+  padding: 8px 15px;
+
+  border-radius: 20px;
+
+  background: #e9f8ff;
+
+  color: #0c89ca;
+
+  font-size: 10px;
+  font-weight: 800;
+}
+
+/* Feedback */
+
+.arrival-feedback {
+  padding: 28px;
+
+  text-align: left;
+
+  border-radius: 24px;
+
+  background: #f6fbff;
+
+  border:
+    1px solid #e0edf5;
+}
+
+.arrival-feedback-heading {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+
+  gap: 20px;
+}
+
+.arrival-feedback-heading p {
+  margin: 0 0 5px;
+
+  color: #0c91d3;
+
+  font-size: 9px;
+  font-weight: 900;
+
+  letter-spacing: 2px;
+}
+
+.arrival-feedback-heading h2 {
+  margin: 0;
+
+  color: #073b70;
+
+  font-size: 21px;
+}
+
+.arrival-feedback-heading > span {
+  padding: 7px 12px;
+
+  border-radius: 15px;
+
+  background: #e4f5ff;
+
+  color: #0787c9;
+
+  font-size: 11px;
+  font-weight: 900;
+}
+
+/* Rating */
+
+.arrival-stars {
+  display: flex;
+  justify-content: center;
+
+  gap: 8px;
+
+  margin: 26px 0;
+}
+
+.arrival-star {
+  padding: 0;
+
+  border: none;
+
+  background: transparent;
+
+  color: #d4dfe7;
+
+  font-size: 38px;
+
+  line-height: 1;
+
+  cursor: pointer;
+
+  transition:
+    color 0.2s ease,
+    transform 0.2s ease;
+}
+
+.arrival-star:hover {
+  color: #f4b942;
+
+  transform: translateY(-3px);
+}
+
+.arrival-star.active {
+  color: #f4b942;
+}
+
+/* Comment */
+
+.arrival-feedback label {
+  display: block;
+
+  margin-bottom: 9px;
+
+  color: #164a78;
+
+  font-size: 13px;
+  font-weight: 800;
+}
+
+.arrival-feedback textarea {
+  width: 100%;
+
+  min-height: 120px;
+
+  padding: 14px 16px;
+
+  resize: vertical;
+
+  border:
+    1px solid #cee5f2;
+
+  border-radius: 16px;
+
+  outline: none;
+
+  background: #ffffff;
+
+  color: #243c53;
+
+  font-family: inherit;
+  font-size: 13px;
+
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease,
+    background 0.3s ease,
+    color 0.3s ease;
+}
+
+.arrival-feedback textarea:focus {
+  border-color: #17a6e7;
+
+  box-shadow:
+    0 0 0 4px
+    rgba(23, 166, 231, 0.1);
+}
+
+/* Done button */
+
+.arrival-done {
+  width: 100%;
+  min-height: 55px;
+
+  margin-top: 25px;
+
+  border: none;
+  border-radius: 18px;
+
+  background:
+    linear-gradient(
+      135deg,
+      #19afea,
+      #0877da
+    );
+
+  color: #ffffff;
+
+  font-size: 14px;
+  font-weight: 800;
+
+  cursor: pointer;
+
+  box-shadow:
+    0 13px 30px rgba(0, 111, 190, 0.23);
+
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.arrival-done span {
+  margin-left: 10px;
+
+  font-size: 18px;
+}
+
+.arrival-done:hover {
+  transform: translateY(-2px);
+
+  box-shadow:
+    0 17px 36px rgba(0, 111, 190, 0.3);
+}
+
+/* Mobile */
+
+@media (max-width: 600px) {
+  .arrival-page {
+    padding: 35px 15px 60px;
+  }
+
+  .arrival-card {
+    padding: 30px 20px;
+
+    border-radius: 25px;
+  }
+
+  .arrival-logo {
+    width: 150px;
+  }
+
+  .arrival-card h1 {
+    font-size: 30px;
+  }
+
+  .arrival-feedback {
+    padding: 22px 17px;
+  }
+
+  .arrival-star {
+    font-size: 32px;
+  }
+}
+
+/* Dark mode */
+
+body.dark-mode .arrival-page {
+  color: #edf7ff;
+
+  background:
+    radial-gradient(
+      circle at 50% 10%,
+      rgba(28, 165, 228, 0.12),
+      transparent 32%
+    ),
+    linear-gradient(
+      180deg,
+      #07111f,
+      #0b1b2c
+    );
+}
+
+body.dark-mode .arrival-card {
+  background: #102335;
+
+  border-color:
+    rgba(57, 174, 233, 0.16);
+
+  box-shadow:
+    0 25px 70px rgba(0, 0, 0, 0.35);
+}
+
+body.dark-mode .arrival-card h1 {
+  color: #edf7ff;
+}
+
+body.dark-mode .arrival-card h1 span {
+  color: #42c2f6;
+}
+
+body.dark-mode .arrival-message {
+  color: #aebdca;
+}
+
+body.dark-mode .arrival-category {
+  background: #123047;
+
+  color: #65cefb;
+}
+
+body.dark-mode .arrival-feedback {
+  background: #0b1b2c;
+
+  border-color:
+    rgba(57, 174, 233, 0.15);
+}
+
+body.dark-mode .arrival-feedback-heading h2 {
+  color: #edf7ff;
+}
+
+body.dark-mode .arrival-feedback-heading > span {
+  background: #143249;
+
+  color: #68d0fc;
+}
+
+body.dark-mode .arrival-feedback label {
+  color: #d8edfa;
+}
+
+body.dark-mode .arrival-feedback textarea {
+  background: #102335;
+
+  color: #edf7ff;
+
+  border-color: #244258;
+}
+
+body.dark-mode .arrival-feedback textarea::placeholder {
+  color: #8197a9;
+}
+
+body.dark-mode .arrival-star {
+  color: #42596a;
+}
+
+body.dark-mode .arrival-star.active,
+body.dark-mode .arrival-star:hover {
+  color: #f4b942;
+}

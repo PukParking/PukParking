@@ -1,0 +1,293 @@
+.manage-page {
+    width: 100%;
+    min-height: 100vh;
+
+    padding: 32px;
+
+    box-sizing: border-box;
+
+    background:
+        linear-gradient(
+            180deg,
+            #f8fcff,
+            #eef8ff
+        );
+
+    color: #172033;
+
+    transition:
+        background 0.3s ease,
+        color 0.3s ease;
+}
+
+.manage-page h1 {
+    margin:
+        0 0 10px;
+
+    color: #073b70;
+
+    font-size: 30px;
+}
+
+.manage-page h2 {
+    margin:
+        0 0 25px;
+
+    color: #0b477b;
+
+    font-size: 21px;
+}
+
+/* Cards */
+
+.manage-cards {
+    display: grid;
+
+    grid-template-columns:
+        repeat(3, 1fr);
+
+    gap: 20px;
+}
+
+.manage-card {
+    padding: 22px;
+
+    border:
+        1px solid #dcebf4;
+
+    border-radius: 20px;
+
+    background: #ffffff;
+
+    box-shadow:
+        0 12px 34px rgba(0, 77, 132, 0.07);
+
+    transition:
+        background 0.3s ease,
+        border-color 0.3s ease,
+        transform 0.2s ease;
+}
+
+.manage-card:hover {
+    transform: translateY(-2px);
+}
+
+.manage-card h3 {
+    margin:
+        0 0 20px;
+
+    color: #073b70;
+
+    font-size: 17px;
+}
+
+.manage-card form {
+    display: flex;
+    flex-direction: column;
+
+    gap: 12px;
+}
+
+/* Inputs */
+
+.manage-card input,
+.manage-card select {
+    width: 100%;
+
+    padding:
+        11px 12px;
+
+    border:
+        1px solid #d2e5f0;
+
+    border-radius: 11px;
+
+    box-sizing: border-box;
+
+    outline: none;
+
+    background: #f9fcff;
+
+    color: #28435b;
+
+    font-family: inherit;
+
+    transition:
+        border-color 0.2s ease,
+        box-shadow 0.2s ease,
+        background 0.3s ease,
+        color 0.3s ease;
+}
+
+.manage-card input:focus,
+.manage-card select:focus {
+    border-color: #19a8ea;
+
+    box-shadow:
+        0 0 0 3px rgba(25, 168, 234, 0.1);
+}
+
+.manage-card input::placeholder {
+    color: #8b98a5;
+}
+
+/* Buttons */
+
+.manage-card button {
+    padding: 11px;
+
+    border: none;
+    border-radius: 12px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #19afea,
+            #0877da
+        );
+
+    color: #ffffff;
+
+    font-weight: 700;
+
+    cursor: pointer;
+
+    transition:
+        transform 0.2s ease,
+        opacity 0.2s ease;
+}
+
+.manage-card button:hover {
+    transform: translateY(-1px);
+
+    opacity: 0.95;
+}
+
+.parking-details {
+    margin-top: 20px;
+}
+
+.parking-details p {
+    margin:
+        8px 0;
+
+    color: #596b7c;
+
+    font-size: 13px;
+}
+
+.parking-details strong {
+    color: #0b477b;
+}
+
+.delete-button {
+    margin-top: 20px;
+
+    background:
+        #d94747 !important;
+}
+
+/* Confirmation */
+
+.confirmation {
+    margin-top: 15px;
+
+    padding: 11px;
+
+    border:
+        1px solid #cceedd;
+
+    border-radius: 11px;
+
+    background: #eefbf4;
+
+    color: #168352;
+
+    font-size: 12px;
+}
+
+.building-heading {
+    margin-top:
+        42px !important;
+}
+
+/* Responsive */
+
+@media (max-width: 900px) {
+    .manage-cards {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 600px) {
+    .manage-page {
+        padding:
+            20px 15px;
+    }
+
+    .manage-page h1 {
+        font-size: 25px;
+    }
+}
+
+/* Dark mode */
+
+body.dark-mode .manage-page {
+    background:
+        linear-gradient(
+            180deg,
+            #07111f,
+            #0b1b2c
+        );
+
+    color: #edf7ff;
+}
+
+body.dark-mode .manage-page h1,
+body.dark-mode .manage-page h2,
+body.dark-mode .manage-card h3,
+body.dark-mode .parking-details strong {
+    color: #edf7ff;
+}
+
+body.dark-mode .manage-card {
+    background: #102335;
+
+    border-color:
+        rgba(57, 174, 233, 0.16);
+
+    box-shadow:
+        0 12px 35px rgba(0, 0, 0, 0.24);
+}
+
+body.dark-mode .manage-card input,
+body.dark-mode .manage-card select {
+    background: #0b1b2c;
+
+    color: #edf7ff;
+
+    border-color:
+        rgba(75, 172, 219, 0.18);
+}
+
+body.dark-mode .manage-card select option {
+    background: #102335;
+
+    color: #edf7ff;
+}
+
+body.dark-mode .manage-card input::placeholder {
+    color: #8297a8;
+}
+
+body.dark-mode .parking-details p {
+    color: #aebdca;
+}
+
+body.dark-mode .confirmation {
+    background: #123226;
+
+    border-color: #24583f;
+
+    color: #7ee0a9;
+}

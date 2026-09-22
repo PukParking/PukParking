@@ -1,0 +1,59 @@
+.admin-settings {
+    width: 100%;
+    min-height: 100vh;
+
+    padding: 32px;
+
+    box-sizing: border-box;
+
+    background:
+        linear-gradient(
+            180deg,
+            #f8fcff,
+            #eef8ff
+        );
+
+    color: #172033;
+
+    transition:
+        background 0.3s ease,
+        color 0.3s ease;
+}
+
+.admin-settings h1 {
+    margin: 0;
+
+    color: #073b70;
+
+    font-size: 30px;
+}
+
+/* Mobile */
+
+@media (max-width: 600px) {
+    .admin-settings {
+        padding:
+            20px 15px;
+    }
+
+    .admin-settings h1 {
+        font-size: 25px;
+    }
+}
+
+/* Dark mode */
+
+body.dark-mode .admin-settings {
+    background:
+        linear-gradient(
+            180deg,
+            #07111f,
+            #0b1b2c
+        );
+
+    color: #edf7ff;
+}
+
+body.dark-mode .admin-settings h1 {
+    color: #edf7ff;
+}
