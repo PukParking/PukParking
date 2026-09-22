@@ -15,7 +15,9 @@
 }
 
 .home-page {
+  width: 100%;
   min-height: 100vh;
+
   overflow-x: hidden;
 
   color: var(--text);
@@ -29,11 +31,11 @@
     );
 }
 
-
-/* HEADER */
+/* Header */
 
 .main-header {
   width: 100%;
+  min-height: 110px;
 
   display: flex;
   justify-content: space-between;
@@ -41,29 +43,37 @@
 
   padding: 18px 6%;
 
-  background: rgba(255, 255, 255, 0.92);
+  background:
+    rgba(255, 255, 255, 0.92);
 
   backdrop-filter: blur(12px);
 
-  border-bottom: 1px solid rgba(10, 93, 156, 0.08);
+  border-bottom:
+    1px solid rgba(10, 93, 156, 0.08);
 
   position: relative;
+
   z-index: 20;
 }
 
 .brand-area {
   display: flex;
   align-items: center;
+  justify-content: flex-start;
+
+  overflow: visible;
 }
 
 .main-logo {
   width: 205px;
   height: auto;
+
   display: block;
+
+  object-fit: contain;
 }
 
-
-/* HAMBURGER */
+/* Hamburger menu */
 
 .hamburger-button {
   width: 50px;
@@ -72,11 +82,12 @@
   border: none;
   border-radius: 15px;
 
-  background: linear-gradient(
-    145deg,
-    #ffffff,
-    #edf8ff
-  );
+  background:
+    linear-gradient(
+      145deg,
+      #ffffff,
+      #edf8ff
+    );
 
   box-shadow:
     0 8px 20px rgba(0, 95, 160, 0.12);
@@ -90,7 +101,9 @@
 
   cursor: pointer;
 
-  transition: all 0.25s ease;
+  transition:
+    transform 0.25s ease,
+    box-shadow 0.25s ease;
 }
 
 .hamburger-button:hover {
@@ -106,15 +119,15 @@
 
   border-radius: 5px;
 
-  background: linear-gradient(
-    90deg,
-    var(--primary),
-    var(--primary-light)
-  );
+  background:
+    linear-gradient(
+      90deg,
+      var(--primary),
+      var(--primary-light)
+    );
 }
 
-
-/* HERO */
+/* Hero */
 
 .hero-section {
   min-height: 650px;
@@ -140,11 +153,12 @@
 
   position: absolute;
 
-  background: radial-gradient(
-    circle,
-    rgba(38, 181, 243, 0.15),
-    transparent 70%
-  );
+  background:
+    radial-gradient(
+      circle,
+      rgba(38, 181, 243, 0.15),
+      transparent 70%
+    );
 
   filter: blur(5px);
 
@@ -168,7 +182,6 @@
   color: var(--primary);
 
   font-size: 13px;
-
   font-weight: 800;
 
   letter-spacing: 5px;
@@ -177,7 +190,12 @@
 .hero-section h1 {
   margin: 0;
 
-  font-size: clamp(38px, 5vw, 68px);
+  font-size:
+    clamp(
+      38px,
+      5vw,
+      68px
+    );
 
   line-height: 1.05;
 
@@ -185,11 +203,12 @@
 }
 
 .hero-section h1 span {
-  background: linear-gradient(
-    90deg,
-    #0d8dea,
-    #22b4f3
-  );
+  background:
+    linear-gradient(
+      90deg,
+      #0d8dea,
+      #22b4f3
+    );
 
   -webkit-background-clip: text;
   background-clip: text;
@@ -200,7 +219,8 @@
 .hero-introduction {
   max-width: 790px;
 
-  margin: 20px auto 35px;
+  margin:
+    20px auto 35px;
 
   color: var(--muted);
 
@@ -209,54 +229,67 @@
   line-height: 1.65;
 }
 
-
-/* HERO CONTENT */
+/* Hero content */
 
 .hero-content {
-  width: min(100%, 920px);
+  width:
+    min(
+      100%,
+      1050px
+    );
+
+  margin-left: auto;
+  margin-right: auto;
 
   display: grid;
 
   grid-template-columns:
-    minmax(300px, 1fr)
-    minmax(280px, 0.9fr);
+    minmax(340px, 1.15fr)
+    minmax(280px, 0.85fr);
 
   gap: 35px;
 
   align-items: center;
 }
 
-.parking-photo-card {
-  position: relative;
+/* Parking image */
 
-  border-radius: 24px;
+.parking-photo-card {
+  width: 100%;
+  height: 320px;
+
+  position: relative;
 
   overflow: hidden;
 
-  min-height: 270px;
+  border-radius: 22px;
 
-  background: white;
+  background: #ffffff;
+
+  border:
+    1px solid rgba(0, 139, 219, 0.12);
 
   box-shadow:
     0 20px 60px rgba(0, 70, 130, 0.18);
-
-  border: 1px solid rgba(0, 139, 219, 0.12);
 }
 
 .nwu-parking-image {
   width: 100%;
   height: 100%;
 
-  min-height: 270px;
-
-  object-fit: cover;
-
   display: block;
 
-  transition: transform 0.5s ease;
+  object-fit: cover;
+  object-position: center;
+
+  border-radius: 0;
+
+  transition:
+    transform 0.5s ease;
 }
 
-.parking-photo-card:hover .nwu-parking-image {
+.parking-photo-card:hover
+.nwu-parking-image {
   transform: scale(1.035);
 }
 
@@ -266,23 +299,23 @@
   left: 18px;
   bottom: 18px;
 
-  padding: 10px 16px;
+  padding:
+    10px 16px;
 
   border-radius: 20px;
 
   color: white;
 
-  background: rgba(2, 39, 82, 0.82);
+  background:
+    rgba(2, 39, 82, 0.82);
 
   backdrop-filter: blur(10px);
 
   font-size: 12px;
-
   font-weight: 700;
 }
 
-
-/* FEATURE ITEMS */
+/* Feature cards */
 
 .hero-features {
   display: flex;
@@ -375,15 +408,15 @@
   line-height: 1.45;
 }
 
-
-/* MORE */
+/* More button */
 
 .more-button {
   margin-top: 30px;
 
   min-width: 155px;
 
-  padding: 13px 25px;
+  padding:
+    13px 25px;
 
   border: none;
   border-radius: 30px;
@@ -405,7 +438,9 @@
   box-shadow:
     0 7px 20px rgba(0, 45, 80, 0.08);
 
-  transition: all 0.25s ease;
+  transition:
+    transform 0.25s ease,
+    box-shadow 0.25s ease;
 }
 
 .more-button span {
@@ -423,11 +458,11 @@
     0 12px 30px rgba(0, 80, 140, 0.15);
 }
 
-
-/* USER TYPE */
+/* User type */
 
 .user-type-section {
-  padding: 65px 7% 80px;
+  padding:
+    65px 7% 80px;
 
   text-align: center;
 
@@ -453,7 +488,8 @@
 .section-description {
   max-width: 650px;
 
-  margin: 13px auto 35px;
+  margin:
+    13px auto 35px;
 
   color: var(--muted);
 
@@ -461,13 +497,22 @@
 }
 
 .user-type-grid {
-  width: min(100%, 930px);
+  width:
+    min(
+      100%,
+      930px
+    );
 
-  margin: 0 auto;
+  margin:
+    0 auto;
 
   display: grid;
 
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns:
+    repeat(
+      3,
+      1fr
+    );
 
   gap: 22px;
 }
@@ -501,7 +546,10 @@
 
   text-align: left;
 
-  transition: all 0.25s ease;
+  transition:
+    transform 0.25s ease,
+    border-color 0.25s ease,
+    box-shadow 0.25s ease;
 }
 
 .user-type-card:hover {
@@ -515,7 +563,8 @@
 }
 
 .user-type-card.selected {
-  border-color: var(--primary);
+  border-color:
+    var(--primary);
 
   background:
     linear-gradient(
@@ -558,20 +607,21 @@
   font-size: 12px;
 }
 
-
-/* SELECTED USER */
+/* Selected user */
 
 .selected-user-box {
   width: fit-content;
 
-  margin: 28px auto 0;
+  margin:
+    28px auto 0;
 
   display: flex;
   align-items: center;
 
   gap: 12px;
 
-  padding: 12px 20px;
+  padding:
+    12px 20px;
 
   border-radius: 30px;
 
@@ -629,13 +679,13 @@
   text-align: left;
 }
 
-
-/* CONTINUE BUTTON */
+/* Continue button */
 
 .continue-button {
   margin-top: 22px;
 
-  padding: 14px 34px;
+  padding:
+    14px 34px;
 
   border: none;
   border-radius: 28px;
@@ -679,11 +729,11 @@
   transform: translateY(0);
 }
 
-
-/* WHY */
+/* Why PukParking */
 
 .why-section {
-  padding: 80px 7%;
+  padding:
+    80px 7%;
 
   background:
     linear-gradient(
@@ -708,19 +758,29 @@
 }
 
 .why-cards {
-  width: min(100%, 1050px);
+  width:
+    min(
+      100%,
+      1050px
+    );
 
-  margin: 45px auto 0;
+  margin:
+    45px auto 0;
 
   display: grid;
 
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns:
+    repeat(
+      3,
+      1fr
+    );
 
   gap: 25px;
 }
 
 .why-card {
-  padding: 35px 28px;
+  padding:
+    35px 28px;
 
   border-radius: 25px;
 
@@ -735,7 +795,9 @@
 
   text-align: center;
 
-  transition: all 0.25s ease;
+  transition:
+    transform 0.25s ease,
+    box-shadow 0.25s ease;
 }
 
 .why-card:hover {
@@ -769,43 +831,60 @@
   font-size: 14px;
 }
 
-
-/* FOOTER */
+/* Footer */
 
 .home-footer {
-  padding: 35px 7%;
+  padding:
+    35px 7%;
 
   text-align: center;
 
-  background: var(--navy);
+  background:
+    var(--navy);
 
   color:
-    rgba(255, 255, 255, 0.75);
+    rgba(
+      255,
+      255,
+      255,
+      0.75
+    );
 }
 
-.home-footer img {
-  width: 145px;
+.home-footer .footer-logo {
+  width: 180px;
+  height: auto;
 
-  filter:
-    brightness(0)
-    invert(1);
+  display: block;
 
-  opacity: 0.92;
+  margin:
+    0 auto 14px;
+
+  object-fit: contain;
+
+  filter: none;
+
+  opacity: 1;
+
+  background: transparent;
+
+  border: none;
+
+  box-shadow: none;
 }
 
 .home-footer p {
-  margin-bottom: 0;
+  margin: 0;
 
   font-size: 12px;
 }
 
-
-/* RESPONSIVE */
+/* Tablet */
 
 @media (max-width: 850px) {
-
   .hero-content {
-    grid-template-columns: 1fr;
+    grid-template-columns:
+      1fr;
   }
 
   .hero-features {
@@ -818,7 +897,8 @@
 
   .user-type-grid,
   .why-cards {
-    grid-template-columns: 1fr;
+    grid-template-columns:
+      1fr;
   }
 
   .user-type-card {
@@ -828,12 +908,25 @@
 
     margin: auto;
   }
+
+  .parking-photo-card {
+    max-width: 650px;
+
+    margin:
+      0 auto;
+
+    height: 300px;
+  }
 }
 
-@media (max-width: 600px) {
+/* Mobile */
 
+@media (max-width: 600px) {
   .main-header {
-    padding: 15px 20px;
+    min-height: 90px;
+
+    padding:
+      15px 20px;
   }
 
   .main-logo {
@@ -853,9 +946,18 @@
     font-size: 15px;
   }
 
-  .parking-photo-card,
+  .parking-photo-card {
+    width: 100%;
+    height: 230px;
+
+    border-radius: 18px;
+  }
+
   .nwu-parking-image {
-    min-height: 210px;
+    width: 100%;
+    height: 100%;
+
+    object-fit: cover;
   }
 
   .user-type-section,

@@ -15,9 +15,9 @@ import guestIcon from "../../assets/guest-icon.png";
 function Home() {
   const [selectedUserType, setSelectedUserType] = useState("");
   const [menuOpen, setMenuOpen] = useState(false);
-  const navigate = useNavigate();
 
   const featuresRef = useRef(null);
+  const navigate = useNavigate();
 
   const selectUserType = (userType) => {
     setSelectedUserType(userType);
@@ -30,16 +30,25 @@ function Home() {
   };
 
   const handleContinue = () => {
-    alert(
-      `Continue as ${selectedUserType} will be connected to the User Landing Page during integration.`
+    if (!selectedUserType) {
+      return;
+    }
+
+    sessionStorage.setItem(
+      "selectedUserType",
+      selectedUserType
     );
+
+    navigate("/parking", {
+      state: {
+        userType: selectedUserType,
+      },
+    });
   };
 
   return (
     <div className="home-page">
-
       <header className="main-header">
-
         <div className="brand-area">
           <img
             src={logo}
@@ -58,7 +67,6 @@ function Home() {
           <span></span>
           <span></span>
         </button>
-
       </header>
 
       {menuOpen && (
@@ -68,9 +76,7 @@ function Home() {
       )}
 
       <main>
-
         <section className="hero-section">
-
           <div className="hero-glow hero-glow-left"></div>
           <div className="hero-glow hero-glow-right"></div>
 
@@ -90,9 +96,7 @@ function Home() {
           </p>
 
           <div className="hero-content">
-
             <div className="parking-photo-card">
-
               <img
                 src={nwuParking}
                 alt="NWU campus parking"
@@ -102,69 +106,53 @@ function Home() {
               <div className="photo-label">
                 NWU Potchefstroom Campus
               </div>
-
             </div>
 
             <div className="hero-features">
-
               <div className="hero-feature">
-
                 <div className="feature-icon-box">
                   <img src={carIcon} alt="" />
                 </div>
 
                 <div>
-                  <strong>
-                    Find suitable parking
-                  </strong>
+                  <strong>Find suitable parking</strong>
 
                   <p>
                     Discover parking areas near your selected
                     destination.
                   </p>
                 </div>
-
               </div>
 
               <div className="hero-feature">
-
                 <div className="feature-icon-box">
                   <img src={locationIcon} alt="" />
                 </div>
 
                 <div>
-                  <strong>
-                    Navigate with confidence
-                  </strong>
+                  <strong>Navigate with confidence</strong>
 
                   <p>
                     Locate suitable parking and continue towards
                     your campus destination.
                   </p>
                 </div>
-
               </div>
 
               <div className="hero-feature">
-
                 <div className="feature-icon-box mini-group-icon">
                   <img src={guestIcon} alt="" />
                 </div>
 
                 <div>
-                  <strong>
-                    Designed for campus users
-                  </strong>
+                  <strong>Designed for campus users</strong>
 
                   <p>
                     Built for students, staff and visitors.
                   </p>
                 </div>
-
               </div>
-
             </div>
-
           </div>
 
           <button
@@ -175,11 +163,9 @@ function Home() {
             More
             <span>→</span>
           </button>
-
         </section>
 
         <section className="user-type-section">
-
           <p className="section-eyebrow">
             GET STARTED
           </p>
@@ -194,13 +180,13 @@ function Home() {
           </p>
 
           <div className="user-type-grid">
-
             <button
               type="button"
-              className={`user-type-card ${selectedUserType === "Staff"
+              className={`user-type-card ${
+                selectedUserType === "Staff"
                   ? "selected"
                   : ""
-                }`}
+              }`}
               onClick={() => selectUserType("Staff")}
             >
               <img src={staffIcon} alt="Staff" />
@@ -213,10 +199,11 @@ function Home() {
 
             <button
               type="button"
-              className={`user-type-card ${selectedUserType === "Student"
+              className={`user-type-card ${
+                selectedUserType === "Student"
                   ? "selected"
                   : ""
-                }`}
+              }`}
               onClick={() => selectUserType("Student")}
             >
               <img src={studentIcon} alt="Student" />
@@ -229,10 +216,11 @@ function Home() {
 
             <button
               type="button"
-              className={`user-type-card ${selectedUserType === "Guest"
+              className={`user-type-card ${
+                selectedUserType === "Guest"
                   ? "selected"
                   : ""
-                }`}
+              }`}
               onClick={() => selectUserType("Guest")}
             >
               <img src={guestIcon} alt="Guest" />
@@ -242,51 +230,38 @@ function Home() {
                 <span>Visitors and guests</span>
               </div>
             </button>
-
           </div>
 
           {selectedUserType && (
             <>
-
               <div className="selected-user-box">
-
                 <div className="selected-check">
                   ✓
                 </div>
 
                 <div>
-                  <span>
-                    Selected user type
-                  </span>
-
-                  <strong>
-                    {selectedUserType}
-                  </strong>
+                  <span>Selected user type</span>
+                  <strong>{selectedUserType}</strong>
                 </div>
-
               </div>
 
               <button
                 className="continue-button"
                 type="button"
-                onClick={() => navigate("/parking")}
+                onClick={handleContinue}
               >
                 Continue
                 <span>→</span>
               </button>
-
             </>
           )}
-
         </section>
 
         <section
           className="why-section"
           ref={featuresRef}
         >
-
           <div className="why-heading">
-
             <p className="section-eyebrow">
               WHY PUKPARKING?
             </p>
@@ -300,75 +275,56 @@ function Home() {
               availability reporting and navigation together
               in one easy-to-use campus application.
             </p>
-
           </div>
 
           <div className="why-cards">
-
             <article className="why-card">
-
               <img src={carIcon} alt="" />
 
-              <h3>
-                Parking Discovery
-              </h3>
+              <h3>Parking Discovery</h3>
 
               <p>
                 Search for suitable parking based on your
                 campus destination.
               </p>
-
             </article>
 
             <article className="why-card">
-
               <img src={locationIcon} alt="" />
 
-              <h3>
-                Smart Navigation
-              </h3>
+              <h3>Smart Navigation</h3>
 
               <p>
                 Move from your selected parking area towards
                 the destination you need.
               </p>
-
             </article>
 
             <article className="why-card">
-
               <img src={guestIcon} alt="" />
 
-              <h3>
-                Crowd Assistance
-              </h3>
+              <h3>Crowd Assistance</h3>
 
               <p>
                 Parking reports help improve the availability
                 information shown to other users.
               </p>
-
             </article>
-
           </div>
-
         </section>
-
       </main>
 
       <footer className="home-footer">
-
         <img
           src={logo}
-          alt="PukParking"
+          alt="PukParking Logo"
+          className="footer-logo"
         />
 
         <p>
           Smart parking for the NWU Potchefstroom Campus.
         </p>
-
       </footer>
-
     </div>
   );
 }
