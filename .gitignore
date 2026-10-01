@@ -2,3 +2,6 @@
 /server/.env
 /server/.env.*
 !/server/.env.example
+# stuff for netify
+node_modules/
+dist/
