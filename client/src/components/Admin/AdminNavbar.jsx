@@ -1,9 +1,13 @@
 import { useState } from "react";
-import { NavLink } from "react-router-dom";
-import { useNavigate } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
+
+import "./AdminNavbar.css";
+
+import logo from "../../assets/pukparking-logo.png";
 
 function AdminNavbar() {
     const [menuOpen, setMenuOpen] = useState(false);
+
     const navigate = useNavigate();
 
     const closeMenu = () => {
@@ -15,12 +19,20 @@ function AdminNavbar() {
             <header className="admin-navbar">
 
                 <div className="admin-navbar-logo">
-                    <h2>PukParking</h2>
+
+                    <img
+                        src={logo}
+                        alt="PukParking"
+                    />
+
                     <span>ADMIN</span>
+
                 </div>
 
                 <button
                     className="menu-button"
+                    type="button"
+                    aria-label="Open admin menu"
                     onClick={() => setMenuOpen(!menuOpen)}
                 >
                     {menuOpen ? "✕" : "☰"}
@@ -64,7 +76,6 @@ function AdminNavbar() {
                     </nav>
 
                     <button
-
                         className="logout-button"
                         onClick={() => navigate("/home")}
                     >
@@ -73,6 +84,7 @@ function AdminNavbar() {
 
                 </div>
             )}
+
         </>
     );
 }

@@ -1,6 +1,9 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+
 import "./AdminLogin.css";
+
+import logo from "../../assets/pukparking-logo.png";
 
 function AdminLogin() {
     const navigate = useNavigate();
@@ -27,61 +30,106 @@ function AdminLogin() {
     return (
         <div className="admin-login-page">
 
-            <div className="admin-login-card">
+            <header className="admin-login-topbar">
 
-                <div className="admin-login-header">
-                    <h1>PukParking</h1>
-                    <p>Admin Login</p>
-                </div>
+                <img
+                    src={logo}
+                    alt="PukParking"
+                    className="admin-login-logo"
+                />
 
-                <form onSubmit={handleLogin}>
+                <button
+                    type="button"
+                    className="admin-home-button"
+                    onClick={() => navigate("/home")}
+                >
+                    Home
+                </button>
 
-                    <div className="login-input-group">
-                        <label>Email</label>
+            </header>
 
-                        <input
-                            type="email"
-                            placeholder="Enter admin email"
-                            value={email}
-                            onChange={(e) => {
-                                setEmail(e.target.value);
-                                setError("");
-                            }}
-                            required
-                        />
-                    </div>
+            <main className="admin-login-main">
 
-                    <div className="login-input-group">
-                        <label>Password</label>
+                <section className="admin-login-card">
 
-                        <input
-                            type="password"
-                            placeholder="Enter password"
-                            value={password}
-                            onChange={(e) => {
-                                setPassword(e.target.value);
-                                setError("");
-                            }}
-                            required
-                        />
-                    </div>
+                    <div className="admin-login-header">
 
-                    {error && (
-                        <p className="login-error">
-                            {error}
+                        <h1>
+                            Admin Login
+                        </h1>
+
+                        <p className="admin-login-description">
+                            Sign in to access the PukParking
+                            administration dashboard.
                         </p>
-                    )}
 
-                    <button
-                        type="submit"
-                        className="login-button"
-                    >
-                        Login
-                    </button>
+                    </div>
 
-                </form>
+                    <form onSubmit={handleLogin}>
 
-            </div>
+                        <div className="login-input-group">
+
+                            <label htmlFor="admin-email">
+                                Email
+                            </label>
+
+                            <input
+                                id="admin-email"
+                                type="email"
+                                placeholder="Enter admin email"
+                                value={email}
+                                onChange={(e) => {
+                                    setEmail(e.target.value);
+                                    setError("");
+                                }}
+                                required
+                            />
+
+                        </div>
+
+                        <div className="login-input-group">
+
+                            <label htmlFor="admin-password">
+                                Password
+                            </label>
+
+                            <input
+                                id="admin-password"
+                                type="password"
+                                placeholder="Enter password"
+                                value={password}
+                                onChange={(e) => {
+                                    setPassword(e.target.value);
+                                    setError("");
+                                }}
+                                required
+                            />
+
+                        </div>
+
+                        {error && (
+                            <p className="login-error">
+                                {error}
+                            </p>
+                        )}
+
+                        <button
+                            type="submit"
+                            className="login-button"
+                        >
+                            Login
+                            <span>→</span>
+                        </button>
+
+                    </form>
+
+                    <p className="admin-login-note">
+                        Authorised administrators only
+                    </p>
+
+                </section>
+
+            </main>
 
         </div>
     );

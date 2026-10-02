@@ -24,9 +24,7 @@ function MenuBar({ onClose }) {
       ></div>
 
       <aside className="menu-bar">
-
         <div className="menu-brand">
-
           <img
             src={logo}
             alt="PukParking"
@@ -40,7 +38,6 @@ function MenuBar({ onClose }) {
           >
             ×
           </button>
-
         </div>
 
         <div className="menu-heading">
@@ -49,10 +46,9 @@ function MenuBar({ onClose }) {
         </div>
 
         <nav className="menu-links">
-
           <button
             type="button"
-            onClick={() => goTo("/")}
+            onClick={() => goTo("/home")}
           >
             <span className="menu-number">01</span>
 
@@ -97,13 +93,11 @@ function MenuBar({ onClose }) {
               <small>Administration access</small>
             </div>
           </button>
-
         </nav>
 
         <div className="menu-footer">
           PARK SMART. CAMPUS READY.
         </div>
-
       </aside>
     </>
   );

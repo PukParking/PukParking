@@ -1,119 +1,177 @@
 .admin-ratings {
     width: 100%;
     min-height: 100vh;
-    padding: 30px;
-    background-color: #f8f9fb;
+
+    padding: 32px;
+
     box-sizing: border-box;
+
+    background:
+        linear-gradient(
+            180deg,
+            #f8fcff,
+            #eef8ff
+        );
+
+    color: #172033;
+
+    transition:
+        background 0.3s ease,
+        color 0.3s ease;
 }
 
-/* =========================
-   Header
-========================= */
+/* Header */
 
 .ratings-header {
-    margin-bottom: 25px;
+    margin-bottom: 26px;
 }
 
 .ratings-header h1 {
     margin: 0;
-    font-size: 28px;
-    color: #1b263b;
+
+    color: #073b70;
+
+    font-size: 30px;
 }
 
 .ratings-header p {
-    margin: 6px 0 0;
-    color: #6b7280;
+    margin:
+        7px 0 0;
+
+    color: #718092;
+
     font-size: 14px;
 }
 
-/* =========================
-   Filters
-========================= */
+/* Filters */
 
 .ratings-filters {
     display: flex;
     align-items: end;
+
     gap: 18px;
-    background-color: #ffffff;
-    border: 1px solid #e5e7eb;
-    border-radius: 12px;
-    padding: 20px;
+
     margin-bottom: 25px;
+
+    padding: 21px;
+
+    border:
+        1px solid #dcebf4;
+
+    border-radius: 20px;
+
+    background: #ffffff;
+
+    box-shadow:
+        0 10px 30px rgba(0, 77, 132, 0.07);
 }
 
 .filter-group {
     display: flex;
     flex-direction: column;
+
     gap: 7px;
 }
 
 .filter-group label {
+    color: #45657f;
+
     font-size: 12px;
-    font-weight: 600;
-    color: #4b5563;
+    font-weight: 700;
 }
 
 .filter-group select {
     min-width: 180px;
-    padding: 10px 12px;
-    border: 1px solid #d1d5db;
-    border-radius: 7px;
-    background-color: #ffffff;
-    color: #374151;
-    font-size: 13px;
+
+    padding:
+        10px 12px;
+
+    border:
+        1px solid #d2e5f0;
+
+    border-radius: 11px;
+
     outline: none;
+
+    background: #f9fcff;
+
+    color: #314d65;
+
+    font-size: 13px;
 }
 
 .filter-group select:focus {
-    border-color: #415f8f;
+    border-color: #19a8ea;
 }
 
-/* =========================
-   Summary Cards
-========================= */
+/* Summary */
 
 .rating-summary {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
+
+    grid-template-columns:
+        repeat(3, 1fr);
+
     gap: 20px;
+
     margin-bottom: 25px;
 }
 
 .rating-summary-card {
-    background-color: #ffffff;
-    border: 1px solid #e5e7eb;
-    border-radius: 12px;
-    padding: 22px;
+    padding: 23px;
+
+    border:
+        1px solid #dcebf4;
+
+    border-radius: 20px;
+
+    background: #ffffff;
+
+    box-shadow:
+        0 10px 30px rgba(0, 77, 132, 0.07);
 }
 
 .rating-summary-card span {
     display: block;
-    font-size: 13px;
-    color: #6b7280;
+
     margin-bottom: 10px;
+
+    color: #718092;
+
+    font-size: 13px;
 }
 
 .rating-summary-card h2 {
     margin: 0;
-    font-size: 27px;
-    color: #1b263b;
+
+    color: #073b70;
+
+    font-size: 28px;
 }
 
 .rating-summary-card p {
-    margin: 7px 0 0;
+    margin:
+        7px 0 0;
+
+    color: #83909e;
+
     font-size: 12px;
-    color: #6b7280;
 }
 
-/* =========================
-   Ratings Section
-========================= */
+/* Ratings */
 
 .ratings-section {
-    background-color: #ffffff;
-    border: 1px solid #e5e7eb;
-    border-radius: 12px;
-    padding: 24px;
+    padding: 25px;
+
+    border:
+        1px solid #dcebf4;
+
+    border-radius: 22px;
+
+    background: #ffffff;
+
+    box-shadow:
+        0 12px 34px rgba(0, 77, 132, 0.07);
 }
 
 .section-header {
@@ -122,33 +180,46 @@
 
 .section-header h2 {
     margin: 0;
-    font-size: 18px;
-    color: #1b263b;
+
+    color: #073b70;
+
+    font-size: 19px;
 }
 
 .section-header p {
-    margin: 5px 0 0;
-    color: #6b7280;
+    margin:
+        5px 0 0;
+
+    color: #718092;
+
     font-size: 13px;
 }
 
-/* =========================
-   Ratings Table
-========================= */
+/* Table */
 
 .ratings-table {
     width: 100%;
+
     overflow-x: auto;
 }
 
 .ratings-row {
-    display: grid;
-    grid-template-columns: 1.1fr 1fr 1fr 2fr 1.1fr;
-    gap: 15px;
-    align-items: center;
-    padding: 15px 10px;
-    border-bottom: 1px solid #e5e7eb;
     min-width: 850px;
+
+    display: grid;
+
+    grid-template-columns:
+        1.1fr 1fr 1fr 2fr 1.1fr;
+
+    align-items: center;
+
+    gap: 15px;
+
+    padding:
+        15px 10px;
+
+    border-bottom:
+        1px solid #e2edf4;
 }
 
 .ratings-row:last-child {
@@ -156,33 +227,35 @@
 }
 
 .ratings-row span {
+    color: #566779;
+
     font-size: 13px;
-    color: #4b5563;
 }
 
 .ratings-table-header {
-    background-color: #f8f9fb;
     border-bottom: none;
-    border-radius: 8px;
+
+    border-radius: 10px;
+
+    background: #edf8ff;
 }
 
 .ratings-table-header span {
-    font-weight: 600;
+    color: #0b477b;
+
     font-size: 12px;
-    color: #1b263b;
+    font-weight: 700;
 }
 
 .rating-stars {
-    color: #c89b3c !important;
+    color: #e5ae34 !important;
+
     letter-spacing: 2px;
 }
 
-/* =========================
-   Tablet
-========================= */
+/* Responsive */
 
 @media (max-width: 900px) {
-
     .rating-summary {
         grid-template-columns: 1fr;
     }
@@ -190,21 +263,16 @@
     .ratings-filters {
         flex-wrap: wrap;
     }
-
 }
 
-/* =========================
-   Mobile
-========================= */
-
 @media (max-width: 600px) {
-
     .admin-ratings {
-        padding: 20px 15px;
+        padding:
+            20px 15px;
     }
 
     .ratings-header h1 {
-        font-size: 24px;
+        font-size: 25px;
     }
 
     .ratings-filters {
@@ -219,5 +287,75 @@
     .ratings-section {
         padding: 18px;
     }
+}
 
+/* Dark mode */
+
+body.dark-mode .admin-ratings {
+    background:
+        linear-gradient(
+            180deg,
+            #07111f,
+            #0b1b2c
+        );
+
+    color: #edf7ff;
+}
+
+body.dark-mode .ratings-header h1,
+body.dark-mode .rating-summary-card h2,
+body.dark-mode .section-header h2 {
+    color: #edf7ff;
+}
+
+body.dark-mode .ratings-header p,
+body.dark-mode .rating-summary-card span,
+body.dark-mode .rating-summary-card p,
+body.dark-mode .section-header p,
+body.dark-mode .ratings-row span {
+    color: #aebdca;
+}
+
+body.dark-mode .ratings-filters,
+body.dark-mode .rating-summary-card,
+body.dark-mode .ratings-section {
+    background: #102335;
+
+    border-color:
+        rgba(57, 174, 233, 0.16);
+
+    box-shadow:
+        0 12px 35px rgba(0, 0, 0, 0.24);
+}
+
+body.dark-mode .filter-group label {
+    color: #d8edfa;
+}
+
+body.dark-mode .filter-group select {
+    background: #0b1b2c;
+
+    color: #edf7ff;
+
+    border-color:
+        rgba(75, 172, 219, 0.18);
+}
+
+body.dark-mode .filter-group select option {
+    background: #102335;
+
+    color: #edf7ff;
+}
+
+body.dark-mode .ratings-table-header {
+    background: #143249;
+}
+
+body.dark-mode .ratings-table-header span {
+    color: #65cefb;
+}
+
+body.dark-mode .ratings-row {
+    border-bottom-color:
+        rgba(82, 166, 207, 0.16);
 }

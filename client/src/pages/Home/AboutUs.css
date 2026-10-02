@@ -298,3 +298,9 @@
     min-height: 260px;
   }
 }
+
+/* Logo */
+
+.about-main-logo {
+  border-radius: 20px !important;
+}
