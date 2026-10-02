@@ -1,0 +1,6 @@
+[build]
+  # The app lives in client/. npm ci gives a clean install (including
+  # devDependencies like vite), replacing the incomplete node_modules
+  # folder committed to the repo.
+  command = "npm ci --prefix client --include=dev && npm run build --prefix client"
+  publish = "client/dist"
