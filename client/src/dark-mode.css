@@ -1,0 +1,902 @@
+/* =========================================================
+   PUKPARKING DARK MODE
+   ========================================================= */
+
+body {
+  transition:
+    background-color 0.3s ease,
+    color 0.3s ease;
+}
+
+body.dark-mode {
+  background-color: #07111f;
+  color: #edf7ff;
+}
+
+
+/* =========================================================
+   HOME PAGE
+   ========================================================= */
+
+body.dark-mode .home-page {
+  color: #edf7ff;
+
+  background:
+    linear-gradient(
+      180deg,
+      #07111f 0%,
+      #091827 50%,
+      #0b2033 100%
+    );
+}
+
+
+/* HEADER */
+
+body.dark-mode .main-header {
+  background:
+    rgba(7, 17, 31, 0.96);
+
+  border-bottom:
+    1px solid rgba(77, 183, 239, 0.14);
+
+  box-shadow:
+    0 6px 25px rgba(0, 0, 0, 0.25);
+}
+
+
+/* Logo */
+
+body.dark-mode .brand-area {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+}
+
+
+/* HAMBURGER */
+
+body.dark-mode .hamburger-button {
+  background:
+    linear-gradient(
+      145deg,
+      #142d43,
+      #0d2133
+    );
+
+  box-shadow:
+    0 8px 25px rgba(0, 0, 0, 0.35);
+}
+
+body.dark-mode .hamburger-button:hover {
+  background:
+    linear-gradient(
+      145deg,
+      #193a56,
+      #102a40
+    );
+}
+
+
+/* HERO */
+
+body.dark-mode .hero-section {
+  background:
+    radial-gradient(
+      circle at top center,
+      rgba(17, 141, 218, 0.10),
+      transparent 55%
+    );
+}
+
+body.dark-mode .hero-section h1 {
+  color: #f5fbff;
+}
+
+body.dark-mode .hero-introduction {
+  color: #a8bdd0;
+}
+
+body.dark-mode .hero-eyebrow,
+body.dark-mode .section-eyebrow {
+  color: #39bdf5;
+}
+
+
+/* HERO FEATURE CARDS */
+
+body.dark-mode .hero-feature {
+  background:
+    rgba(14, 34, 52, 0.93);
+
+  border:
+    1px solid rgba(63, 180, 239, 0.14);
+
+  box-shadow:
+    0 13px 32px rgba(0, 0, 0, 0.28);
+}
+
+body.dark-mode .hero-feature:hover {
+  background:
+    rgba(18, 45, 67, 0.97);
+
+  box-shadow:
+    0 17px 38px rgba(0, 0, 0, 0.34);
+}
+
+body.dark-mode .hero-feature strong {
+  color: #f0f8ff;
+}
+
+body.dark-mode .hero-feature p {
+  color: #9eb3c6;
+}
+
+
+/* FEATURE ICON BOX */
+
+body.dark-mode .feature-icon-box {
+  background:
+    linear-gradient(
+      145deg,
+      #143c59,
+      #0d2a43
+    );
+}
+
+
+/* PARKING PHOTO */
+
+body.dark-mode .parking-photo-card {
+  background: #102335;
+
+  border:
+    1px solid rgba(41, 171, 237, 0.18);
+
+  box-shadow:
+    0 22px 60px rgba(0, 0, 0, 0.38);
+}
+
+
+/* MORE BUTTON */
+
+body.dark-mode .more-button {
+  background:
+    linear-gradient(
+      135deg,
+      #17364f,
+      #10273c
+    );
+
+  color: #f0f8ff;
+
+  box-shadow:
+    0 10px 25px rgba(0, 0, 0, 0.30);
+}
+
+body.dark-mode .more-button:hover {
+  background:
+    linear-gradient(
+      135deg,
+      #1b4565,
+      #143149
+    );
+}
+
+
+/* =========================================================
+   USER TYPE SECTION
+   ========================================================= */
+
+body.dark-mode .user-type-section {
+  background:
+    linear-gradient(
+      180deg,
+      #091827,
+      #081521
+    );
+}
+
+body.dark-mode .user-type-section h2 {
+  color: #f2f9ff;
+}
+
+body.dark-mode .section-description {
+  color: #9fb3c5;
+}
+
+
+/* USER CARDS */
+
+body.dark-mode .user-type-card {
+  background:
+    linear-gradient(
+      145deg,
+      #10283d,
+      #0b1f31
+    );
+
+  border:
+    2px solid rgba(62, 180, 241, 0.08);
+
+  box-shadow:
+    0 15px 38px rgba(0, 0, 0, 0.28);
+}
+
+body.dark-mode .user-type-card:hover {
+  background:
+    linear-gradient(
+      145deg,
+      #153750,
+      #0d293f
+    );
+
+  border-color:
+    rgba(47, 187, 248, 0.35);
+}
+
+body.dark-mode .user-type-card.selected {
+  background:
+    linear-gradient(
+      145deg,
+      #164460,
+      #0d2d45
+    );
+
+  border-color: #28baf4;
+
+  box-shadow:
+    0 18px 45px rgba(0, 126, 200, 0.20);
+}
+
+body.dark-mode .user-type-card strong {
+  color: #f3faff;
+}
+
+body.dark-mode .user-type-card span {
+  color: #a7bbcc;
+}
+
+
+/* SELECTED USER */
+
+body.dark-mode .selected-user-box {
+  background:
+    linear-gradient(
+      145deg,
+      #13374f,
+      #0d283c
+    );
+
+  border:
+    1px solid rgba(43, 184, 244, 0.25);
+
+  box-shadow:
+    0 10px 28px rgba(0, 0, 0, 0.30);
+}
+
+body.dark-mode .selected-user-box span {
+  color: #9eb3c6;
+}
+
+body.dark-mode .selected-user-box strong {
+  color: #ffffff;
+}
+
+
+/* CONTINUE BUTTON */
+
+body.dark-mode .continue-button {
+  background:
+    linear-gradient(
+      135deg,
+      #23b9f1,
+      #0878da
+    );
+
+  box-shadow:
+    0 13px 30px rgba(0, 112, 190, 0.32);
+}
+
+
+/* =========================================================
+   WHY PUKPARKING
+   ========================================================= */
+
+body.dark-mode .why-section {
+  background:
+    linear-gradient(
+      180deg,
+      #081521,
+      #0b1e2f
+    );
+}
+
+body.dark-mode .why-heading h2 {
+  color: #f3faff;
+}
+
+body.dark-mode .why-heading p:last-child {
+  color: #9db2c5;
+}
+
+body.dark-mode .why-card {
+  background:
+    rgba(14, 35, 53, 0.95);
+
+  border:
+    1px solid rgba(44, 175, 239, 0.13);
+
+  box-shadow:
+    0 16px 40px rgba(0, 0, 0, 0.30);
+}
+
+body.dark-mode .why-card:hover {
+  background:
+    rgba(18, 45, 67, 0.98);
+}
+
+body.dark-mode .why-card h3 {
+  color: #eff8ff;
+}
+
+body.dark-mode .why-card p {
+  color: #9eb2c4;
+}
+
+
+/* FOOTER */
+
+body.dark-mode .home-footer {
+  background: #040c16;
+
+  border-top:
+    1px solid rgba(61, 175, 235, 0.11);
+}
+
+
+/* =========================================================
+   PARKING STATS
+   ========================================================= */
+
+body.dark-mode .stats-page {
+  color: #edf7ff;
+
+  background:
+    linear-gradient(
+      180deg,
+      #07111f,
+      #0b2031
+    );
+}
+
+
+/* STATS HEADER */
+
+body.dark-mode .stats-header {
+  background:
+    rgba(7, 17, 31, 0.96);
+
+  border-bottom:
+    1px solid rgba(71, 180, 238, 0.13);
+}
+
+body.dark-mode .stats-menu-button {
+  background: #112a40;
+
+  box-shadow:
+    0 8px 25px rgba(0, 0, 0, 0.32);
+}
+
+
+/* STATS TITLE */
+
+body.dark-mode .stats-title h1 {
+  color: #f2f9ff;
+}
+
+body.dark-mode .stats-title span {
+  color: #9fb4c6;
+}
+
+
+/* SUMMARY CARDS */
+
+body.dark-mode .stats-summary article {
+  background: #10283a;
+
+  border:
+    1px solid rgba(61, 178, 238, 0.08);
+
+  box-shadow:
+    0 14px 38px rgba(0, 0, 0, 0.30);
+}
+
+body.dark-mode .stats-summary span {
+  color: #94aabd;
+}
+
+body.dark-mode .stats-summary strong {
+  color: #eff8ff;
+}
+
+
+/* CHART */
+
+body.dark-mode .chart-card {
+  background: #102638;
+
+  border:
+    1px solid rgba(65, 180, 239, 0.09);
+
+  box-shadow:
+    0 20px 52px rgba(0, 0, 0, 0.35);
+}
+
+body.dark-mode .chart-card-heading h2 {
+  color: #eff8ff;
+}
+
+body.dark-mode .chart-card-heading p {
+  color: #98adbf;
+}
+
+body.dark-mode .chart-card-heading > span {
+  background: #17394f;
+
+  color: #59cbf6;
+}
+
+body.dark-mode .pretty-chart {
+  border-bottom:
+    1px solid #294459;
+}
+
+body.dark-mode .bar-track {
+  background:
+    linear-gradient(
+      180deg,
+      #193349,
+      #11293c
+    );
+}
+
+body.dark-mode .pretty-chart-item strong {
+  color: #eaf6ff;
+}
+
+
+/* PARKING CARDS */
+
+body.dark-mode .stats-parking-card {
+  background: #10283a;
+
+  border:
+    1px solid rgba(66, 181, 239, 0.08);
+
+  box-shadow:
+    0 14px 38px rgba(0, 0, 0, 0.30);
+}
+
+body.dark-mode .stats-parking-card:hover {
+  background: #143147;
+}
+
+body.dark-mode .stats-parking-card h3 {
+  color: #eff8ff;
+}
+
+body.dark-mode .stats-parking-card p {
+  color: #97adbf;
+}
+
+body.dark-mode .parking-card-top span {
+  background: #17394f;
+
+  color: #58caf5;
+}
+
+body.dark-mode .availability-track {
+  background: #1b374a;
+}
+
+
+/* =========================================================
+   ABOUT US
+   ========================================================= */
+
+body.dark-mode .about-page {
+  color: #edf7ff;
+
+  background:
+    linear-gradient(
+      180deg,
+      #07111f,
+      #0b2031
+    );
+}
+
+
+/* ABOUT HEADER */
+
+body.dark-mode .about-header {
+  background:
+    rgba(7, 17, 31, 0.96);
+
+  border-bottom:
+    1px solid rgba(68, 178, 237, 0.13);
+}
+
+body.dark-mode .about-menu-button {
+  background: #112a40;
+
+  box-shadow:
+    0 8px 25px rgba(0, 0, 0, 0.32);
+}
+
+
+/* ABOUT HERO */
+
+body.dark-mode .about-hero-copy h1 {
+  color: #eef8ff;
+}
+
+body.dark-mode .about-hero-copy > p:not(.about-label) {
+  color: #9fb4c6;
+}
+
+body.dark-mode .about-tag {
+  background: #15384e;
+
+  color: #4bc8f6;
+}
+
+body.dark-mode .about-photo {
+  border:
+    1px solid rgba(60, 180, 240, 0.12);
+
+  box-shadow:
+    0 23px 60px rgba(0, 0, 0, 0.38);
+}
+
+
+/* ABOUT PURPOSE */
+
+body.dark-mode .about-purpose {
+  background: #091a29;
+}
+
+body.dark-mode .about-purpose-heading h2 {
+  color: #eff8ff;
+}
+
+body.dark-mode .about-purpose-grid article {
+  background: #10283a;
+
+  border:
+    1px solid rgba(61, 180, 240, 0.08);
+
+  box-shadow:
+    0 16px 42px rgba(0, 0, 0, 0.30);
+}
+
+body.dark-mode .about-purpose-grid article:hover {
+  background: #143147;
+}
+
+body.dark-mode .about-purpose-grid h3 {
+  color: #eff8ff;
+}
+
+body.dark-mode .about-purpose-grid p {
+  color: #9db2c4;
+}
+
+
+/* =========================================================
+   ADMIN LOGIN
+   ========================================================= */
+
+body.dark-mode .admin-login-page {
+  background:
+    radial-gradient(
+      circle at top center,
+      rgba(25, 130, 204, 0.10),
+      transparent 45%
+    ),
+    linear-gradient(
+      180deg,
+      #07111f 0%,
+      #091827 55%,
+      #0b2031 100%
+    );
+
+  color: #edf7ff;
+}
+
+
+/* LOGIN CARD */
+
+body.dark-mode .admin-login-card {
+  background:
+    linear-gradient(
+      145deg,
+      #10283a,
+      #0c1f30
+    );
+
+  border:
+    1px solid rgba(70, 181, 238, 0.17);
+
+  box-shadow:
+    0 24px 60px rgba(0, 0, 0, 0.42);
+}
+
+
+/* LOGIN HEADING */
+
+body.dark-mode .admin-login-header h1 {
+  color: #f2f9ff;
+}
+
+body.dark-mode .admin-login-header p {
+  color: #9fb4c6;
+}
+
+
+/* LABELS */
+
+body.dark-mode .login-input-group label {
+  color: #dfeefa;
+}
+
+
+/* INPUTS */
+
+body.dark-mode .login-input-group input {
+  background: #0b1b2a;
+
+  color: #eef8ff;
+
+  border:
+    1px solid #29485e;
+
+  box-shadow:
+    inset 0 1px 3px rgba(0, 0, 0, 0.22);
+
+  transition:
+    border-color 0.2s ease,
+    background-color 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+body.dark-mode .login-input-group input::placeholder {
+  color: #71899d;
+}
+
+body.dark-mode .login-input-group input:focus {
+  background: #0d2234;
+
+  border-color: #2db5ef;
+
+  box-shadow:
+    0 0 0 3px rgba(45, 181, 239, 0.12);
+
+  outline: none;
+}
+
+
+/* AUTOFILL */
+
+body.dark-mode .login-input-group input:-webkit-autofill,
+body.dark-mode .login-input-group input:-webkit-autofill:hover,
+body.dark-mode .login-input-group input:-webkit-autofill:focus {
+  -webkit-text-fill-color: #eef8ff;
+
+  -webkit-box-shadow:
+    0 0 0 1000px #0b1b2a inset;
+
+  transition:
+    background-color 9999s ease-in-out 0s;
+}
+
+
+/* LOGIN BUTTON */
+
+body.dark-mode .login-button {
+  background:
+    linear-gradient(
+      135deg,
+      #22b5ef,
+      #0877d8
+    );
+
+  color: #ffffff;
+
+  box-shadow:
+    0 11px 28px rgba(0, 110, 190, 0.28);
+
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease,
+    opacity 0.2s ease;
+}
+
+body.dark-mode .login-button:hover {
+  opacity: 1;
+
+  transform: translateY(-2px);
+
+  box-shadow:
+    0 15px 34px rgba(0, 110, 190, 0.38);
+}
+
+
+/* LOGIN ERROR */
+
+body.dark-mode .login-error {
+  background: rgba(174, 47, 47, 0.18);
+
+  color: #ff9b9b;
+
+  border:
+    1px solid rgba(255, 105, 105, 0.18);
+}
+
+
+/* =========================================================
+   MENU BAR
+   ========================================================= */
+
+body.dark-mode .menu-overlay {
+  background:
+    rgba(0, 0, 0, 0.70);
+}
+
+body.dark-mode .menu-bar {
+  background:
+    linear-gradient(
+      160deg,
+      #0b1c2c 0%,
+      #0d273b 55%,
+      #10354e 100%
+    );
+
+  box-shadow:
+    -20px 0 60px rgba(0, 0, 0, 0.48);
+}
+
+body.dark-mode .menu-brand {
+  border-bottom:
+    1px solid rgba(103, 190, 238, 0.15);
+}
+
+body.dark-mode .close-menu {
+  background: #16384f;
+
+  color: #ffffff;
+
+  box-shadow:
+    0 8px 20px rgba(0, 0, 0, 0.27);
+}
+
+body.dark-mode .close-menu:hover {
+  background: #1a4764;
+}
+
+body.dark-mode .menu-heading h2 {
+  color: #eff8ff;
+}
+
+body.dark-mode .menu-links button {
+  background:
+    rgba(17, 45, 66, 0.93);
+
+  border:
+    1px solid rgba(78, 185, 240, 0.11);
+
+  box-shadow:
+    0 9px 28px rgba(0, 0, 0, 0.23);
+}
+
+body.dark-mode .menu-links button:hover {
+  background:
+    linear-gradient(
+      120deg,
+      #17415e,
+      #123149
+    );
+}
+
+body.dark-mode .menu-links strong {
+  color: #f3faff;
+}
+
+body.dark-mode .menu-links small {
+  color: #9cb1c3;
+}
+
+body.dark-mode .menu-footer {
+  border-top:
+    1px solid rgba(103, 190, 238, 0.15);
+
+  color: #4bc8f6;
+}
+
+
+/* =========================================================
+   FLOATING CONTROLS
+   ========================================================= */
+
+body.dark-mode .scroll-to-top {
+  background:
+    linear-gradient(
+      145deg,
+      #26b8ef,
+      #0875d7
+    );
+
+  color: #ffffff;
+
+  box-shadow:
+    0 13px 32px rgba(0, 108, 182, 0.35);
+}
+
+
+/* =========================================================
+   SCROLLBAR
+   ========================================================= */
+
+body.dark-mode::-webkit-scrollbar {
+  width: 10px;
+}
+
+body.dark-mode::-webkit-scrollbar-track {
+  background: #07111f;
+}
+
+body.dark-mode::-webkit-scrollbar-thumb {
+  background: #184866;
+
+  border-radius: 10px;
+}
+
+body.dark-mode::-webkit-scrollbar-thumb:hover {
+  background: #1e6289;
+}
+
+/* Logos */
+
+body.dark-mode .main-logo,
+body.dark-mode .stats-logo,
+body.dark-mode .about-main-logo,
+body.dark-mode .landing-logo,
+body.dark-mode .route-logo,
+body.dark-mode .selection-logo,
+body.dark-mode .directions-logo,
+body.dark-mode .arrival-logo,
+body.dark-mode .admin-login-logo,
+body.dark-mode .admin-navbar-logo img {
+    background: transparent !important;
+    border: none !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+    padding: 0 !important;
+}
+
+/* Home logo */
+
+body.dark-mode .home-page .brand-area {
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+}
+
+body.dark-mode .home-page .main-logo {
+    background: transparent !important;
+    border: none !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+    padding: 0 !important;
+}
