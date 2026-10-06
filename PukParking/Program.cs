@@ -1,4 +1,6 @@
 using PukParking.Services;
+using Microsoft.Extensions.Configuration;
+
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddSingleton<MongoDBService>();
 builder.Services.AddEndpointsApiExplorer();
@@ -15,7 +17,7 @@ var app = builder.Build();
 // Configure the HTTP request pipeline.
 app.MapOpenApi();
 
-app.UseHttpsRedirection();
+//app.UseHttpsRedirection();
 
 app.UseAuthorization();
 

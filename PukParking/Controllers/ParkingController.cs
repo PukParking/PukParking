@@ -17,12 +17,20 @@ namespace PukParking.Controllers
         {
            var database = mongoDBService.GetDatabase();
             _parkingSpaces = database.GetCollection<ParkingSpaces>("ParkingSpaces");
+            
         }
         [HttpGet]
         public async Task<ActionResult<List<ParkingSpaces>>> GetAll()
         {
             var parkingSpaces = await _parkingSpaces.Find(_ => true).ToListAsync();
             return Ok(parkingSpaces);
+        }
+
+        [HttpPost]
+        public async Task<ActionResult<ParkingSpaces>> Create(ParkingSpaces parkingSpace)
+        {
+            await _parkingSpaces.InsertOneAsync(parkingSpace);
+            return Ok(parkingSpace);
         }
     }
 }
