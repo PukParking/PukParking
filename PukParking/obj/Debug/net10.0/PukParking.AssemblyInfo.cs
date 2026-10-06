@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("PukParking")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+3bc0292ebbbd3bd2c81f9a2d94d407f379569fca")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+600f21d82abe294af8ef24f890abe3c994b767f8")]
 [assembly: System.Reflection.AssemblyProductAttribute("PukParking")]
 [assembly: System.Reflection.AssemblyTitleAttribute("PukParking")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

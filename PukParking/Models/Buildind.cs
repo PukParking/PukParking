@@ -1,11 +1,14 @@
 using Microsoft.AspNetCore.Mvc;
 using MongoDB.Driver;
 using PukParking.Models;
+using MongoDB.Bson;
+using MongoDB.Bson.Serialization.Attributes;
 
 
 
 namespace PukParking.Models
 {
+    [BsonIgnoreExtraElements]
     public class Building
     {
         public string Building_Id { get; set; } = Guid.NewGuid().ToString();
