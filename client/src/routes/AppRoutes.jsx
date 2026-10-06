@@ -14,6 +14,7 @@ import UserConfirmation from "../pages/Parking/UserConfirmation";
 
 import ParkingDirections from "../pages/ParkingDirections/ParkingDirections";
 import ParkingConfirmation from "../pages/ParkingConfirmation/ParkingConfirmation";
+import NavigationPage from "../pages/NavigationPage";
 
 import AdminLogin from "../pages/Admin/AdminLogin";
 import Dashboard from "../pages/Admin/Dashboard";
@@ -80,6 +81,11 @@ function AppRoutes() {
       <Route
         path="/parking-confirmation"
         element={<ParkingConfirmation />}
+      />
+
+      <Route
+        path="/navigation"
+        element={<NavigationPage />}
       />
 
       {/* Admin Login */}
