@@ -9,7 +9,6 @@ import AboutUs from "../pages/Home/AboutUs";
 import ParkingStats from "../pages/Home/ParkingStats";
 
 import UserLanding from "../pages/Parking/UserLanding";
-import UserNavigation from "../pages/Parking/UserNavigation";
 import UserConfirmation from "../pages/Parking/UserConfirmation";
 
 import ParkingDirections from "../pages/ParkingDirections/ParkingDirections";
@@ -65,7 +64,7 @@ function AppRoutes() {
 
       <Route
         path="/parking/navigation"
-        element={<UserNavigation />}
+        element={<NavigationPage />}
       />
 
       <Route
