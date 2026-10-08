@@ -6,6 +6,7 @@ import {
 
 import "./UserLanding.css";
 
+import { mockBuildings, mockParkingLots } from "../../data/mockCampusData";
 import logo from "../../assets/pukparking-logo.png";
 import carIcon from "../../assets/car-icon.png";
 import locationIcon from "../../assets/location-icon.png";
@@ -14,7 +15,7 @@ function UserLanding() {
   const navigate = useNavigate();
   const location = useLocation();
 
-  const [start, setStart] = useState("");
+  const [start, setStart] = useState("gps");
   const [destination, setDestination] = useState("");
 
   const storedUserType =
@@ -23,7 +24,7 @@ function UserLanding() {
   const selectedUserType =
     location.state?.userType ||
     storedUserType ||
-    "Guest";
+    "Student";
 
   const userType =
     selectedUserType.charAt(0).toUpperCase() +
@@ -36,13 +37,13 @@ function UserLanding() {
     Staff:
       "Find suitable staff parking and get to your destination quickly and confidently.",
 
-    Guest:
+    Visitor:
       "Welcome to NWU Potchefstroom Campus. We’ll help you find suitable visitor parking and reach your destination.",
   };
 
   const welcomeMessage =
-    welcomeMessages[userType] ||
-    welcomeMessages.Guest;
+    welcomeMessages[userType === "Guest" ? "Visitor" : userType] ||
+    welcomeMessages.Student;
 
   useEffect(() => {
     sessionStorage.setItem(
@@ -62,8 +63,8 @@ function UserLanding() {
 
     navigate("/parking/navigation", {
       state: {
-        start,
-        destination,
+        startLocationId: start,
+        destinationId: destination,
         userType,
       },
     });
@@ -207,24 +208,16 @@ function UserLanding() {
                   }
                 >
                   <option
-                    value=""
-                    disabled
+                    value="gps"
                   >
-                    Select starting point
+                    My Current Location (GPS)
                   </option>
 
-                  <option value="Main gate">
-                    Main Gate
-                  </option>
-
-                  <option value="Library">
-                    Library
-                  </option>
-
-                  <option value="E8">
-                    E8
-                  </option>
-
+                  {mockParkingLots.map((lot) => (
+                    <option key={lot.id} value={lot.id}>
+                      {lot.name} — {lot.accessGate}
+                    </option>
+                  ))}
                 </select>
 
               </div>
@@ -273,33 +266,11 @@ function UserLanding() {
                     Select destination
                   </option>
 
-                  <option
-                    value="Main gate"
-                    disabled={
-                      start === "Main gate"
-                    }
-                  >
-                    Main Gate
-                  </option>
-
-                  <option
-                    value="Library"
-                    disabled={
-                      start === "Library"
-                    }
-                  >
-                    Library
-                  </option>
-
-                  <option
-                    value="E8"
-                    disabled={
-                      start === "E8"
-                    }
-                  >
-                    E8
-                  </option>
-
+                  {mockBuildings.map((building) => (
+                    <option key={building.id} value={building.id}>
+                      {building.name} ({building.code})
+                    </option>
+                  ))}
                 </select>
 
               </div>
