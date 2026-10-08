@@ -2,6 +2,20 @@
 
 PukParking is a mobile-first Progressive Web Application (PWA) for NWU Potchefstroom Campus parking and walking navigation. It recommends the closest valid parking area for a selected destination while respecting access type and live availability.
 
+## Features
+
+- Haversine distance calculation to recommend nearby parking.
+- Student, staff, and visitor/guest access categories.
+- Destination-based parking recommendations and walking navigation.
+- Parking availability loaded from the SQLite API, with mock-data fallback for demos.
+
+## Tech stack and APIs
+
+- React and Vite for the frontend.
+- Node.js, Express, and SQLite for the parking API.
+- Mapbox GL for maps and walking directions.
+- The repository also contains a separate .NET/MongoDB project under `PukParking/`.
+
 ## Project layout
 
 - `client/` — React + Vite frontend for the parking and navigation experience.

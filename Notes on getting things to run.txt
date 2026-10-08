@@ -1,0 +1,11 @@
+For client first time install:
+
+if in home directory, cd to client <---- we might need to merge stuff
+
+npm.cmd run dev <--- if vite is not installed then first npm.cmd install, afterwards run npm.cmd run devS
+
+
+getting navigation going:
+
+cd client
+npm install react-router-dom
