@@ -2,7 +2,7 @@ import Database from "better-sqlite3";
 import { existsSync, mkdirSync, readFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
-import { migrateParkingAreaSchema } from "./parkingAreaMigration.js";
+import { migrateErdSchema } from "./erdSchemaMigration.js";
 
 const dataDirectory = dirname(fileURLToPath(import.meta.url));
 const databasePath = join(dataDirectory, "pukparking.sqlite");
@@ -13,8 +13,9 @@ if (!existsSync(databasePath)) {
 }
 
 const database = new Database(databasePath);
+const schemaSql = readFileSync(schemaPath, "utf8");
+database.exec(schemaSql);
+migrateErdSchema(database, schemaSql);
 database.pragma("foreign_keys = ON");
-database.exec(readFileSync(schemaPath, "utf8"));
-migrateParkingAreaSchema(database);
 
 export default database;

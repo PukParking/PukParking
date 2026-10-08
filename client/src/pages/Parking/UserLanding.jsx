@@ -7,7 +7,7 @@ import {
 import "./UserLanding.css";
 
 import { mockBuildings, mockParkingLots } from "../../data/mockCampusData";
-import { fetchParkingAreas } from "../../services/parkingApi";
+import { fetchBuildings, fetchParkingAreas } from "../../services/parkingApi";
 import logo from "../../assets/pukparking-logo.png";
 import carIcon from "../../assets/car-icon.png";
 import locationIcon from "../../assets/location-icon.png";
@@ -18,6 +18,7 @@ function UserLanding() {
 
   const [start, setStart] = useState("gps");
   const [destination, setDestination] = useState("");
+  const [buildings, setBuildings] = useState(mockBuildings);
   const [parkingLots, setParkingLots] = useState(mockParkingLots);
 
   const storedUserType =
@@ -56,6 +57,12 @@ function UserLanding() {
 
   useEffect(() => {
     const controller = new AbortController();
+
+    fetchBuildings({ signal: controller.signal }).then(setBuildings).catch((error) => {
+      if (error.name !== "AbortError") {
+        console.error("Unable to load buildings.", error);
+      }
+    });
 
     fetchParkingAreas({ signal: controller.signal })
       .then(setParkingLots)
@@ -283,7 +290,7 @@ function UserLanding() {
                     Select destination
                   </option>
 
-                  {mockBuildings.map((building) => (
+                  {buildings.map((building) => (
                     <option key={building.id} value={building.id}>
                       {building.name} ({building.code})
                     </option>

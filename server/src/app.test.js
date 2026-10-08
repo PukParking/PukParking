@@ -1,8 +1,11 @@
 import assert from "node:assert/strict";
+import { randomUUID } from "node:crypto";
 import { once } from "node:events";
 import test from "node:test";
 
 import "dotenv/config";
+
+import database from "../data/db.js";
 
 process.env.CLIENT_ORIGIN = process.env.CLIENT_ORIGIN ?? "http://localhost:5173";
 
@@ -45,7 +48,103 @@ test("parking areas endpoint returns database rows as a JSON array", async () =>
 
         assert.equal(response.status, 200);
         assert.equal(response.headers.get("content-type")?.includes("application/json"), true);
-        assert.equal(Array.isArray(await response.json()), true);
+        const parkingAreas = await response.json();
+        assert.equal(Array.isArray(parkingAreas), true);
+        assert.equal(parkingAreas.length, 6);
+        const visitorsLot = parkingAreas.find(
+            (area) => area.Parking_Area_Name === "Hoffman St / Main Gate Visitors",
+        );
+        assert.equal(visitorsLot.availableBays, 11);
+        assert.equal(visitorsLot.status, "open");
+    } finally {
+        await new Promise((resolve, reject) => {
+            server.close((error) => (error ? reject(error) : resolve()));
+        });
+    }
+});
+
+test("buildings endpoint returns seeded buildings as JSON", async () => {
+    const server = app.listen(0);
+    await once(server, "listening");
+
+    try {
+        const { port } = server.address();
+        const response = await fetch(`http://localhost:${port}/api/buildings`);
+        const buildings = await response.json();
+
+        assert.equal(response.status, 200);
+        assert.equal(Array.isArray(buildings), true);
+        assert.equal(buildings.length, 6);
+        assert.equal(
+            buildings.some((building) => building.Building_Abbreviation === "F1"),
+            true,
+        );
+    } finally {
+        await new Promise((resolve, reject) => {
+            server.close((error) => (error ? reject(error) : resolve()));
+        });
+    }
+});
+
+test("full report marks a parking area full until report expiry", async () => {
+    const parkingArea = database
+        .prepare("SELECT Parking_Area_ID FROM PARKING_AREA WHERE Parking_Area_Capacity > Parking_Area_Occupied_Spaces LIMIT 1")
+        .get();
+    assert.ok(parkingArea);
+
+    const server = app.listen(0);
+    await once(server, "listening");
+    let reportId;
+
+    try {
+        const { port } = server.address();
+        const response = await fetch(
+            `http://localhost:${port}/api/parking-areas/${parkingArea.Parking_Area_ID}/report-full`,
+            { method: "POST" },
+        );
+        const report = await response.json();
+        reportId = report.Report_ID;
+
+        assert.equal(response.status, 201);
+        assert.match(reportId, /^[0-9a-f-]{36}$/i);
+        assert.equal(
+            database
+                .prepare("SELECT Report_Expiry_Time > CURRENT_TIMESTAMP AS isFuture FROM PARKING_FULL_REPORT WHERE Report_ID = ?")
+                .get(reportId).isFuture,
+            1,
+        );
+
+        const areasResponse = await fetch(`http://localhost:${port}/api/parking-areas`);
+        const areas = await areasResponse.json();
+        const reportedArea = areas.find(
+            (area) => area.Parking_Area_ID === parkingArea.Parking_Area_ID,
+        );
+        assert.equal(reportedArea.status, "full");
+    } finally {
+        if (reportId) {
+            database
+                .prepare("DELETE FROM PARKING_FULL_REPORT WHERE Report_ID = ?")
+                .run(reportId);
+        }
+        await new Promise((resolve, reject) => {
+            server.close((error) => (error ? reject(error) : resolve()));
+        });
+    }
+});
+
+test("reporting a missing parking area returns 404", async () => {
+    const server = app.listen(0);
+    await once(server, "listening");
+
+    try {
+        const { port } = server.address();
+        const response = await fetch(
+            `http://localhost:${port}/api/parking-areas/${randomUUID()}/report-full`,
+            { method: "POST" },
+        );
+
+        assert.equal(response.status, 404);
+        assert.deepEqual(await response.json(), { error: "Parking area not found" });
     } finally {
         await new Promise((resolve, reject) => {
             server.close((error) => (error ? reject(error) : resolve()));
