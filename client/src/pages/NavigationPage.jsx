@@ -9,7 +9,9 @@ import {
   mockBuildings,
   mockParkingLots,
 } from "../data/mockCampusData";
+import { normalizeLocation } from "../data/dataUtils";
 import { getWalkingRoute } from "../services/mapboxDirections";
+import { fetchParkingAreas } from "../services/parkingApi";
 import "./NavigationPage.css";
 
 const accessToken = import.meta.env.VITE_MAPBOX_ACCESS_TOKEN;
@@ -27,42 +29,14 @@ function normalizeCategory(value) {
   return userCategories.find((item) => item.toLowerCase() === category);
 }
 
-function parseCoordinates(value) {
-  let coordinates = value;
-
-  if (typeof coordinates === "string") {
-    coordinates = coordinates.split(",").map((coordinate) => Number(coordinate.trim()));
-  } else if (
-    coordinates &&
-    !Array.isArray(coordinates) &&
-    typeof coordinates === "object"
-  ) {
-    coordinates = [
-      coordinates.longitude ?? coordinates.lng,
-      coordinates.latitude ?? coordinates.lat,
-    ];
+function clearRouteLayer(map) {
+  if (map.getLayer("walking-route-line")) {
+    map.removeLayer("walking-route-line");
   }
 
-  if (
-    !Array.isArray(coordinates) ||
-    coordinates.length !== 2 ||
-    !coordinates.every(
-      (coordinate) =>
-        coordinate !== null &&
-        coordinate !== undefined &&
-        coordinate !== "" &&
-        Number.isFinite(Number(coordinate)),
-    )
-  ) {
-    return null;
+  if (map.getSource("walking-route")) {
+    map.removeSource("walking-route");
   }
-
-  const [longitude, latitude] = coordinates.map(Number);
-  if (longitude < -180 || longitude > 180 || latitude < -90 || latitude > 90) {
-    return null;
-  }
-
-  return [longitude, latitude];
 }
 
 function getInitialSelection(location) {
@@ -120,7 +94,7 @@ function getInitialSelection(location) {
       : typeof destinationValue === "string"
         ? destinationValue
         : null);
-  const coordinates = parseCoordinates(coordinateValue);
+  const coordinates = normalizeLocation(coordinateValue);
 
   if (!coordinates) {
     return { category, destinationId: "", customDestination: null };
@@ -173,6 +147,7 @@ function NavigationPage() {
   const mapRef = useRef(null);
   const markersRef = useRef([]);
   const [mapReady, setMapReady] = useState(false);
+  const [parkingLots, setParkingLots] = useState(mockParkingLots);
   const [category, setCategory] = useState(initialSelection.category);
   const [destinationId, setDestinationId] = useState(initialSelection.destinationId);
   const [customDestination, setCustomDestination] = useState(
@@ -182,13 +157,14 @@ function NavigationPage() {
   const [route, setRoute] = useState(null);
   const [routeStatus, setRouteStatus] = useState("idle");
   const [routeError, setRouteError] = useState("");
+  const [routeAlert, setRouteAlert] = useState("");
 
   const destination =
     customDestination ||
     mockBuildings.find((building) => building.id === destinationId);
   const availableLots = useMemo(
     () =>
-      mockParkingLots
+      parkingLots
         .filter(
           (lot) =>
             lot.type === category.toLowerCase() &&
@@ -202,9 +178,23 @@ function NavigationPage() {
               distanceBetween(second.coordinates, destination.coordinates)
             : 0,
         ),
-    [category, destination, fullLotIds],
+    [category, destination, fullLotIds, parkingLots],
   );
   const activeLot = destination ? availableLots[0] : undefined;
+
+  useEffect(() => {
+    const controller = new AbortController();
+
+    fetchParkingAreas({ signal: controller.signal })
+      .then(setParkingLots)
+      .catch((error) => {
+        if (error.name !== "AbortError") {
+          console.error("Unable to load parking areas.", error);
+        }
+      });
+
+    return () => controller.abort();
+  }, []);
 
   useEffect(() => {
     if (!mapContainerRef.current || !accessToken) return undefined;
@@ -224,6 +214,19 @@ function NavigationPage() {
       showUserHeading: true,
     });
     map.addControl(geolocate, "top-right");
+    geolocate.on("error", (event) => {
+      const code = event?.code ?? event?.error?.code;
+      const permissionDenied =
+        code === "PERMISSION_DENIED" || code === 1 || event?.error?.message?.toLowerCase().includes("permission");
+
+      if (permissionDenied) {
+        console.warn("User denied geolocation access for navigation.");
+        return;
+      }
+
+      console.error("Geolocation error:", event?.error ?? event);
+    });
+
     map.on("error", (event) => {
       const error = event.error;
       const message =
@@ -244,6 +247,7 @@ function NavigationPage() {
     return () => {
       markersRef.current.forEach((marker) => marker.remove());
       markersRef.current = [];
+      clearRouteLayer(map);
       map.remove();
       mapRef.current = null;
       setMapReady(false);
@@ -278,7 +282,7 @@ function NavigationPage() {
       );
     });
 
-    mockParkingLots.forEach((lot) => {
+    parkingLots.forEach((lot) => {
       const isFull =
         fullLotIds.has(lot.id) || lot.status === "full" || lot.availableBays <= 0;
       const isPermitted = lot.type === category.toLowerCase();
@@ -314,31 +318,38 @@ function NavigationPage() {
           .addTo(map),
       );
     }
-  }, [activeLot, category, customDestination, destinationId, fullLotIds, mapReady]);
+  }, [activeLot, category, customDestination, destinationId, fullLotIds, mapReady, parkingLots]);
 
   useEffect(() => {
     const map = mapRef.current;
     if (!mapReady || !map) return undefined;
 
-    const source = map.getSource("walking-route");
     if (!destination || !activeLot) {
-      source?.setData({ type: "FeatureCollection", features: [] });
+      clearRouteLayer(map);
+      queueMicrotask(() => {
+        setRoute(null);
+        setRouteError("");
+        setRouteAlert("");
+        setRouteStatus("idle");
+      });
       return undefined;
     }
 
     const controller = new AbortController();
-    source?.setData({ type: "FeatureCollection", features: [] });
+    clearRouteLayer(map);
+    queueMicrotask(() => {
+      setRoute(null);
+      setRouteError("");
+      setRouteAlert("");
+      setRouteStatus("loading");
+    });
 
     Promise.resolve()
-      .then(() => {
-        if (controller.signal.aborted) return null;
-        setRoute(null);
-        setRouteError("");
-        setRouteStatus("loading");
-        return getWalkingRoute(activeLot.coordinates, destination.coordinates, {
+      .then(() =>
+        getWalkingRoute(activeLot.coordinates, destination.coordinates, {
           signal: controller.signal,
-        });
-      })
+        }),
+      )
       .then((nextRoute) => {
         if (controller.signal.aborted || !nextRoute) return;
 
@@ -382,7 +393,9 @@ function NavigationPage() {
       })
       .catch((error) => {
         if (controller.signal.aborted) return;
-        setRouteError(error.message || "Unable to calculate this walking route.");
+        const message = error.message || "Unable to calculate this walking route.";
+        setRouteAlert(message);
+        setRouteError(message);
         setRouteStatus("error");
       });
 
@@ -501,7 +514,7 @@ function NavigationPage() {
               <span>Marked full</span>
               {[...fullLotIds].map((lotId) => (
                 <span key={lotId} className="navigation-full-chip">
-                  {mockParkingLots.find((lot) => lot.id === lotId)?.name}
+                  {parkingLots.find((lot) => lot.id === lotId)?.name}
                 </span>
               ))}
             </div>
@@ -514,6 +527,12 @@ function NavigationPage() {
           {!accessToken && (
             <div className="navigation-map-message" role="alert">
               Mapbox access token is missing. Set VITE_MAPBOX_ACCESS_TOKEN to load the map.
+            </div>
+          )}
+
+          {routeAlert && (
+            <div className="navigation-map-message" role="alert">
+              {routeAlert}
             </div>
           )}
 

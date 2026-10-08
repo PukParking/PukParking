@@ -1,0 +1,31 @@
+# PukParking server
+
+## Password hashing utility
+
+`src/auth/password.js` provides server-side bcrypt hashing and verification for
+administrator passwords. Store only the value returned by `hashPassword`; never
+store or log the submitted plaintext password. During login, pass the submitted
+password and the stored hash to `verifyPassword`.
+
+The helper uses bcrypt cost factor 12. Passwords passed to `hashPassword` must
+contain at least 15 Unicode characters, must not exactly match the local common
+password blocklist (case-insensitive), and must not exceed bcrypt's 72-byte
+UTF-8 input limit. Passwords are not trimmed or otherwise changed. The 72-byte
+limit also applies when verifying a password.
+
+The local blocklist catches selected common passwords; it is not a comprehensive
+check against every known-compromised password. Account persistence, login
+routes, JWT issuance, and authorization middleware are not implemented here.
+
+## SQLite database
+
+Starting the server opens `data/pukparking.sqlite` (creating the file if needed)
+and applies the table definitions in `data/table structure.sql`. The tables are
+created if they do not already exist. No initial records are inserted; add
+administrator, building, parking-area, and report records with SQL as needed.
+
+Run the utility tests with:
+
+```sh
+npm test
+```

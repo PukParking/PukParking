@@ -3,7 +3,10 @@ import { once } from "node:events";
 import test from "node:test";
 
 import "dotenv/config";
-import app from "./app.js";
+
+process.env.CLIENT_ORIGIN = process.env.CLIENT_ORIGIN ?? "http://localhost:5173";
+
+const { default: app } = await import("./app.js");
 
 test("health endpoint returns status and security headers", async () => {
     const server = app.listen(0);
@@ -25,6 +28,24 @@ test("health endpoint returns status and security headers", async () => {
             response.headers.get("access-control-allow-origin"),
             process.env.CLIENT_ORIGIN ?? "http://localhost:5173",
         );
+    } finally {
+        await new Promise((resolve, reject) => {
+            server.close((error) => (error ? reject(error) : resolve()));
+        });
+    }
+});
+
+test("parking areas endpoint returns database rows as a JSON array", async () => {
+    const server = app.listen(0);
+    await once(server, "listening");
+
+    try {
+        const { port } = server.address();
+        const response = await fetch(`http://localhost:${port}/api/parking-areas`);
+
+        assert.equal(response.status, 200);
+        assert.equal(response.headers.get("content-type")?.includes("application/json"), true);
+        assert.equal(Array.isArray(await response.json()), true);
     } finally {
         await new Promise((resolve, reject) => {
             server.close((error) => (error ? reject(error) : resolve()));

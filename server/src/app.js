@@ -1,6 +1,7 @@
 import cors from "cors";
 import express from "express";
 import helmet from "helmet";
+import database from "../data/db.js";
 
 const app = express();
 
@@ -22,6 +23,11 @@ app.use(express.json({ limit: "10kb" }));
 
 app.get("/api/health", (_req, res) => {
     res.status(200).json({ status: "ok" });
+});
+
+app.get("/api/parking-areas", (_req, res) => {
+    const parkingAreas = database.prepare("SELECT * FROM PARKING_AREA").all();
+    res.status(200).json(parkingAreas);
 });
 
 app.use((error, _req, res, _next) => {
