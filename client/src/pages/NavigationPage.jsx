@@ -11,7 +11,11 @@ import {
 } from "../data/mockCampusData";
 import { normalizeLocation } from "../data/dataUtils";
 import { getWalkingRoute } from "../services/mapboxDirections";
-import { fetchParkingAreas } from "../services/parkingApi";
+import {
+  fetchBuildings,
+  fetchParkingAreas,
+  reportParkingAreaFull,
+} from "../services/parkingApi";
 import "./NavigationPage.css";
 
 const accessToken = import.meta.env.VITE_MAPBOX_ACCESS_TOKEN;
@@ -39,7 +43,7 @@ function clearRouteLayer(map) {
   }
 }
 
-function getInitialSelection(location) {
+function getInitialSelection(location, buildings = mockBuildings) {
   const state = location.state || {};
   const searchParams = new URLSearchParams(location.search);
   const category =
@@ -53,7 +57,7 @@ function getInitialSelection(location) {
   const destinationLabel =
     typeof destinationValue === "string" ? destinationValue : state.destination?.name;
   const normalizedDestination = normalizeLabel(destinationLabel || destinationValue || "");
-  const matchedBuilding = mockBuildings.find(
+  const matchedBuilding = buildings.find(
     (building) =>
       normalizeLabel(building.id) === normalizedDestination ||
       normalizeLabel(building.code) === normalizedDestination ||
@@ -100,7 +104,7 @@ function getInitialSelection(location) {
     return { category, destinationId: "", customDestination: null };
   }
 
-  const buildingAtCoordinates = mockBuildings.find(
+  const buildingAtCoordinates = buildings.find(
     (building) =>
       building.coordinates[0] === coordinates[0] &&
       building.coordinates[1] === coordinates[1],
@@ -147,6 +151,7 @@ function NavigationPage() {
   const mapRef = useRef(null);
   const markersRef = useRef([]);
   const [mapReady, setMapReady] = useState(false);
+  const [buildings, setBuildings] = useState(mockBuildings);
   const [parkingLots, setParkingLots] = useState(mockParkingLots);
   const [category, setCategory] = useState(initialSelection.category);
   const [destinationId, setDestinationId] = useState(initialSelection.destinationId);
@@ -161,7 +166,7 @@ function NavigationPage() {
 
   const destination =
     customDestination ||
-    mockBuildings.find((building) => building.id === destinationId);
+    buildings.find((building) => building.id === destinationId);
   const availableLots = useMemo(
     () =>
       parkingLots
@@ -185,6 +190,20 @@ function NavigationPage() {
   useEffect(() => {
     const controller = new AbortController();
 
+    fetchBuildings({ signal: controller.signal })
+      .then((loadedBuildings) => {
+        setBuildings(loadedBuildings);
+        const selection = getInitialSelection(location, loadedBuildings);
+        setCategory(selection.category);
+        setDestinationId(selection.destinationId);
+        setCustomDestination(selection.customDestination);
+      })
+      .catch((error) => {
+        if (error.name !== "AbortError") {
+          console.error("Unable to load buildings.", error);
+        }
+      });
+
     fetchParkingAreas({ signal: controller.signal })
       .then(setParkingLots)
       .catch((error) => {
@@ -194,7 +213,7 @@ function NavigationPage() {
       });
 
     return () => controller.abort();
-  }, []);
+  }, [location]);
 
   useEffect(() => {
     if (!mapContainerRef.current || !accessToken) return undefined;
@@ -261,14 +280,14 @@ function NavigationPage() {
     markersRef.current.forEach((marker) => marker.remove());
     markersRef.current = [];
 
-    mockBuildings.forEach((building) => {
+    buildings.forEach((building) => {
       const element = document.createElement("button");
       element.type = "button";
       element.className = `campus-marker campus-marker--building${
         building.id === destinationId ? " is-selected" : ""
       }`;
       element.textContent = building.code;
-      element.title = `${building.name} — ${building.category}: ${building.description}`;
+      element.title = `${building.name} — ${building.category || "Campus building"}: ${building.description}`;
       element.setAttribute("aria-label", `Set destination to ${building.name}`);
       element.addEventListener("click", () => {
         setDestinationId(building.id);
@@ -318,7 +337,7 @@ function NavigationPage() {
           .addTo(map),
       );
     }
-  }, [activeLot, category, customDestination, destinationId, fullLotIds, mapReady, parkingLots]);
+  }, [activeLot, buildings, category, customDestination, destinationId, fullLotIds, mapReady, parkingLots]);
 
   useEffect(() => {
     const map = mapRef.current;
@@ -402,9 +421,17 @@ function NavigationPage() {
     return () => controller.abort();
   }, [activeLot, destination, mapReady]);
 
-  function markActiveLotFull() {
+  async function markActiveLotFull() {
     if (!activeLot) return;
-    setFullLotIds((current) => new Set(current).add(activeLot.id));
+    const lotId = activeLot.id;
+    setFullLotIds((current) => new Set(current).add(lotId));
+
+    try {
+      await reportParkingAreaFull(lotId);
+    } catch (error) {
+      console.error("Unable to submit full parking report.", error);
+      setRouteAlert("Could not submit this report. The lot is marked full for this session.");
+    }
   }
 
   function handleDestinationChange(event) {
@@ -464,7 +491,7 @@ function NavigationPage() {
             {customDestination && (
               <option value={CUSTOM_DESTINATION_ID}>{customDestination.name}</option>
             )}
-            {mockBuildings.map((building) => (
+            {buildings.map((building) => (
               <option key={building.id} value={building.id}>
                 {building.name}
               </option>

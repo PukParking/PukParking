@@ -64,7 +64,7 @@ npm run seed
 npm run dev
 ```
 
-The API listens on `http://localhost:3000` by default. `GET /api/parking-areas` returns all parking rows as JSON. The seed command initializes an empty database with the NWU Potchefstroom demo dataset and does not overwrite existing parking data. If the required administrator foreign key has no owner, it creates a non-privileged seed owner with an inaccessible random password hash.
+The API listens on `http://localhost:3000` by default. SQLite uses UUID text identifiers and the ERD-aligned `ADMINISTRATOR`, `BUILDING`, `PARKING_AREA`, and `PARKING_FULL_REPORT` tables. `GET /api/buildings` returns campus buildings; `GET /api/parking-areas` computes availability and respects unexpired full reports; `POST /api/parking-areas/:id/report-full` reports a lot full for 30 minutes. The seed command initializes whichever of the buildings or parking tables are empty with the NWU Potchefstroom dataset. If the required administrator foreign key has no owner, it creates a non-privileged seed owner with an inaccessible random password hash. Existing SQLite data is migrated to the ERD schema while preserving its rows and relationships.
 
 ## Campus data schema
 
