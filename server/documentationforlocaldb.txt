@@ -17,6 +17,13 @@ The local blocklist catches selected common passwords; it is not a comprehensive
 check against every known-compromised password. Account persistence, login
 routes, JWT issuance, and authorization middleware are not implemented here.
 
+## SQLite database
+
+Starting the server opens `data/pukparking.sqlite` (creating the file if needed)
+and applies the table definitions in `data/table structure.sql`. The tables are
+created if they do not already exist. No initial records are inserted; add
+administrator, building, parking-area, and report records with SQL as needed.
+
 Run the utility tests with:
 
 ```sh

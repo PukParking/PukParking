@@ -5,3 +5,7 @@
 # stuff for netify
 node_modules/
 dist/
+
+
+#just for safety right now
+/server/data/pukparking.sqlite
