@@ -9,11 +9,11 @@ export const campusBounds = [
 export const mockBuildings = [
   {
     id: "bld-f1",
-    name: "Joon van Rooy Building (F1)",
+    name: "Joon van Rooy Administration (F1)",
     code: "F1",
     category: "Administration",
     description: "Main Administrative Center & Registrar",
-    coordinates: [27.0929, -26.6882],
+    coordinates: [27.0954, -26.6896],
   },
   {
     id: "bld-e7",
@@ -21,7 +21,7 @@ export const mockBuildings = [
     code: "E7",
     category: "Academic",
     description: "Main Campus Library & Study Commons",
-    coordinates: [27.0918, -26.6890],
+    coordinates: [27.0968, -26.6888],
   },
   {
     id: "bld-g3",
@@ -29,7 +29,7 @@ export const mockBuildings = [
     code: "G3",
     category: "Academic",
     description: "Computer Science, Mathematics & Information Technology",
-    coordinates: [27.0952, -26.6885],
+    coordinates: [27.0975, -26.6876],
   },
   {
     id: "bld-student-centre",
@@ -37,7 +37,7 @@ export const mockBuildings = [
     code: "F14",
     category: "Student Life",
     description: "Cafeterias, Student Council, & Amenities",
-    coordinates: [27.0928, -26.6871],
+    coordinates: [27.0940, -26.6885],
   },
   {
     id: "bld-sanlam",
@@ -45,7 +45,7 @@ export const mockBuildings = [
     code: "F12",
     category: "Auditorium",
     description: "Campus Hall & Event Auditorium",
-    coordinates: [27.0938, -26.6880],
+    coordinates: [27.0949, -26.6890],
   },
   {
     id: "bld-n1",
@@ -53,7 +53,7 @@ export const mockBuildings = [
     code: "N1",
     category: "Academic",
     description: "Engineering Lecture Halls & Laboratories",
-    coordinates: [27.0942, -26.6820],
+    coordinates: [27.0910, -26.6835],
   },
 ];
 

@@ -88,10 +88,6 @@ async function fetchList(endpoint, fallback, mapItem, label, signal) {
     if (!Array.isArray(items)) {
       throw new Error(`${label} API response must be a JSON array.`);
     }
-    if (items.length === 0) {
-      throw new Error(`${label} API returned no ${label.toLowerCase()}.`);
-    }
-
     return items.map(mapItem);
   } catch (error) {
     if (error.name === "AbortError") {

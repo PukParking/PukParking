@@ -64,7 +64,9 @@ npm run seed
 npm run dev
 ```
 
-The API listens on `http://localhost:3000` by default. SQLite uses UUID text identifiers and the ERD-aligned `ADMINISTRATOR`, `BUILDING`, `PARKING_AREA`, and `PARKING_FULL_REPORT` tables. `GET /api/buildings` returns campus buildings; `GET /api/parking-areas` computes availability and respects unexpired full reports; `POST /api/parking-areas/:id/report-full` reports a lot full for 30 minutes. The seed command initializes whichever of the buildings or parking tables are empty with the NWU Potchefstroom dataset. If the required administrator foreign key has no owner, it creates a non-privileged seed owner with an inaccessible random password hash. Existing SQLite data is migrated to the ERD schema while preserving its rows and relationships.
+The API listens on `http://localhost:3000` by default. SQLite uses UUID text identifiers and the ERD-aligned `ADMINISTRATOR`, `BUILDING`, `PARKING_AREA`, and `PARKING_FULL_REPORT` tables. `GET /api/buildings` returns campus buildings; `GET /api/parking-areas` computes availability and respects unexpired full reports; `POST /api/parking-areas/:id/report-full` reports a lot full for 30 minutes. The seed command initializes whichever of the buildings or parking tables are empty and updates the seeded building coordinates on every run. Existing SQLite data is migrated to the ERD schema while preserving its rows and relationships.
+
+Seeding creates the `parking-seed-owner` administrator when needed and prints its random password once. To set or reset that local account's password, provide a private `SEED_ADMIN_PASSWORD` (at least 15 characters) when running `npm run seed`. Sign in at `/admin`. Admin API routes use an eight-hour bearer token: `POST /api/admin/login`, `GET /api/admin/parking-areas`, `PATCH /api/admin/parking-areas/:id` (`availableBays` and/or `isActive`), and `GET /api/admin/reports`.
 
 ## Campus data schema
 

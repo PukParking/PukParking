@@ -1,3 +1,5 @@
+import { normalizeLocation } from "../data/dataUtils";
+
 const directionsBaseUrl = "https://api.mapbox.com/directions/v5/mapbox/walking";
 
 export async function getWalkingRoute(origin, destination, { signal } = {}) {
@@ -7,7 +9,13 @@ export async function getWalkingRoute(origin, destination, { signal } = {}) {
     throw new Error("The Mapbox access token is not configured.");
   }
 
-  const coordinates = `${origin.join(",")};${destination.join(",")}`;
+  const originCoordinates = normalizeLocation(origin);
+  const destinationCoordinates = normalizeLocation(destination);
+  if (!originCoordinates || !destinationCoordinates) {
+    throw new Error("Walking route coordinates must be [longitude, latitude] pairs.");
+  }
+
+  const coordinates = `${originCoordinates.join(",")};${destinationCoordinates.join(",")}`;
   const query = new URLSearchParams({
     access_token: accessToken,
     geometries: "geojson",

@@ -5,45 +5,45 @@ import database from "./data/db.js";
 const buildings = [
     {
         abbreviation: "F1",
-        name: "Joon van Rooy Building (F1)",
+        name: "Joon van Rooy Administration (F1)",
         description: "Main Administrative Center & Registrar",
-        latitude: -26.6882,
-        longitude: 27.0929,
+        latitude: -26.6896,
+        longitude: 27.0954,
     },
     {
         abbreviation: "E7",
         name: "Ferdinand Postma Library (E7)",
         description: "Main Campus Library & Study Commons",
-        latitude: -26.689,
-        longitude: 27.0918,
+        latitude: -26.6888,
+        longitude: 27.0968,
     },
     {
         abbreviation: "G3",
         name: "Natural Sciences & IT (G3)",
         description: "Computer Science, Mathematics & Information Technology",
-        latitude: -26.6885,
-        longitude: 27.0952,
+        latitude: -26.6876,
+        longitude: 27.0975,
     },
     {
         abbreviation: "F14",
         name: "Student Centre / Drakenstein (F14)",
         description: "Cafeterias, Student Council, & Amenities",
-        latitude: -26.6871,
-        longitude: 27.0928,
+        latitude: -26.6885,
+        longitude: 27.094,
     },
     {
         abbreviation: "F12",
         name: "Sanlam Auditorium (F12)",
         description: "Campus Hall & Event Auditorium",
-        latitude: -26.688,
-        longitude: 27.0938,
+        latitude: -26.689,
+        longitude: 27.0949,
     },
     {
         abbreviation: "N1",
         name: "Faculty of Engineering (N1)",
         description: "Engineering Lecture Halls & Laboratories",
-        latitude: -26.682,
-        longitude: 27.0942,
+        latitude: -26.6835,
+        longitude: 27.091,
     },
 ];
 
@@ -104,22 +104,29 @@ const parkingAreas = [
     },
 ];
 
+const configuredSeedAdminPassword = process.env.SEED_ADMIN_PASSWORD;
+if (
+    configuredSeedAdminPassword &&
+    (Array.from(configuredSeedAdminPassword).length < 15 ||
+        Buffer.byteLength(configuredSeedAdminPassword, "utf8") > 72)
+) {
+    throw new Error("SEED_ADMIN_PASSWORD must be at least 15 characters and at most 72 UTF-8 bytes.");
+}
+
 const seed = database.transaction(() => {
     const buildingsEmpty =
         database.prepare("SELECT COUNT(*) AS count FROM BUILDING").get().count === 0;
     const parkingAreasEmpty =
         database.prepare("SELECT COUNT(*) AS count FROM PARKING_AREA").get().count === 0;
 
-    if (!buildingsEmpty && !parkingAreasEmpty) {
-        return { buildings: 0, parkingAreas: 0 };
-    }
-
     let administrator = database
-        .prepare("SELECT Administrator_ID FROM ADMINISTRATOR ORDER BY Administrator_ID LIMIT 1")
-        .get();
+        .prepare("SELECT Administrator_ID FROM ADMINISTRATOR WHERE Administrator_Username = ?")
+        .get("parking-seed-owner");
 
-    if (!administrator) {
-        const passwordHash = bcrypt.hashSync(randomBytes(32).toString("hex"), 12);
+    if (!administrator && (configuredSeedAdminPassword || buildingsEmpty || parkingAreasEmpty)) {
+        const seedAdminPassword =
+            configuredSeedAdminPassword ?? randomBytes(32).toString("base64url");
+        const passwordHash = bcrypt.hashSync(seedAdminPassword, 12);
         administrator = {
             Administrator_ID: randomUUID(),
         };
@@ -137,6 +144,36 @@ const seed = database.transaction(() => {
                 "parking-seed-owner",
                 passwordHash,
             );
+        if (!configuredSeedAdminPassword) {
+            console.log(`Created seed admin parking-seed-owner with one-time password: ${seedAdminPassword}`);
+        }
+    } else if (configuredSeedAdminPassword) {
+        const passwordHash = bcrypt.hashSync(configuredSeedAdminPassword, 12);
+        database
+            .prepare("UPDATE ADMINISTRATOR SET Administrator_passwordHash = ? WHERE Administrator_ID = ?")
+            .run(passwordHash, administrator.Administrator_ID);
+        console.log("Reset the seed admin password from SEED_ADMIN_PASSWORD.");
+    }
+
+    if (!administrator) {
+        administrator = database
+            .prepare("SELECT Administrator_ID FROM ADMINISTRATOR ORDER BY Administrator_ID LIMIT 1")
+        .get();
+    }
+
+    const updateBuilding = database.prepare(`
+        UPDATE BUILDING
+        SET Building_Name = ?, Building_Latitude = ?, Building_Longitude = ?
+        WHERE Building_Abbreviation = ?
+    `);
+    let updatedBuildings = 0;
+    for (const building of buildings) {
+        updatedBuildings += updateBuilding.run(
+            building.name,
+            building.latitude,
+            building.longitude,
+            building.abbreviation,
+        ).changes;
     }
 
     if (buildingsEmpty) {
@@ -200,16 +237,17 @@ const seed = database.transaction(() => {
     return {
         buildings: buildingsEmpty ? buildings.length : 0,
         parkingAreas: parkingAreasEmpty ? parkingAreas.length : 0,
+        updatedBuildings,
     };
 });
 
 const seeded = seed();
-if (seeded.buildings || seeded.parkingAreas) {
+if (seeded.buildings || seeded.parkingAreas || seeded.updatedBuildings) {
     console.log(
-        `Seeded ${seeded.buildings} buildings and ${seeded.parkingAreas} parking areas.`,
+        `Seeded ${seeded.buildings} buildings and ${seeded.parkingAreas} parking areas; calibrated ${seeded.updatedBuildings} existing buildings.`,
     );
 } else {
-    console.log("BUILDING and PARKING_AREA already contain data; seed skipped.");
+    console.log("BUILDING and PARKING_AREA already contain calibrated data; seed skipped.");
 }
 
 database.close();

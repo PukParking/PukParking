@@ -1,0 +1,132 @@
+.admin-data-page {
+  width: 100%;
+  min-height: 100vh;
+  padding: 32px;
+  box-sizing: border-box;
+  color: #172033;
+  background: linear-gradient(180deg, #f8fcff, #eef8ff);
+}
+
+.admin-data-page h1 {
+  color: #073b70;
+}
+
+.admin-data-intro {
+  margin: -4px 0 22px;
+  color: #718092;
+}
+
+.admin-data-card {
+  margin: 20px 0;
+  padding: 22px;
+  border: 1px solid #dcebf4;
+  border-radius: 18px;
+  background: #fff;
+  box-shadow: 0 10px 30px rgba(0, 77, 132, 0.07);
+}
+
+.admin-data-card h2 {
+  margin-top: 0;
+  color: #073b70;
+}
+
+.admin-data-table-wrap {
+  width: 100%;
+  overflow-x: auto;
+}
+
+.admin-data-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+}
+
+.admin-data-table th,
+.admin-data-table td {
+  padding: 12px 10px;
+  border-bottom: 1px solid #e4edf3;
+  vertical-align: middle;
+}
+
+.admin-data-table th {
+  color: #45657f;
+  font-size: 13px;
+}
+
+.admin-data-table td {
+  color: #314d65;
+}
+
+.admin-data-table input {
+  width: 96px;
+  padding: 8px;
+  border: 1px solid #d2e5f0;
+  border-radius: 8px;
+}
+
+.admin-data-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.admin-data-actions button {
+  padding: 8px 10px;
+  border: 0;
+  border-radius: 8px;
+  color: #fff;
+  background: #0877da;
+  cursor: pointer;
+}
+
+.admin-data-actions button:disabled {
+  cursor: wait;
+  opacity: 0.6;
+}
+
+.admin-data-actions .admin-data-secondary {
+  color: #16415d;
+  background: #e8f2f8;
+}
+
+.admin-data-error,
+.admin-data-success {
+  padding: 12px;
+  border-radius: 8px;
+}
+
+.admin-data-error {
+  color: #8a1c1c;
+  background: #fff0f0;
+}
+
+.admin-data-success {
+  color: #185c35;
+  background: #ecf8ef;
+}
+
+body.dark-mode .admin-data-page {
+  color: #e8edf3;
+  background: #111b27;
+}
+
+body.dark-mode .admin-data-page h1,
+body.dark-mode .admin-data-card h2 {
+  color: #86c8ff;
+}
+
+body.dark-mode .admin-data-card {
+  border-color: #2b4052;
+  background: #192635;
+}
+
+body.dark-mode .admin-data-table th,
+body.dark-mode .admin-data-table td,
+body.dark-mode .admin-data-intro {
+  color: #c1ced9;
+}
+
+body.dark-mode .admin-data-table th,
+body.dark-mode .admin-data-table td {
+  border-color: #2b4052;
+}

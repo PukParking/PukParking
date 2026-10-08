@@ -67,7 +67,7 @@ test("expired token is rejected", async () => {
 
 test("valid token reaches the protected route", async () => {
     const token = jwt.sign(
-        { sub: "admin-1" },
+        { sub: "admin-1", role: "admin" },
         TEST_SECRET,
         { algorithm: "HS256", expiresIn: "5m" },
     );
@@ -75,4 +75,15 @@ test("valid token reaches the protected route", async () => {
 
     assert.equal(response.status, 200);
     assert.deepEqual(await response.json(), { adminId: "admin-1" });
+});
+
+test("valid token without admin role is rejected", async () => {
+    const token = jwt.sign(
+        { sub: "user-1", role: "user" },
+        TEST_SECRET,
+        { algorithm: "HS256", expiresIn: "5m" },
+    );
+    const response = await requestProtectedRoute(token);
+
+    assert.equal(response.status, 401);
 });

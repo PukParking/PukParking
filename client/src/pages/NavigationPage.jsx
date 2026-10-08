@@ -144,16 +144,47 @@ function distanceBetween(first, second) {
   return 6371000 * 2 * Math.atan2(Math.sqrt(haversine), Math.sqrt(1 - haversine));
 }
 
+function closestAvailableLot(lots, category, destination) {
+  return lots
+    .filter(
+      (lot) =>
+        lot.type === category.toLowerCase() &&
+        lot.availableBays > 0 &&
+        lot.status !== "full",
+    )
+    .sort((first, second) =>
+      destination
+        ? distanceBetween(first.coordinates, destination.coordinates) -
+          distanceBetween(second.coordinates, destination.coordinates)
+        : 0,
+    )[0];
+}
+
 function NavigationPage() {
   const location = useLocation();
   const [initialSelection] = useState(() => getInitialSelection(location));
+  const initialDestination =
+    initialSelection.customDestination ||
+    mockBuildings.find((building) => building.id === initialSelection.destinationId);
+  const initialOriginLot = closestAvailableLot(
+    mockParkingLots,
+    initialSelection.category,
+    initialDestination,
+  );
   const mapContainerRef = useRef(null);
   const mapRef = useRef(null);
-  const markersRef = useRef([]);
+  const parkingLotsRef = useRef(mockParkingLots);
+  const originLotIdRef = useRef(initialOriginLot?.id ?? "");
+  const buildingMarkersRef = useRef([]);
+  const parkingMarkersRef = useRef([]);
+  const customDestinationMarkerRef = useRef(null);
+  const destinationChangedRef = useRef(false);
+  const categoryChangedRef = useRef(false);
   const [mapReady, setMapReady] = useState(false);
   const [buildings, setBuildings] = useState(mockBuildings);
   const [parkingLots, setParkingLots] = useState(mockParkingLots);
   const [category, setCategory] = useState(initialSelection.category);
+  const [originLotId, setOriginLotId] = useState(initialOriginLot?.id ?? "");
   const [destinationId, setDestinationId] = useState(initialSelection.destinationId);
   const [customDestination, setCustomDestination] = useState(
     initialSelection.customDestination,
@@ -185,7 +216,16 @@ function NavigationPage() {
         ),
     [category, destination, fullLotIds, parkingLots],
   );
-  const activeLot = destination ? availableLots[0] : undefined;
+  const activeLot =
+    availableLots.find((lot) => lot.id === originLotId) || availableLots[0];
+
+  useEffect(() => {
+    parkingLotsRef.current = parkingLots;
+  }, [parkingLots]);
+
+  useEffect(() => {
+    originLotIdRef.current = originLotId;
+  }, [originLotId]);
 
   useEffect(() => {
     const controller = new AbortController();
@@ -193,10 +233,16 @@ function NavigationPage() {
     fetchBuildings({ signal: controller.signal })
       .then((loadedBuildings) => {
         setBuildings(loadedBuildings);
-        const selection = getInitialSelection(location, loadedBuildings);
-        setCategory(selection.category);
-        setDestinationId(selection.destinationId);
-        setCustomDestination(selection.customDestination);
+        if (!destinationChangedRef.current || !categoryChangedRef.current) {
+          const selection = getInitialSelection(location, loadedBuildings);
+          if (!destinationChangedRef.current) {
+            setDestinationId(selection.destinationId);
+            setCustomDestination(selection.customDestination);
+          }
+          if (!categoryChangedRef.current) {
+            setCategory(selection.category);
+          }
+        }
       })
       .catch((error) => {
         if (error.name !== "AbortError") {
@@ -205,7 +251,21 @@ function NavigationPage() {
       });
 
     fetchParkingAreas({ signal: controller.signal })
-      .then(setParkingLots)
+      .then((loadedParkingLots) => {
+        const previousOrigin = parkingLotsRef.current.find(
+          (lot) => lot.id === originLotIdRef.current,
+        );
+        const replacementOrigin = loadedParkingLots.find(
+          (lot) =>
+            lot.id === originLotIdRef.current ||
+            lot.name === previousOrigin?.name,
+        );
+        if (replacementOrigin) {
+          originLotIdRef.current = replacementOrigin.id;
+          setOriginLotId(replacementOrigin.id);
+        }
+        setParkingLots(loadedParkingLots);
+      })
       .catch((error) => {
         if (error.name !== "AbortError") {
           console.error("Unable to load parking areas.", error);
@@ -260,12 +320,25 @@ function NavigationPage() {
       });
     });
     map.addControl(new mapboxgl.NavigationControl(), "top-right");
+    map.on("click", (event) => {
+      destinationChangedRef.current = true;
+      setDestinationId(CUSTOM_DESTINATION_ID);
+      setCustomDestination({
+        id: CUSTOM_DESTINATION_ID,
+        name: "Map pin",
+        coordinates: [event.lngLat.lng, event.lngLat.lat],
+      });
+    });
     map.on("load", () => setMapReady(true));
     mapRef.current = map;
 
     return () => {
-      markersRef.current.forEach((marker) => marker.remove());
-      markersRef.current = [];
+      buildingMarkersRef.current.forEach(({ marker }) => marker.remove());
+      buildingMarkersRef.current = [];
+      parkingMarkersRef.current.forEach((marker) => marker.remove());
+      parkingMarkersRef.current = [];
+      customDestinationMarkerRef.current?.remove();
+      customDestinationMarkerRef.current = null;
       clearRouteLayer(map);
       map.remove();
       mapRef.current = null;
@@ -277,30 +350,41 @@ function NavigationPage() {
     const map = mapRef.current;
     if (!mapReady || !map) return;
 
-    markersRef.current.forEach((marker) => marker.remove());
-    markersRef.current = [];
-
+    buildingMarkersRef.current.forEach(({ marker }) => marker.remove());
+    buildingMarkersRef.current = [];
     buildings.forEach((building) => {
       const element = document.createElement("button");
       element.type = "button";
-      element.className = `campus-marker campus-marker--building${
-        building.id === destinationId ? " is-selected" : ""
-      }`;
+      element.className = "campus-marker campus-marker--building";
       element.textContent = building.code;
       element.title = `${building.name} — ${building.category || "Campus building"}: ${building.description}`;
       element.setAttribute("aria-label", `Set destination to ${building.name}`);
-      element.addEventListener("click", () => {
+      element.addEventListener("click", (event) => {
+        event.stopPropagation();
+        destinationChangedRef.current = true;
         setDestinationId(building.id);
         setCustomDestination(null);
       });
 
-      markersRef.current.push(
-        new mapboxgl.Marker({ element, anchor: "bottom" })
-          .setLngLat(building.coordinates)
-          .addTo(map),
-      );
+      const marker = new mapboxgl.Marker({ element, anchor: "bottom" })
+        .setLngLat(building.coordinates)
+        .addTo(map);
+      buildingMarkersRef.current.push({ id: building.id, element, marker });
     });
+  }, [buildings, mapReady]);
 
+  useEffect(() => {
+    buildingMarkersRef.current.forEach(({ id, element }) => {
+      element.classList.toggle("is-selected", id === destinationId);
+    });
+  }, [destinationId]);
+
+  useEffect(() => {
+    const map = mapRef.current;
+    if (!mapReady || !map) return;
+
+    parkingMarkersRef.current.forEach((marker) => marker.remove());
+    parkingMarkersRef.current = [];
     parkingLots.forEach((lot) => {
       const isFull =
         fullLotIds.has(lot.id) || lot.status === "full" || lot.availableBays <= 0;
@@ -316,28 +400,36 @@ function NavigationPage() {
         isPermitted ? "" : ` (not for ${category.toLowerCase()}s)`
       }`;
       element.setAttribute("aria-label", element.title);
+      element.addEventListener("click", (event) => event.stopPropagation());
 
-      markersRef.current.push(
+      parkingMarkersRef.current.push(
         new mapboxgl.Marker({ element, anchor: "bottom" })
           .setLngLat(lot.coordinates)
           .addTo(map),
       );
     });
 
-    if (customDestination) {
-      const element = document.createElement("div");
-      element.className = "campus-marker campus-marker--building is-selected";
-      element.textContent = "D";
-      element.title = customDestination.name;
-      element.setAttribute("aria-label", customDestination.name);
+  }, [activeLot, category, fullLotIds, mapReady, parkingLots]);
 
-      markersRef.current.push(
-        new mapboxgl.Marker({ element, anchor: "bottom" })
-          .setLngLat(customDestination.coordinates)
-          .addTo(map),
-      );
-    }
-  }, [activeLot, buildings, category, customDestination, destinationId, fullLotIds, mapReady, parkingLots]);
+  useEffect(() => {
+    customDestinationMarkerRef.current?.remove();
+    customDestinationMarkerRef.current = null;
+    const map = mapRef.current;
+    if (!mapReady || !map || !customDestination) return;
+
+    const element = document.createElement("div");
+    element.className = "campus-marker campus-marker--building is-selected";
+    element.textContent = "D";
+    element.title = customDestination.name;
+    element.setAttribute("aria-label", customDestination.name);
+    element.addEventListener("click", (event) => event.stopPropagation());
+    customDestinationMarkerRef.current = new mapboxgl.Marker({
+      element,
+      anchor: "bottom",
+    })
+      .setLngLat(customDestination.coordinates)
+      .addTo(map);
+  }, [customDestination, mapReady]);
 
   useEffect(() => {
     const map = mapRef.current;
@@ -436,8 +528,25 @@ function NavigationPage() {
 
   function handleDestinationChange(event) {
     const nextDestinationId = event.target.value;
+    destinationChangedRef.current = true;
     setDestinationId(nextDestinationId);
     setCustomDestination(null);
+  }
+
+  function handleCategoryChange(nextCategory) {
+    categoryChangedRef.current = true;
+    const eligibleLots = parkingLots.filter(
+      (lot) =>
+        lot.type === nextCategory.toLowerCase() &&
+        lot.availableBays > 0 &&
+        lot.status !== "full" &&
+        !fullLotIds.has(lot.id),
+    );
+    if (!eligibleLots.some((lot) => lot.id === originLotId)) {
+      const closestLot = closestAvailableLot(eligibleLots, nextCategory, destination);
+      setOriginLotId(closestLot?.id ?? "");
+    }
+    setCategory(nextCategory);
   }
 
   return (
@@ -468,7 +577,7 @@ function NavigationPage() {
                 <button
                   className={category === item ? "is-active" : ""}
                   key={item}
-                  onClick={() => setCategory(item)}
+                  onClick={() => handleCategoryChange(item)}
                   type="button"
                   aria-pressed={category === item}
                 >
@@ -494,6 +603,23 @@ function NavigationPage() {
             {buildings.map((building) => (
               <option key={building.id} value={building.id}>
                 {building.name}
+              </option>
+            ))}
+          </select>
+
+          <label className="navigation-destination-label" htmlFor="campus-origin">
+            Starting parking area
+          </label>
+          <select
+            id="campus-origin"
+            className="navigation-destination-select"
+            value={activeLot?.id ?? ""}
+            onChange={(event) => setOriginLotId(event.target.value)}
+          >
+            <option value="">No available parking</option>
+            {availableLots.map((lot) => (
+              <option key={lot.id} value={lot.id}>
+                {lot.name} ({lot.availableBays} available)
               </option>
             ))}
           </select>

@@ -4,6 +4,7 @@ import { NavLink, useNavigate } from "react-router-dom";
 import "./AdminNavbar.css";
 
 import logo from "../../assets/pukparking-logo.png";
+import { ADMIN_TOKEN_KEY } from "../../services/adminApi";
 
 function AdminNavbar() {
     const [menuOpen, setMenuOpen] = useState(false);
@@ -77,7 +78,10 @@ function AdminNavbar() {
 
                     <button
                         className="logout-button"
-                        onClick={() => navigate("/home")}
+                        onClick={() => {
+                            localStorage.removeItem(ADMIN_TOKEN_KEY);
+                            navigate("/admin");
+                        }}
                     >
                         Logout
                     </button>

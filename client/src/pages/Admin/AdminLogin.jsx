@@ -4,26 +4,28 @@ import { useNavigate } from "react-router-dom";
 import "./AdminLogin.css";
 
 import logo from "../../assets/pukparking-logo.png";
+import { ADMIN_TOKEN_KEY, loginAdmin } from "../../services/adminApi";
 
 function AdminLogin() {
     const navigate = useNavigate();
 
-    const [email, setEmail] = useState("");
+    const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
     const [error, setError] = useState("");
+    const [isSubmitting, setIsSubmitting] = useState(false);
 
-    const handleLogin = (e) => {
+    const handleLogin = async (e) => {
         e.preventDefault();
-
-        // Temporary login details
-        if (
-            email === "admin@pukparking.co.za" &&
-            password === "admin123"
-        ) {
+        setIsSubmitting(true);
+        try {
+            const result = await loginAdmin(username, password);
+            localStorage.setItem(ADMIN_TOKEN_KEY, result.token);
             setError("");
             navigate("/admin/dashboard");
-        } else {
-            setError("Invalid email or password.");
+        } catch (loginError) {
+            setError(loginError.message || "Unable to sign in.");
+        } finally {
+            setIsSubmitting(false);
         }
     };
 
@@ -69,17 +71,18 @@ function AdminLogin() {
 
                         <div className="login-input-group">
 
-                            <label htmlFor="admin-email">
-                                Email
+                            <label htmlFor="admin-username">
+                                Username
                             </label>
 
                             <input
-                                id="admin-email"
-                                type="email"
-                                placeholder="Enter admin email"
-                                value={email}
+                                id="admin-username"
+                                type="text"
+                                autoComplete="username"
+                                placeholder="Enter admin username"
+                                value={username}
                                 onChange={(e) => {
-                                    setEmail(e.target.value);
+                                    setUsername(e.target.value);
                                     setError("");
                                 }}
                                 required
@@ -96,6 +99,7 @@ function AdminLogin() {
                             <input
                                 id="admin-password"
                                 type="password"
+                                autoComplete="current-password"
                                 placeholder="Enter password"
                                 value={password}
                                 onChange={(e) => {
@@ -116,8 +120,9 @@ function AdminLogin() {
                         <button
                             type="submit"
                             className="login-button"
+                            disabled={isSubmitting}
                         >
-                            Login
+                            {isSubmitting ? "Signing in..." : "Login"}
                             <span>→</span>
                         </button>
 

@@ -28,7 +28,8 @@ export function requireAdmin(req, res, next) {
             typeof claims !== "object" ||
             claims === null ||
             typeof claims.sub !== "string" ||
-            typeof claims.exp !== "number"
+            typeof claims.exp !== "number" ||
+            claims.role !== "admin"
         ) {
             return res.status(401).json({ error: "Authentication required" });
         }

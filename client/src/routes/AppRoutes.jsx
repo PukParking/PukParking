@@ -22,6 +22,7 @@ import Reports from "../pages/Admin/Reports";
 import RatingsComments from "../pages/Admin/RatingsComments";
 
 import AdminLayout from "../components/Admin/AdminLayout";
+import AdminRoute from "./AdminRoute";
 
 function AppRoutes() {
   return (
@@ -96,26 +97,28 @@ function AppRoutes() {
 
       {/* Admin Pages */}
 
-      <Route element={<AdminLayout />}>
-        <Route
-          path="/admin/dashboard"
-          element={<Dashboard />}
-        />
+      <Route element={<AdminRoute />}>
+        <Route element={<AdminLayout />}>
+          <Route
+            path="/admin/dashboard"
+            element={<Dashboard />}
+          />
 
-        <Route
-          path="/admin/manage"
-          element={<Manage />}
-        />
+          <Route
+            path="/admin/manage"
+            element={<Manage />}
+          />
 
-        <Route
-          path="/admin/reports"
-          element={<Reports />}
-        />
+          <Route
+            path="/admin/reports"
+            element={<Reports />}
+          />
 
-        <Route
-          path="/admin/ratings"
-          element={<RatingsComments />}
-        />
+          <Route
+            path="/admin/ratings"
+            element={<RatingsComments />}
+          />
+        </Route>
       </Route>
     </Routes>
   );
