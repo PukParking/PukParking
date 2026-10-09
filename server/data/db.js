@@ -17,5 +17,7 @@ const schemaSql = readFileSync(schemaPath, "utf8");
 database.exec(schemaSql);
 migrateErdSchema(database, schemaSql);
 database.pragma("foreign_keys = ON");
+database.pragma("foreign_keys = ON");
+database.exec(readFileSync(schemaPath, "utf8"));
 
 export default database;
