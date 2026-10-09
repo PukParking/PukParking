@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using MongoDB.Driver;
 using PukParking.Models;
@@ -26,6 +27,7 @@ namespace ParkingAreas.Controllers
         }
 
         [HttpPost]
+        [Authorize]
         public async Task<ActionResult<ParkingArea>> Create(ParkingArea parkingArea)
         {
             await _mongoDBService.ParkingAreas.InsertOneAsync(parkingArea);

@@ -2,10 +2,12 @@ using Microsoft.AspNetCore.Mvc;
 using MongoDB.Driver;
 using PukParking.Models;
 using PukParking.Services;
+using Microsoft.AspNetCore.Authorization;
 
 
 namespace Administrators.Controllers
 {
+    [Authorize]
     [ApiController]
     [Route("api/[controller]")]
     
@@ -18,43 +20,11 @@ namespace Administrators.Controllers
             _mongoDBService = mongoDBService;
             
         }
-        [HttpGet]
-        public async Task<ActionResult<List<Administrator>>> GetAdministrators()
-        {
-            var administrators = await _mongoDBService.Administrators.Find(_ => true).ToListAsync();
-            return Ok(administrators);
-        }
-        [HttpGet("Count")]
-        public async Task<ActionResult<int>> GetAdminCount()
-        {
-            var count = await _mongoDBService.Administrators.CountDocumentsAsync(_ => true);
-            return Ok(new { Count = count });
-        }
-        [HttpGet("diagnostic")]
-public async Task<IActionResult> Diagnostic()
-{
-var database = _mongoDBService.GetDatabase();
-
-var collectionNames = await database
-.ListCollectionNames()
-.ToListAsync();
-
-var adminCount = await _mongoDBService.Administrators
-.CountDocumentsAsync(_ => true);
-
-return Ok(new
-{
-DatabaseName = database.DatabaseNamespace.DatabaseName,
-Collections = collectionNames,
-AdministratorsCount = adminCount
-});
-}
-
         [HttpPost]
-        public async Task<ActionResult<Administrator>> Create(Administrator administrator)
+        public async Task<IActionResult> Create(Administrator administrator)
         {
             await _mongoDBService.Administrators.InsertOneAsync(administrator);
-            return Ok(administrator);
+            return StatusCode(StatusCodes.Status201Created);
         }   
       
         

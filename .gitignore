@@ -2,6 +2,13 @@
 /server/.env
 /server/.env.*
 !/server/.env.example
-# stuff for netify
+/.env
+/.env.*
+!/.env.example
 node_modules/
 dist/
+
+# .NET build and IDE artifacts
+**/bin/
+**/obj/
+**/.vs/
