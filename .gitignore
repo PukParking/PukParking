@@ -12,3 +12,6 @@ dist/
 **/bin/
 **/obj/
 **/.vs/
+
+# Local SQLite database
+/server/data/pukparking.sqlite
