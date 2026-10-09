@@ -20,6 +20,7 @@ import Dashboard from "../pages/Admin/Dashboard";
 import Manage from "../pages/Admin/Manage";
 import Reports from "../pages/Admin/Reports";
 import RatingsComments from "../pages/Admin/RatingsComments";
+import Settings from "../pages/Admin/Settings";
 
 import AdminLayout from "../components/Admin/AdminLayout";
 
@@ -115,6 +116,11 @@ function AppRoutes() {
         <Route
           path="/admin/ratings"
           element={<RatingsComments />}
+        />
+
+        <Route
+          path="/admin/settings"
+          element={<Settings />}
         />
       </Route>
     </Routes>

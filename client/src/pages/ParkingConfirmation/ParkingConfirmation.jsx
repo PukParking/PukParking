@@ -38,26 +38,46 @@ function ParkingConfirmation() {
 
   const [rating, setRating] = useState(0);
   const [comment, setComment] = useState("");
+  const [feedbackError, setFeedbackError] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const userType =
     sessionStorage.getItem("selectedUserType") || "Guest";
 
-  const handleDone = () => {
-    const feedback = {
-      parkingId: parking._id,
-      parkingName: parking.name,
-      rating: rating > 0 ? rating : null,
-      comment: comment.trim(),
-    };
+  const handleDone = async () => {
+    if (rating < 1 || rating > 5) {
+      setFeedbackError("Please select a star rating before submitting.");
+      return;
+    }
 
-    sessionStorage.setItem(
-      "parkingFeedback",
-      JSON.stringify(feedback)
-    );
+    setFeedbackError("");
+    setIsSubmitting(true);
+    try {
+      const response = await fetch("/api/feedback", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          parkingAreaName: parking.name,
+          userType,
+          rating,
+          comment: comment.trim(),
+        }),
+      });
+      const result = await response.json();
 
-    sessionStorage.removeItem("selectedParking");
+      if (!response.ok) {
+        setFeedbackError(result.error || "Unable to submit your feedback.");
+        return;
+      }
 
-    navigate("/home");
+      sessionStorage.removeItem("selectedParking");
+      navigate("/home");
+    } catch {
+      setFeedbackError("Unable to submit feedback. Please try again.");
+    } finally {
+      setIsSubmitting(false);
+    }
+
   };
 
   return (
@@ -133,6 +153,7 @@ function ParkingConfirmation() {
                     ? "arrival-star active"
                     : "arrival-star"
                 }
+                aria-pressed={starValue === rating}
                 onClick={() => setRating(starValue)}
               >
                 ★
@@ -149,12 +170,18 @@ function ParkingConfirmation() {
           <textarea
             id="parking-comment"
             rows="5"
+            maxLength={1000}
             placeholder="Anything you'd like to tell us about this parking area?"
             value={comment}
             onChange={(event) =>
               setComment(event.target.value)
             }
           />
+          {feedbackError && (
+            <p className="feedback-error" role="alert">
+              {feedbackError}
+            </p>
+          )}
 
         </section>
 
@@ -162,8 +189,9 @@ function ParkingConfirmation() {
           type="button"
           className="arrival-done"
           onClick={handleDone}
+          disabled={isSubmitting}
         >
-          Done
+          {isSubmitting ? "Submitting..." : "Submit feedback"}
           <span>→</span>
         </button>
 

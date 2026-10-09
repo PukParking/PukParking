@@ -7,7 +7,6 @@ import {
   campusCenter,
   defaultZoom,
   mockBuildings,
-  mockParkingLots,
 } from "../data/mockCampusData";
 import { getWalkingRoute } from "../services/mapboxDirections";
 import "./NavigationPage.css";
@@ -178,7 +177,11 @@ function NavigationPage() {
   const [customDestination, setCustomDestination] = useState(
     initialSelection.customDestination,
   );
-  const [fullLotIds, setFullLotIds] = useState(() => new Set());
+  const [parkingLots, setParkingLots] = useState([]);
+  const [parkingLoadError, setParkingLoadError] = useState("");
+  const [isLoadingParking, setIsLoadingParking] = useState(true);
+  const [isReportingFull, setIsReportingFull] = useState(false);
+  const [fullReportError, setFullReportError] = useState("");
   const [route, setRoute] = useState(null);
   const [routeStatus, setRouteStatus] = useState("idle");
   const [routeError, setRouteError] = useState("");
@@ -186,15 +189,90 @@ function NavigationPage() {
   const destination =
     customDestination ||
     mockBuildings.find((building) => building.id === destinationId);
+  useEffect(() => {
+    let isCurrent = true;
+
+    fetch("/api/parking/areas")
+      .then(async (response) => {
+        const result = await response.json();
+        if (!response.ok) {
+          throw new Error(result.error || "Unable to load parking areas.");
+        }
+        return result;
+      })
+      .then((result) => {
+        if (isCurrent) {
+          setParkingLots(
+            result.parkingAreas.map((area) => ({
+              ...area,
+              type: area.category === "Guest"
+                ? "visitor"
+                : String(area.category || "").toLowerCase(),
+              totalBays: area.capacity,
+              availableBays: area.available,
+              coordinates: area.coordinates,
+              accessGate: area.buildingName || "Campus",
+              status: area.isFull ? "full" : "open",
+            })),
+          );
+          setParkingLoadError("");
+        }
+      })
+      .catch((requestError) => {
+        if (isCurrent) setParkingLoadError(requestError.message);
+      })
+      .finally(() => {
+        if (isCurrent) setIsLoadingParking(false);
+      });
+
+    return () => {
+      isCurrent = false;
+    };
+  }, []);
+
+  useEffect(() => {
+    const nextExpiry = parkingLots
+      .map((lot) => lot.fullUntil ? Date.parse(lot.fullUntil) : NaN)
+      .filter((expiry) => Number.isFinite(expiry) && expiry > Date.now())
+      .sort((first, second) => first - second)[0];
+
+    if (!nextExpiry) return undefined;
+
+    const timeout = setTimeout(async () => {
+      try {
+        const response = await fetch("/api/parking/areas");
+        const result = await response.json();
+        if (!response.ok) {
+          throw new Error(result.error || "Unable to refresh parking availability.");
+        }
+        setParkingLots(
+          result.parkingAreas.map((area) => ({
+            ...area,
+            type: area.category === "Guest"
+              ? "visitor"
+              : String(area.category || "").toLowerCase(),
+            totalBays: area.capacity,
+            availableBays: area.available,
+            accessGate: area.buildingName || "Campus",
+            status: area.isFull ? "full" : "open",
+          })),
+        );
+      } catch (error) {
+        setParkingLoadError(error.message);
+      }
+    }, Math.max(0, nextExpiry - Date.now() + 250));
+
+    return () => clearTimeout(timeout);
+  }, [parkingLots]);
+
   const availableLots = useMemo(
     () =>
-      mockParkingLots
+      parkingLots
         .filter(
           (lot) =>
             lot.type === category.toLowerCase() &&
             lot.availableBays > 0 &&
-            lot.status !== "full" &&
-            !fullLotIds.has(lot.id),
+            !lot.isFull,
         )
         .sort((first, second) =>
           destination
@@ -202,7 +280,7 @@ function NavigationPage() {
               distanceBetween(second.coordinates, destination.coordinates)
             : 0,
         ),
-    [category, destination, fullLotIds],
+    [category, destination, parkingLots],
   );
   const activeLot = destination ? availableLots[0] : undefined;
 
@@ -238,7 +316,7 @@ function NavigationPage() {
       });
     });
     map.addControl(new mapboxgl.NavigationControl(), "top-right");
-    map.on("load", () => setMapReady(true));
+    map.on("style.load", () => setMapReady(true));
     mapRef.current = map;
 
     return () => {
@@ -278,9 +356,8 @@ function NavigationPage() {
       );
     });
 
-    mockParkingLots.forEach((lot) => {
-      const isFull =
-        fullLotIds.has(lot.id) || lot.status === "full" || lot.availableBays <= 0;
+    parkingLots.forEach((lot) => {
+      const isFull = lot.isFull || lot.availableBays <= 0;
       const isPermitted = lot.type === category.toLowerCase();
       const element = document.createElement("div");
       element.className = `campus-marker campus-marker--parking${
@@ -288,8 +365,7 @@ function NavigationPage() {
       }${isFull ? " is-full" : ""}${!isPermitted ? " is-restricted" : ""}`;
       element.textContent = isFull ? "×" : "P";
       element.title = `${lot.name} (${lot.availableBays}/${lot.totalBays} bays available; access: ${lot.accessGate})${
-        lot.status === "almost_full" ? " (Almost full)" : ""
-      }${isFull ? " (Full)" : ""}${
+        isFull ? " (Full)" : ""}${
         isPermitted ? "" : ` (not for ${category.toLowerCase()}s)`
       }`;
       element.setAttribute("aria-label", element.title);
@@ -314,7 +390,7 @@ function NavigationPage() {
           .addTo(map),
       );
     }
-  }, [activeLot, category, customDestination, destinationId, fullLotIds, mapReady]);
+  }, [activeLot, category, customDestination, destinationId, mapReady, parkingLots]);
 
   useEffect(() => {
     const map = mapRef.current;
@@ -389,9 +465,41 @@ function NavigationPage() {
     return () => controller.abort();
   }, [activeLot, destination, mapReady]);
 
-  function markActiveLotFull() {
-    if (!activeLot) return;
-    setFullLotIds((current) => new Set(current).add(activeLot.id));
+  async function markActiveLotFull() {
+    if (!activeLot || isReportingFull) return;
+    setIsReportingFull(true);
+    setFullReportError("");
+
+    try {
+      const response = await fetch(
+        `/api/parking/areas/${activeLot.id}/full-report`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({}),
+        },
+      );
+      const result = await response.json();
+      if (!response.ok) {
+        throw new Error(result.error || "Unable to report this parking area full.");
+      }
+
+      setParkingLots((current) =>
+        current.map((lot) => lot.id === result.parkingArea.id
+          ? {
+            ...lot,
+            isFull: true,
+            availableBays: result.parkingArea.available,
+            status: "full",
+            fullUntil: result.parkingArea.fullUntil,
+          }
+          : lot),
+      );
+    } catch (error) {
+      setFullReportError(error.message);
+    } finally {
+      setIsReportingFull(false);
+    }
   }
 
   function handleDestinationChange(event) {
@@ -476,9 +584,13 @@ function NavigationPage() {
               </div>
             ) : (
               <p className="navigation-empty-state">
-                {destination
-                  ? "All permitted parking is marked full."
-                  : "Choose a building to find permitted parking."}
+                {isLoadingParking
+                  ? "Loading parking availability..."
+                  : parkingLoadError
+                    ? parkingLoadError
+                    : destination
+                      ? "No permitted parking is currently available."
+                      : "Choose a building to find permitted parking."}
               </p>
             )}
           </section>
@@ -487,21 +599,26 @@ function NavigationPage() {
             className="navigation-full-button"
             type="button"
             onClick={markActiveLotFull}
-            disabled={!activeLot}
+            disabled={!activeLot || isReportingFull}
           >
             <span aria-hidden="true">×</span>
-            Parking Full
+            {isReportingFull ? "Reporting..." : "Parking Full"}
           </button>
           <p className="navigation-full-hint">
-            Mark this lot full to find the next closest option.
+            Report this lot as full for 30 minutes to find the next closest option.
           </p>
+          {fullReportError && (
+            <p className="navigation-full-error" role="alert">
+              {fullReportError}
+            </p>
+          )}
 
-          {fullLotIds.size > 0 && (
+          {parkingLots.some((lot) => lot.isFull) && (
             <div className="navigation-full-list">
-              <span>Marked full</span>
-              {[...fullLotIds].map((lotId) => (
-                <span key={lotId} className="navigation-full-chip">
-                  {mockParkingLots.find((lot) => lot.id === lotId)?.name}
+              <span>Reported full</span>
+              {parkingLots.filter((lot) => lot.isFull).map((lot) => (
+                <span key={lot.id} className="navigation-full-chip">
+                  {lot.name}
                 </span>
               ))}
             </div>

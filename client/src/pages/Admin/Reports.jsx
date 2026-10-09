@@ -1,187 +1,194 @@
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import "./Reports.css";
 
-function Reports() {
+const EMPTY_SUMMARY = {
+    totalSpaces: 0,
+    occupiedSpaces: 0,
+    availableSpaces: 0,
+    parkingAreas: 0,
+};
 
-    const [selectedPeriod, setSelectedPeriod] = useState("This Month");
-    const [reportPeriod, setReportPeriod] = useState("This Month");
+function Reports() {
+    const [parkingAreas, setParkingAreas] = useState([]);
+    const [selectedAreaId, setSelectedAreaId] = useState("all");
+    const [isLoading, setIsLoading] = useState(true);
+    const [error, setError] = useState("");
+
+    useEffect(() => {
+        let isCurrent = true;
+
+        fetch("/api/admin/dashboard", { credentials: "include" })
+            .then(async (response) => {
+                const result = await response.json();
+                if (!response.ok) {
+                    throw new Error(
+                        result.error || "Unable to load the parking report.",
+                    );
+                }
+                return result;
+            })
+            .then((result) => {
+                if (isCurrent) {
+                    setParkingAreas(result.parkingAreas);
+                    setError("");
+                }
+            })
+            .catch((requestError) => {
+                if (isCurrent) {
+                    setError(requestError.message);
+                }
+            })
+            .finally(() => {
+                if (isCurrent) {
+                    setIsLoading(false);
+                }
+            });
+
+        return () => {
+            isCurrent = false;
+        };
+    }, []);
+
+    const visibleAreas = useMemo(
+        () => selectedAreaId === "all"
+            ? parkingAreas
+            : parkingAreas.filter(
+                (area) => String(area.id) === selectedAreaId,
+            ),
+        [parkingAreas, selectedAreaId],
+    );
+
+    const summary = useMemo(
+        () => visibleAreas.reduce(
+            (totals, area) => ({
+                totalSpaces: totals.totalSpaces + area.capacity,
+                occupiedSpaces: totals.occupiedSpaces + area.occupied,
+                availableSpaces: totals.availableSpaces + area.available,
+                parkingAreas: totals.parkingAreas + 1,
+            }),
+            EMPTY_SUMMARY,
+        ),
+        [visibleAreas],
+    );
+
     return (
         <div className="admin-reports">
-
-            {/* Header */}
             <div className="reports-header">
                 <div>
                     <h1>Reports</h1>
-                    <p>View and monitor PukParking activity and usage.</p>
+                    <p>
+                        Current capacity and occupancy for active parking areas.
+                    </p>
                 </div>
             </div>
 
-
-            {/* Filters */}
             <div className="reports-filters">
-
                 <div className="filter-group">
-                    <label>Report Period</label>
-
+                    <label htmlFor="report-parking-area">Parking area</label>
                     <select
-                        value={selectedPeriod}
-                        onChange={(e) => setSelectedPeriod(e.target.value)}
+                        id="report-parking-area"
+                        value={selectedAreaId}
+                        onChange={(event) => setSelectedAreaId(event.target.value)}
                     >
-                        <option>Today</option>
-                        <option>This Week</option>
-                        <option>This Month</option>
-                        <option>Last 3 Months</option>
+                        <option value="all">All active parking areas</option>
+                        {parkingAreas.map((area) => (
+                            <option key={area.id} value={String(area.id)}>
+                                {area.name}
+                            </option>
+                        ))}
                     </select>
                 </div>
-
-                <div className="filter-group">
-                    <label>Parking Area</label>
-
-                    <select>
-                        <option>All Parking Areas</option>
-                        <option>Parking A</option>
-                        <option>Parking B</option>
-                        <option>Parking C</option>
-                        <option>Parking D</option>
-                    </select>
-                </div>
-
-                <button
-                    className="generate-button"
-                    onClick={() => setReportPeriod(selectedPeriod)}
-                >
-                    Generate Report
-                </button>
-
             </div>
 
-
-            {/* Summary Cards */}
-            <div className="report-cards">
-
-                <div className="report-card">
-                    <span>Total Parking Sessions</span>
-                    <h2>486</h2>
-                    <p>{reportPeriod}</p>
-                </div>
-
-                <div className="report-card">
-                    <span>Average Occupancy</span>
-                    <h2>68%</h2>
-                    <p>Across all parking areas</p>
-                </div>
-
-                <div className="report-card">
-                    <span>Peak Occupancy</span>
-                    <h2>92%</h2>
-                    <p>10:00 - 12:00</p>
-                </div>
-
-                <div className="report-card">
-                    <span>Active Users</span>
-                    <h2>324</h2>
-                    <p>{reportPeriod}</p>
-                </div>
-
-            </div>
-
-
-            {/* Parking Usage */}
-            <div className="report-section">
-
-                <div className="section-header">
-                    <div>
-                        <h2>Parking Usage</h2>
-                        <p>Parking activity by area.</p>
-                    </div>
-                </div>
-
-                <div className="report-table">
-
-                    <div className="report-row report-table-header">
-                        <span>Parking Area</span>
-                        <span>Total Spaces</span>
-                        <span>Sessions</span>
-                        <span>Avg. Occupancy</span>
+            {error && <p className="report-message report-error" role="alert">{error}</p>}
+            {isLoading ? (
+                <p className="report-message" role="status">
+                    Loading parking report...
+                </p>
+            ) : !error && (
+                <>
+                    <div className="report-cards">
+                        <div className="report-card">
+                            <span>Active Parking Areas</span>
+                            <h2>{summary.parkingAreas}</h2>
+                            <p>Included in this report</p>
+                        </div>
+                        <div className="report-card">
+                            <span>Total Capacity</span>
+                            <h2>{summary.totalSpaces}</h2>
+                            <p>Parking spaces</p>
+                        </div>
+                        <div className="report-card">
+                            <span>Reported Occupied</span>
+                            <h2>{summary.occupiedSpaces}</h2>
+                            <p>Current stored occupancy</p>
+                        </div>
+                        <div className="report-card">
+                            <span>Available</span>
+                            <h2>{summary.availableSpaces}</h2>
+                            <p>Capacity less reported occupancy</p>
+                        </div>
                     </div>
 
-                    <div className="report-row">
-                        <span>Parking A</span>
-                        <span>40</span>
-                        <span>156</span>
-                        <span>72%</span>
+                    <div className="report-section">
+                        <div className="section-header">
+                            <div>
+                                <h2>Parking capacity by area</h2>
+                                <p>
+                                    This is a current snapshot, not historical
+                                    session or usage data.
+                                </p>
+                            </div>
+                        </div>
+
+                        {visibleAreas.length === 0 ? (
+                            <p className="report-message">
+                                {parkingAreas.length === 0
+                                    ? "No active parking areas are available to report."
+                                    : "No parking area matches this filter."}
+                            </p>
+                        ) : (
+                            <div className="report-table" role="table" aria-label="Parking capacity by area">
+                                <div
+                                    className="report-row report-table-header"
+                                    role="row"
+                                >
+                                    <span role="columnheader">Parking area</span>
+                                    <span role="columnheader">Building</span>
+                                    <span role="columnheader">Capacity</span>
+                                    <span role="columnheader">Occupied</span>
+                                    <span role="columnheader">Available</span>
+                                    <span role="columnheader">Occupancy</span>
+                                </div>
+                                {visibleAreas.map((area) => {
+                                    const occupancyPercent = area.capacity
+                                        ? Math.round(
+                                            (area.occupied / area.capacity) * 100,
+                                        )
+                                        : 0;
+
+                                    return (
+                                        <div
+                                            className="report-row"
+                                            role="row"
+                                            key={area.id}
+                                        >
+                                            <span role="cell">{area.name}</span>
+                                            <span role="cell">
+                                                {area.buildingName || "Unassigned"}
+                                            </span>
+                                            <span role="cell">{area.capacity}</span>
+                                            <span role="cell">{area.occupied}</span>
+                                            <span role="cell">{area.available}</span>
+                                            <span role="cell">{occupancyPercent}%</span>
+                                        </div>
+                                    );
+                                })}
+                            </div>
+                        )}
                     </div>
-
-                    <div className="report-row">
-                        <span>Parking B</span>
-                        <span>35</span>
-                        <span>128</span>
-                        <span>68%</span>
-                    </div>
-
-                    <div className="report-row">
-                        <span>Parking C</span>
-                        <span>25</span>
-                        <span>112</span>
-                        <span>64%</span>
-                    </div>
-
-                    <div className="report-row">
-                        <span>Parking D</span>
-                        <span>20</span>
-                        <span>90</span>
-                        <span>59%</span>
-                    </div>
-
-                </div>
-
-            </div>
-
-
-            {/* User Activity */}
-            <div className="report-section">
-
-                <div className="section-header">
-                    <div>
-                        <h2>User Activity</h2>
-                        <p>Recent user activity across the parking system.</p>
-                    </div>
-                </div>
-
-                <div className="report-table">
-
-                    <div className="report-row user-report-header">
-                        <span>User Type</span>
-                        <span>Parking Sessions</span>
-                        <span>Average Duration</span>
-                        <span>Percentage</span>
-                    </div>
-
-                    <div className="report-row">
-                        <span>Students</span>
-                        <span>298</span>
-                        <span>2h 15m</span>
-                        <span>61%</span>
-                    </div>
-
-                    <div className="report-row">
-                        <span>Staff</span>
-                        <span>142</span>
-                        <span>3h 42m</span>
-                        <span>29%</span>
-                    </div>
-
-                    <div className="report-row">
-                        <span>Guests</span>
-                        <span>46</span>
-                        <span>1h 35m</span>
-                        <span>10%</span>
-                    </div>
-
-                </div>
-
-            </div>
-
+                </>
+            )}
         </div>
     );
 }

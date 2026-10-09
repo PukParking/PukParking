@@ -84,8 +84,6 @@
     display: flex;
     align-items: end;
 
-    gap: 18px;
-
     margin-bottom: 25px;
 
     padding: 21px;
@@ -241,12 +239,12 @@
 }
 
 .report-row {
-    min-width: 600px;
+    min-width: 780px;
 
     display: grid;
 
     grid-template-columns:
-        1.5fr 1fr 1fr 1fr;
+        1.5fr 1.2fr repeat(4, 0.8fr);
 
     align-items: center;
 
@@ -257,6 +255,15 @@
 
     border-bottom:
         1px solid #e2edf4;
+}
+
+.report-message {
+    margin: 18px 0;
+    color: #566779;
+}
+
+.report-error {
+    color: #b42318;
 }
 
 .report-row:last-child {
@@ -362,7 +369,8 @@ body.dark-mode .reports-header p,
 body.dark-mode .report-card span,
 body.dark-mode .report-card p,
 body.dark-mode .section-header p,
-body.dark-mode .report-row span {
+body.dark-mode .report-row span,
+body.dark-mode .report-message {
     color: #aebdca;
 }
 

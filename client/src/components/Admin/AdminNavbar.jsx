@@ -7,11 +7,36 @@ import logo from "../../assets/pukparking-logo.png";
 
 function AdminNavbar() {
     const [menuOpen, setMenuOpen] = useState(false);
+    const [logoutError, setLogoutError] = useState("");
+    const [isLoggingOut, setIsLoggingOut] = useState(false);
 
     const navigate = useNavigate();
 
     const closeMenu = () => {
         setMenuOpen(false);
+    };
+
+    const handleLogout = async () => {
+        setIsLoggingOut(true);
+        setLogoutError("");
+
+        try {
+            const response = await fetch("/api/auth/logout", {
+                method: "POST",
+                credentials: "include",
+            });
+
+            if (!response.ok) {
+                setLogoutError("Unable to sign out. Please try again.");
+                return;
+            }
+
+            navigate("/admin", { replace: true });
+        } catch {
+            setLogoutError("Unable to reach the sign-out service.");
+        } finally {
+            setIsLoggingOut(false);
+        }
     };
 
     return (
@@ -73,14 +98,23 @@ function AdminNavbar() {
                             Ratings & Comments
                         </NavLink>
 
+                        <NavLink
+                            to="/admin/settings"
+                            onClick={closeMenu}
+                        >
+                            Settings
+                        </NavLink>
+
                     </nav>
 
                     <button
                         className="logout-button"
-                        onClick={() => navigate("/home")}
+                        onClick={handleLogout}
+                        disabled={isLoggingOut}
                     >
-                        Logout
+                        {isLoggingOut ? "Signing out..." : "Logout"}
                     </button>
+                    {logoutError && <p role="alert">{logoutError}</p>}
 
                 </div>
             )}

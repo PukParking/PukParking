@@ -14,15 +14,70 @@ UTF-8 input limit. Passwords are not trimmed or otherwise changed. The 72-byte
 limit also applies when verifying a password.
 
 The local blocklist catches selected common passwords; it is not a comprehensive
-check against every known-compromised password. Account persistence, login
-routes, JWT issuance, and authorization middleware are not implemented here.
+check against every known-compromised password. Run `npm run create-admin` from
+the server directory to create the first local administrator. The password is
+entered without being echoed and is stored only as a bcrypt hash. First-admin
+setup refuses to create another account once one exists; further account
+management can be performed locally with `npm run add-admin` from the server
+directory. Only run this command on a trusted machine with access to the local
+database; it requires an interactive terminal and does not expose a public
+administrator-registration endpoint.
+
+`POST /api/auth/login` accepts an email and password and sets a 15-minute HS256
+JWT in an HttpOnly, SameSite=Strict cookie. The token is not exposed to
+JavaScript or returned in the response body. `GET /api/auth/me` returns the
+current administrator profile, and `POST /api/auth/logout` clears the cookie.
+The endpoints reject untrusted browser origins and return the same 401 response
+for an unknown email and an incorrect password. Login allows five failed
+attempts per IP address in a rolling 15-minute window; successful logins do not
+count toward the limit. Further attempts receive HTTP 429 until failed attempts
+expire from the window. The production cookie is Secure; local development
+permits loopback origins so Vite can use an alternate port.
+Signed-in administrators can change their password with
+`POST /api/auth/change-password`, supplying `currentPassword` and `newPassword`.
+The current password is verified before the existing password policy is applied
+and only a bcrypt hash is stored. A successful change clears the current
+session cookie; the administrator must sign in again. Other already-issued
+sessions remain valid until their 15-minute JWT expiry.
+
+Authenticated management endpoints are available under `/api/admin`:
+`/buildings` and `/parking-areas` support GET and POST, while individual records
+support PUT and DELETE by ID. Parking categories map to `Parking_Type`, capacity
+maps to `Parking_Area_Capacity`, and each parking area stores its own coordinates
+and references a selected building. Buildings with parking areas and parking
+areas with reports cannot be deleted until their dependent records are handled.
+
+The public `POST /api/feedback` endpoint stores anonymous post-journey feedback.
+It requires a parking-area name, user type (`Student`, `Staff`, or `Guest`),
+and a rating from 1 to 5; comments are optional and limited to 1,000 characters.
+It does not collect a user name, email address, or account ID. The protected
+`GET /api/admin/feedback` endpoint returns feedback, summary values, and parking
+area options; optional `rating` and `parkingArea` query parameters filter the
+results. The table is created automatically from the schema when the server
+starts.
+
+`GET /api/parking/areas` returns active parking areas with current availability.
+An unexpired row in `PARKING_FULL_REPORT` makes the area full and sets available
+spaces to zero; when all full reports expire, availability returns to capacity
+less stored occupied spaces. `POST /api/parking/areas/:id/full-report` records a
+full report for 30 minutes and does not add another report if an active one
+already exists. Submitted and expiry timestamps are stored as ISO 8601 UTC text,
+which SQLite can compare with `datetime()`; SQLite does not have a dedicated
+timestamp storage class. Admin dashboard and report totals use the same
+unexpired-report rule.
 
 ## SQLite database
 
 Starting the server opens `data/pukparking.sqlite` (creating the file if needed)
 and applies the table definitions in `data/table structure.sql`. The tables are
-created if they do not already exist. No initial records are inserted; add
-administrator, building, parking-area, and report records with SQL as needed.
+created if they do not already exist. The old `Administrator_Username` column is
+migrated to `Administrator_Email` for an existing local database, and email
+uniqueness is enforced without case sensitivity. No building, parking-area,
+report, or feedback records are inserted automatically.
+
+Parking areas reference a building. Existing parking-area rows are preserved
+when this relationship is added and remain unassigned until an administrator
+edits the row and selects a building.
 
 Run the utility tests with:
 

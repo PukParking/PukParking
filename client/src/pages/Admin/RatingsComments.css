@@ -232,6 +232,19 @@
     font-size: 13px;
 }
 
+.feedback-comment {
+    overflow-wrap: anywhere;
+}
+
+.ratings-message {
+    margin: 18px 0;
+    color: #566779;
+}
+
+.ratings-error {
+    color: #b42318;
+}
+
 .ratings-table-header {
     border-bottom: none;
 
@@ -312,7 +325,8 @@ body.dark-mode .ratings-header p,
 body.dark-mode .rating-summary-card span,
 body.dark-mode .rating-summary-card p,
 body.dark-mode .section-header p,
-body.dark-mode .ratings-row span {
+body.dark-mode .ratings-row span,
+body.dark-mode .ratings-message {
     color: #aebdca;
 }
 

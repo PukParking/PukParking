@@ -49,7 +49,7 @@
     display: grid;
 
     grid-template-columns:
-        repeat(4, 1fr);
+        repeat(auto-fit, minmax(200px, 1fr));
 
     gap: 20px;
 
@@ -279,14 +279,14 @@
 .parking-table {
     width: 100%;
 
-    min-width: 450px;
+    min-width: 620px;
 }
 
 .parking-table-row {
     display: grid;
 
     grid-template-columns:
-        1.5fr 0.8fr 1fr 1fr;
+        1.3fr 1.2fr 0.6fr 0.8fr 0.8fr;
 
     align-items: center;
 
@@ -326,54 +326,11 @@
 
 /* Activity */
 
-.activity-table {
-    width: 100%;
-
-    overflow-x: auto;
-}
-
-.activity-row {
-    min-width: 600px;
-
-    display: grid;
-
-    grid-template-columns:
-        1.5fr 1fr 1.5fr 1fr;
-
-    align-items: center;
-
-    gap: 15px;
-
-    padding:
-        15px 10px;
-
-    border-bottom:
-        1px solid #e2edf4;
-}
-
-.activity-row:last-child {
-    border-bottom: none;
-}
-
-.activity-row span {
+.dashboard-message,
+.dashboard-empty {
     color: #566779;
-
-    font-size: 14px;
-}
-
-.activity-header {
-    border-bottom: none;
-
-    border-radius: 10px;
-
-    background: #edf8ff;
-}
-
-.activity-header span {
-    color: #0b477b;
-
-    font-size: 13px;
-    font-weight: 700;
+    line-height: 1.5;
+    padding: 12px 10px;
 }
 
 /* Tablet */
@@ -445,8 +402,9 @@ body.dark-mode .dashboard-card span,
 body.dark-mode .dashboard-card p,
 body.dark-mode .legend-item,
 body.dark-mode .parking-table-row span,
-body.dark-mode .activity-row span,
-body.dark-mode .chart-center span {
+body.dark-mode .chart-center span,
+body.dark-mode .dashboard-message,
+body.dark-mode .dashboard-empty {
     color: #aebdca;
 }
 
@@ -477,18 +435,15 @@ body.dark-mode .chart-center strong {
     color: #edf7ff;
 }
 
-body.dark-mode .parking-table-header,
-body.dark-mode .activity-header {
+body.dark-mode .parking-table-header {
     background: #143249;
 }
 
-body.dark-mode .parking-table-header span,
-body.dark-mode .activity-header span {
+body.dark-mode .parking-table-header span {
     color: #65cefb;
 }
 
-body.dark-mode .parking-table-row,
-body.dark-mode .activity-row {
+body.dark-mode .parking-table-row {
     border-bottom-color:
         rgba(82, 166, 207, 0.16);
 }

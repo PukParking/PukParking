@@ -11,19 +11,34 @@ function AdminLogin() {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [error, setError] = useState("");
+    const [isSubmitting, setIsSubmitting] = useState(false);
 
-    const handleLogin = (e) => {
+    const handleLogin = async (e) => {
         e.preventDefault();
+        setError("");
+        setIsSubmitting(true);
 
-        // Temporary login details
-        if (
-            email === "admin@pukparking.co.za" &&
-            password === "admin123"
-        ) {
-            setError("");
+        try {
+            const response = await fetch("/api/auth/login", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                credentials: "include",
+                body: JSON.stringify({ email, password }),
+            });
+            const result = await response.json();
+
+            if (!response.ok) {
+                setError(result.error || "Unable to sign in.");
+                return;
+            }
+
             navigate("/admin/dashboard");
-        } else {
-            setError("Invalid email or password.");
+        } catch {
+            setError("Unable to reach the sign-in service. Please try again.");
+        } finally {
+            setIsSubmitting(false);
         }
     };
 
@@ -116,8 +131,9 @@ function AdminLogin() {
                         <button
                             type="submit"
                             className="login-button"
+                            disabled={isSubmitting}
                         >
-                            Login
+                            {isSubmitting ? "Signing in..." : "Login"}
                             <span>→</span>
                         </button>
 

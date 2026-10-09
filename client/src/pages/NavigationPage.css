@@ -264,6 +264,13 @@
   text-align: center;
 }
 
+.navigation-full-error {
+  margin: 8px 0 0;
+  color: #b42318;
+  font-size: 12px;
+  text-align: center;
+}
+
 .navigation-full-list {
   display: flex;
   flex-wrap: wrap;

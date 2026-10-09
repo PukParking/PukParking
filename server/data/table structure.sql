@@ -2,7 +2,7 @@ PRAGMA foreign_keys = ON;
 
 CREATE TABLE IF NOT EXISTS ADMINISTRATOR (
     Administrator_ID INTEGER PRIMARY KEY AUTOINCREMENT,
-    Administrator_Username TEXT NOT NULL,
+    Administrator_Email TEXT NOT NULL COLLATE NOCASE,
     Administrator_passwordHash TEXT NOT NULL,
     Administrator_Permissions TEXT
 );
@@ -25,6 +25,7 @@ CREATE TABLE IF NOT EXISTS BUILDING (
 CREATE TABLE IF NOT EXISTS PARKING_AREA (
     Parking_Area_ID INTEGER PRIMARY KEY AUTOINCREMENT,
     Administrator_ID INTEGER NOT NULL,
+    Building_ID INTEGER NOT NULL,
     Parking_Area_Name TEXT NOT NULL,
     Parking_Area_Latitude REAL,
     Parking_Area_Longitude REAL,
@@ -38,7 +39,9 @@ CREATE TABLE IF NOT EXISTS PARKING_AREA (
     Parking_Area_isActive INTEGER,
 
     FOREIGN KEY (Administrator_ID)
-        REFERENCES ADMINISTRATOR(Administrator_ID)
+        REFERENCES ADMINISTRATOR(Administrator_ID),
+    FOREIGN KEY (Building_ID)
+        REFERENCES BUILDING(Building_ID)
 );
 
 
@@ -51,3 +54,17 @@ CREATE TABLE IF NOT EXISTS PARKING_FULL_REPORT (
     FOREIGN KEY (Parking_Area_ID)
         REFERENCES PARKING_AREA(Parking_Area_ID)
 );
+
+CREATE TABLE IF NOT EXISTS PARKING_FEEDBACK (
+    Feedback_ID INTEGER PRIMARY KEY AUTOINCREMENT,
+    Parking_Area_Name TEXT NOT NULL,
+    User_Type TEXT NOT NULL CHECK (User_Type IN ('Student', 'Staff', 'Guest')),
+    Rating INTEGER NOT NULL CHECK (
+        Rating BETWEEN 1 AND 5 AND Rating = CAST(Rating AS INTEGER)
+    ),
+    Comment TEXT,
+    Submitted_Time TEXT NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%fZ', 'now'))
+);
+
+CREATE INDEX IF NOT EXISTS idx_parking_feedback_submitted_time
+    ON PARKING_FEEDBACK (Submitted_Time DESC);

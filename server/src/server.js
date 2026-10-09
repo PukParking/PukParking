@@ -1,6 +1,6 @@
 import "dotenv/config";
-import "../data/db.js";
-import app from "./app.js";
+import database from "../data/db.js";
+import { createApp } from "./app.js";
 
 const port = Number(process.env.PORT || 3000);
 
@@ -18,6 +18,11 @@ if (
 ) {
     throw new Error("JWT_SECRET must be set to a secret of at least 32 bytes.");
 }
+
+const app = createApp({
+    database,
+    jwtSecret: process.env.JWT_SECRET,
+});
 
 app.listen(port, () => {
     console.log(`PukParking API listening on port ${port}`);
