@@ -1,4 +1,5 @@
 import assert from "node:assert/strict";
+import { randomUUID } from "node:crypto";
 import { readFileSync } from "node:fs";
 import { once } from "node:events";
 import { dirname, join } from "node:path";
@@ -23,20 +24,24 @@ async function createParkingTestServer() {
         "admin@example.com",
         "correct horse battery staple",
     );
-    const building = database
+    const buildingId = randomUUID();
+    database
         .prepare(`
             INSERT INTO BUILDING (
+                Building_ID,
                 Administrator_ID,
                 Building_Name,
                 Building_Abbreviation,
                 Building_Latitude,
                 Building_Longitude
-            ) VALUES (?, ?, ?, ?, ?)
+            ) VALUES (?, ?, ?, ?, ?, ?)
         `)
-        .run(administrator.lastInsertRowid, "Engineering", "ENG", -26.68, 27.1);
-    const activeArea = database
+        .run(buildingId, administrator.id, "Engineering", "ENG", -26.68, 27.1);
+    const activeAreaId = randomUUID();
+    database
         .prepare(`
             INSERT INTO PARKING_AREA (
+                Parking_Area_ID,
                 Administrator_ID,
                 Building_ID,
                 Parking_Area_Name,
@@ -46,11 +51,12 @@ async function createParkingTestServer() {
                 Parking_Area_Latitude,
                 Parking_Area_Longitude,
                 Parking_Area_isActive
-            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         `)
         .run(
-            administrator.lastInsertRowid,
-            building.lastInsertRowid,
+            activeAreaId,
+            administrator.id,
+            buildingId,
             "Engineering North",
             "Student",
             40,
@@ -59,9 +65,11 @@ async function createParkingTestServer() {
             27.101,
             1,
         );
-    const inactiveArea = database
+    const inactiveAreaId = randomUUID();
+    database
         .prepare(`
             INSERT INTO PARKING_AREA (
+                Parking_Area_ID,
                 Administrator_ID,
                 Building_ID,
                 Parking_Area_Name,
@@ -71,11 +79,12 @@ async function createParkingTestServer() {
                 Parking_Area_Latitude,
                 Parking_Area_Longitude,
                 Parking_Area_isActive
-            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         `)
         .run(
-            administrator.lastInsertRowid,
-            building.lastInsertRowid,
+            inactiveAreaId,
+            administrator.id,
+            buildingId,
             "Closed Lot",
             "Guest",
             10,
@@ -95,8 +104,8 @@ async function createParkingTestServer() {
         database,
         server,
         port: server.address().port,
-        activeAreaId: Number(activeArea.lastInsertRowid),
-        inactiveAreaId: Number(inactiveArea.lastInsertRowid),
+        activeAreaId,
+        inactiveAreaId,
     };
 }
 
@@ -144,15 +153,18 @@ test("full report forces zero availability until its expiry, then stored occupan
         testServer.database
             .prepare(`
                 INSERT INTO PARKING_FULL_REPORT (
+                    Report_ID,
                     Parking_Area_ID,
                     Report_Submitted_Time,
                     Report_Expiry_Time
-                ) VALUES (?, ?, ?), (?, ?, ?)
+                ) VALUES (?, ?, ?, ?), (?, ?, ?, ?)
             `)
             .run(
+                randomUUID(),
                 testServer.activeAreaId,
                 new Date(now - 60_000).toISOString(),
                 new Date(now + 10 * 60_000).toISOString(),
+                randomUUID(),
                 testServer.activeAreaId,
                 new Date(now - 60 * 60_000).toISOString(),
                 new Date(now - 30 * 60_000).toISOString(),
@@ -209,6 +221,7 @@ test("parking full report records UTC timestamps with a 30-minute expiry and is 
                     Report_Expiry_Time AS expiresAt
                 FROM PARKING_FULL_REPORT
                 WHERE Parking_Area_ID = ?
+                ORDER BY Report_Expiry_Time DESC
             `)
             .get(testServer.activeAreaId);
         const duplicateResponse = await submit();

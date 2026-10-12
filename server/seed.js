@@ -127,14 +127,14 @@ const seed = database.transaction(() => {
             .prepare(`
                 INSERT INTO ADMINISTRATOR (
                     Administrator_ID,
-                    Administrator_Username,
+                    Administrator_Email,
                     Administrator_passwordHash,
                     Administrator_Permissions
                 ) VALUES (?, ?, ?, NULL)
             `)
             .run(
                 administrator.Administrator_ID,
-                "parking-seed-owner",
+                `seed-owner-${administrator.Administrator_ID.slice(0, 8)}@example.invalid`,
                 passwordHash,
             );
     }

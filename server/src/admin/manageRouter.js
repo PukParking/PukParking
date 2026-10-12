@@ -1,3 +1,4 @@
+import { randomUUID } from "node:crypto";
 import express from "express";
 import { createRequireAdmin } from "../auth/requireAdmin.js";
 
@@ -16,13 +17,15 @@ function requiredText(value, fieldName, maxLength = 120) {
     return normalizedValue;
 }
 
-function positiveId(value, fieldName) {
-    const id = Number(value);
-    if (!Number.isSafeInteger(id) || id <= 0) {
-        throw new TypeError(`${fieldName} must be a positive integer.`);
+function validId(value, fieldName) {
+    if (
+        typeof value !== "string" ||
+        !/^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(value)
+    ) {
+        throw new TypeError(`${fieldName} must be a valid UUID.`);
     }
 
-    return id;
+    return value;
 }
 
 function coordinate(value, fieldName, minimum, maximum) {
@@ -64,7 +67,7 @@ function parkingValues(body) {
         name: requiredText(body.name, "Parking name"),
         category,
         capacity,
-        buildingId: positiveId(body.buildingId, "Building"),
+        buildingId: validId(body.buildingId, "Building"),
         latitude: coordinate(body.latitude, "Latitude", -90, 90),
         longitude: coordinate(body.longitude, "Longitude", -180, 180),
     };
@@ -267,18 +270,21 @@ export function createManageRouter({ database, jwtSecret, clientOrigin }) {
             return respondWithValidationError(res, error);
         }
 
-        const result = database
+        const id = randomUUID();
+        database
             .prepare(`
                 INSERT INTO BUILDING (
+                    Building_ID,
                     Administrator_ID,
                     Building_Name,
                     Building_Abbreviation,
                     Building_Latitude,
                     Building_Longitude
-                ) VALUES (?, ?, ?, ?, ?)
+                ) VALUES (?, ?, ?, ?, ?, ?)
             `)
             .run(
-                Number(req.admin.sub),
+                id,
+                req.admin.sub,
                 values.name,
                 values.code,
                 values.latitude,
@@ -286,7 +292,7 @@ export function createManageRouter({ database, jwtSecret, clientOrigin }) {
             );
 
         return res.status(201).json({
-            building: { id: result.lastInsertRowid, ...values },
+            building: { id, ...values },
         });
     });
 
@@ -294,7 +300,7 @@ export function createManageRouter({ database, jwtSecret, clientOrigin }) {
         let id;
         let values;
         try {
-            id = positiveId(req.params.id, "Building ID");
+            id = validId(req.params.id, "Building ID");
             values = buildingValues(req.body ?? {});
         } catch (error) {
             return respondWithValidationError(res, error);
@@ -328,7 +334,7 @@ export function createManageRouter({ database, jwtSecret, clientOrigin }) {
     router.delete("/buildings/:id", (req, res) => {
         let id;
         try {
-            id = positiveId(req.params.id, "Building ID");
+            id = validId(req.params.id, "Building ID");
         } catch (error) {
             return respondWithValidationError(res, error);
         }
@@ -390,9 +396,11 @@ export function createManageRouter({ database, jwtSecret, clientOrigin }) {
             return res.status(400).json({ error: "Selected building does not exist." });
         }
 
-        const result = database
+        const id = randomUUID();
+        database
             .prepare(`
                 INSERT INTO PARKING_AREA (
+                    Parking_Area_ID,
                     Administrator_ID,
                     Building_ID,
                     Parking_Area_Name,
@@ -402,10 +410,11 @@ export function createManageRouter({ database, jwtSecret, clientOrigin }) {
                     Parking_Area_Latitude,
                     Parking_Area_Longitude,
                     Parking_Area_isActive
-                ) VALUES (?, ?, ?, ?, ?, 0, ?, ?, 1)
+                ) VALUES (?, ?, ?, ?, ?, ?, 0, ?, ?, 1)
             `)
             .run(
-                Number(req.admin.sub),
+                id,
+                req.admin.sub,
                 values.buildingId,
                 values.name,
                 values.category,
@@ -415,7 +424,7 @@ export function createManageRouter({ database, jwtSecret, clientOrigin }) {
             );
 
         return res.status(201).json({
-            parkingArea: { id: result.lastInsertRowid, ...values },
+            parkingArea: { id, ...values },
         });
     });
 
@@ -423,7 +432,7 @@ export function createManageRouter({ database, jwtSecret, clientOrigin }) {
         let id;
         let values;
         try {
-            id = positiveId(req.params.id, "Parking area ID");
+            id = validId(req.params.id, "Parking area ID");
             values = parkingValues(req.body ?? {});
         } catch (error) {
             return respondWithValidationError(res, error);
@@ -465,7 +474,7 @@ export function createManageRouter({ database, jwtSecret, clientOrigin }) {
     router.delete("/parking-areas/:id", (req, res) => {
         let id;
         try {
-            id = positiveId(req.params.id, "Parking area ID");
+            id = validId(req.params.id, "Parking area ID");
         } catch (error) {
             return respondWithValidationError(res, error);
         }

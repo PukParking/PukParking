@@ -193,7 +193,7 @@ export function createAdminAuthRouter({
                 });
             }
 
-            const administratorId = Number(req.admin.sub);
+            const administratorId = req.admin.sub;
             const administrator = database
                 .prepare(`
                     SELECT Administrator_passwordHash AS passwordHash
@@ -255,7 +255,7 @@ export function createAdminAuthRouter({
                 FROM ADMINISTRATOR
                 WHERE Administrator_ID = ?
             `)
-            .get(Number(req.admin.sub));
+            .get(req.admin.sub);
 
         if (!administrator) {
             res.clearCookie(ADMIN_SESSION_COOKIE, cookieOptions);

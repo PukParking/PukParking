@@ -1,4 +1,5 @@
 import assert from "node:assert/strict";
+import { randomUUID } from "node:crypto";
 import test from "node:test";
 import Database from "better-sqlite3";
 import { readFileSync } from "node:fs";
@@ -84,8 +85,8 @@ test("database migration preserves existing parking rows and adds the building r
         initializeDatabase(database, readFileSync(schemaPath, "utf8"));
 
         const migratedArea = database
-            .prepare("SELECT * FROM PARKING_AREA WHERE Parking_Area_ID = 1")
-            .get();
+            .prepare("SELECT * FROM PARKING_AREA WHERE Parking_Area_Name = ?")
+            .get("Existing Lot");
         assert.equal(migratedArea.Parking_Area_Name, "Existing Lot");
         assert.equal(migratedArea.Building_ID, null);
 
@@ -93,13 +94,16 @@ test("database migration preserves existing parking rows and adds the building r
             () =>
                 database
                     .prepare(`
-                        INSERT INTO PARKING_AREA (
-                            Administrator_ID,
+                        INSERT INTO BUILDING (
                             Building_ID,
-                            Parking_Area_Name
-                        ) VALUES (1, 999, 'Invalid FK')
+                            Administrator_ID,
+                            Building_Name,
+                            Building_Abbreviation,
+                            Building_Latitude,
+                            Building_Longitude
+                        ) VALUES (?, ?, ?, ?, ?, ?)
                     `)
-                    .run(),
+                    .run(randomUUID(), randomUUID(), "Invalid FK", "BAD", 0, 0),
             /FOREIGN KEY constraint failed/,
         );
     } finally {

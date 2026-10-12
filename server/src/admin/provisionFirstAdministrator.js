@@ -1,3 +1,4 @@
+import { randomUUID } from "node:crypto";
 import { hashPassword } from "../auth/password.js";
 
 export function normalizeAdministratorEmail(email) {
@@ -38,14 +39,17 @@ export async function provisionFirstAdministrator(database, email, password) {
 }
 
 function createAdministratorWithHash(database, normalizedEmail, passwordHash) {
-    return database
+    const id = randomUUID();
+    const result = database
         .prepare(`
             INSERT INTO ADMINISTRATOR (
+                Administrator_ID,
                 Administrator_Email,
                 Administrator_passwordHash
-            ) VALUES (?, ?)
+            ) VALUES (?, ?, ?)
         `)
-        .run(normalizedEmail, passwordHash);
+        .run(id, normalizedEmail, passwordHash);
+    return { ...result, id };
 }
 
 export async function provisionAdditionalAdministrator(

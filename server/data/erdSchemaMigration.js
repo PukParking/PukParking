@@ -3,7 +3,7 @@ import { randomUUID } from "node:crypto";
 const canonicalColumns = {
     ADMINISTRATOR: [
         "Administrator_ID",
-        "Administrator_Username",
+        "Administrator_Email",
         "Administrator_passwordHash",
         "Administrator_Permissions",
     ],
@@ -19,6 +19,7 @@ const canonicalColumns = {
     PARKING_AREA: [
         "Parking_Area_ID",
         "Administrator_ID",
+        "Building_ID",
         "Parking_Area_Name",
         "Parking_Area_Latitude",
         "Parking_Area_Longitude",
@@ -67,6 +68,24 @@ function normalizeParkingType(value) {
     return type === "guest" ? "visitor" : ["student", "staff", "visitor"].includes(type) ? type : "student";
 }
 
+function migratedAdministratorEmail(administrator, administratorId) {
+    const existingEmail = String(administrator.Administrator_Email ?? "").trim();
+    if (existingEmail) {
+        return existingEmail;
+    }
+
+    const legacyUsername = String(administrator.Administrator_Username ?? "").trim();
+    if (/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(legacyUsername)) {
+        return legacyUsername;
+    }
+
+    const localPart = legacyUsername
+        .toLowerCase()
+        .replace(/[^a-z0-9._-]+/g, "-")
+        .replace(/^[.-]+|[.-]+$/g, "");
+    return `${localPart || "migrated"}-${administratorId.slice(0, 8)}@legacy.invalid`;
+}
+
 export function migrateErdSchema(database, schemaSql) {
     if (hasCanonicalSchema(database)) {
         return false;
@@ -107,7 +126,7 @@ export function migrateErdSchema(database, schemaSql) {
             const insertAdministrator = database.prepare(`
                 INSERT INTO ADMINISTRATOR (
                     Administrator_ID,
-                    Administrator_Username,
+                    Administrator_Email,
                     Administrator_passwordHash,
                     Administrator_Permissions
                 ) VALUES (?, ?, ?, ?)
@@ -115,7 +134,10 @@ export function migrateErdSchema(database, schemaSql) {
             for (const administrator of administrators) {
                 insertAdministrator.run(
                     administratorIds.get(String(administrator.Administrator_ID)),
-                    administrator.Administrator_Username ?? "Migrated administrator",
+                    migratedAdministratorEmail(
+                        administrator,
+                        administratorIds.get(String(administrator.Administrator_ID)),
+                    ),
                     administrator.Administrator_passwordHash ?? "",
                     administrator.Administrator_Permissions ?? null,
                 );
@@ -160,6 +182,7 @@ export function migrateErdSchema(database, schemaSql) {
                 INSERT INTO PARKING_AREA (
                     Parking_Area_ID,
                     Administrator_ID,
+                    Building_ID,
                     Parking_Area_Name,
                     Parking_Area_Latitude,
                     Parking_Area_Longitude,
@@ -171,7 +194,7 @@ export function migrateErdSchema(database, schemaSql) {
                     Parking_Area_Accessible_Spaces,
                     Parking_Area_Image_URL,
                     Parking_Area_IsActive
-                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
             `);
             for (const area of parkingAreas) {
                 const administratorId = administratorIds.get(
@@ -182,6 +205,10 @@ export function migrateErdSchema(database, schemaSql) {
                         `Parking area ${area.Parking_Area_ID} references a missing administrator.`,
                     );
                 }
+                const buildingId = area.Building_ID === null ||
+                    area.Building_ID === undefined
+                    ? null
+                    : buildingIds.get(String(area.Building_ID)) ?? null;
 
                 const capacity = Math.max(
                     0,
@@ -209,6 +236,7 @@ export function migrateErdSchema(database, schemaSql) {
                 insertParkingArea.run(
                     parkingAreaIds.get(String(area.Parking_Area_ID)),
                     administratorId,
+                    buildingId,
                     area.Parking_Area_Name ?? "Unnamed parking area",
                     Number.isFinite(Number(area.Parking_Area_Latitude))
                         ? Number(area.Parking_Area_Latitude)

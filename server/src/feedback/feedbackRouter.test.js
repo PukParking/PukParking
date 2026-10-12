@@ -29,7 +29,7 @@ async function createFeedbackTestServer() {
         TEST_JWT_SECRET,
         {
             algorithm: "HS256",
-            subject: String(administrator.lastInsertRowid),
+            subject: administrator.id,
             expiresIn: "5m",
         },
     );

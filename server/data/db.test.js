@@ -84,7 +84,7 @@ test("migration converts legacy tables and preserves related data using UUID tex
     assert.match(report.Report_ID, /^[0-9a-f-]{36}$/i);
     assert.equal(report.Parking_Area_ID, area.Parking_Area_ID);
     assert.deepEqual(database.pragma("foreign_key_check"), []);
-    assert.equal(database.prepare("PRAGMA table_info(PARKING_AREA)").all().length, 13);
+    assert.equal(database.prepare("PRAGMA table_info(PARKING_AREA)").all().length, 14);
 });
 
 test("canonical schema migration is a no-op", (context) => {

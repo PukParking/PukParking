@@ -22,7 +22,7 @@ const schemaPath = join(
 async function createAuthTestServer() {
     const database = new Database(":memory:");
     initializeDatabase(database, readFileSync(schemaPath, "utf8"));
-    await provisionFirstAdministrator(
+    const administrator = await provisionFirstAdministrator(
         database,
         "admin@example.com",
         "correct horse battery staple",
@@ -36,7 +36,7 @@ async function createAuthTestServer() {
     const server = app.listen(0);
     await once(server, "listening");
 
-    return { database, server, port: server.address().port };
+    return { database, server, port: server.address().port, administratorId: administrator.id };
 }
 
 async function postLogin(port, payload) {
@@ -71,7 +71,7 @@ async function loginCookie(port, password = "correct horse battery staple") {
 }
 
 test("login sets a short-lived HttpOnly JWT cookie without exposing the hash", async () => {
-    const { database, server, port } = await createAuthTestServer();
+    const { database, server, port, administratorId } = await createAuthTestServer();
 
     try {
         const response = await postLogin(port, {
@@ -83,7 +83,7 @@ test("login sets a short-lived HttpOnly JWT cookie without exposing the hash", a
         assert.equal(response.status, 200);
         assert.equal(body.expiresIn, 900);
         assert.deepEqual(body.administrator, {
-            id: 1,
+            id: administratorId,
             email: "admin@example.com",
             permissions: null,
         });
@@ -102,7 +102,7 @@ test("login sets a short-lived HttpOnly JWT cookie without exposing the hash", a
         const claims = jwt.verify(cookieToken, TEST_JWT_SECRET, {
             algorithms: ["HS256"],
         });
-        assert.equal(claims.sub, "1");
+        assert.equal(claims.sub, administratorId);
         assert.equal(claims.email, "admin@example.com");
         assert.equal(claims.exp - claims.iat, 900);
     } finally {
@@ -114,7 +114,7 @@ test("login sets a short-lived HttpOnly JWT cookie without exposing the hash", a
 });
 
 test("session endpoint accepts the HttpOnly cookie and rejects missing sessions", async () => {
-    const { database, server, port } = await createAuthTestServer();
+    const { database, server, port, administratorId } = await createAuthTestServer();
 
     try {
         const missingSession = await fetch(
@@ -136,7 +136,7 @@ test("session endpoint accepts the HttpOnly cookie and rejects missing sessions"
         assert.equal(currentSession.status, 200);
         assert.deepEqual(await currentSession.json(), {
             administrator: {
-                id: 1,
+                id: administratorId,
                 email: "admin@example.com",
                 permissions: null,
             },
@@ -281,7 +281,7 @@ test("login rejects missing credentials", async () => {
 });
 
 test("administrator can change their password and must sign in again", async () => {
-    const { database, server, port } = await createAuthTestServer();
+    const { database, server, port, administratorId } = await createAuthTestServer();
 
     try {
         const cookie = await loginCookie(port);
@@ -304,9 +304,9 @@ test("administrator can change their password and must sign in again", async () 
             .prepare(`
                 SELECT Administrator_passwordHash
                 FROM ADMINISTRATOR
-                WHERE Administrator_ID = 1
+                WHERE Administrator_ID = ?
             `)
-            .get().Administrator_passwordHash;
+            .get(administratorId).Administrator_passwordHash;
         assert.notEqual(
             storedPasswordHash,
             "correct horse battery staple",

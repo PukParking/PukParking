@@ -1,15 +1,70 @@
 import assert from "node:assert/strict";
 import { randomUUID } from "node:crypto";
 import { once } from "node:events";
-import test from "node:test";
-
-import "dotenv/config";
-
-import database from "../data/db.js";
+import { readFileSync } from "node:fs";
+import Database from "better-sqlite3";
+import { after, test } from "node:test";
+import { initializeDatabase } from "../data/initialize.js";
 
 process.env.CLIENT_ORIGIN = process.env.CLIENT_ORIGIN ?? "http://localhost:5173";
 
-const { default: app } = await import("./app.js");
+const database = new Database(":memory:");
+initializeDatabase(
+    database,
+    readFileSync(new URL("../data/table structure.sql", import.meta.url), "utf8"),
+);
+
+const administratorId = randomUUID();
+const buildingId = randomUUID();
+const parkingAreaId = randomUUID();
+database.prepare(`
+    INSERT INTO ADMINISTRATOR (
+        Administrator_ID,
+        Administrator_Email,
+        Administrator_passwordHash
+    ) VALUES (?, ?, ?)
+`).run(administratorId, "test-admin@example.invalid", "test-hash");
+database.prepare(`
+    INSERT INTO BUILDING (
+        Building_ID,
+        Administrator_ID,
+        Building_Name,
+        Building_Abbreviation,
+        Building_Latitude,
+        Building_Longitude
+    ) VALUES (?, ?, ?, ?, ?, ?)
+`).run(buildingId, administratorId, "Test Building", "F1", -26.6882, 27.0929);
+database.prepare(`
+    INSERT INTO PARKING_AREA (
+        Parking_Area_ID,
+        Administrator_ID,
+        Building_ID,
+        Parking_Area_Name,
+        Parking_Area_Latitude,
+        Parking_Area_Longitude,
+        Parking_Type,
+        Parking_Area_Capacity,
+        Parking_Area_Occupied_Spaces
+    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+`).run(
+    parkingAreaId,
+    administratorId,
+    buildingId,
+    "Hoffman St / Main Gate Visitors",
+    -26.6905,
+    27.0936,
+    "visitor",
+    35,
+    24,
+);
+
+const { createApp } = await import("./app.js");
+const app = createApp({
+    database,
+    jwtSecret: "test-only-secret-with-at-least-32-bytes",
+});
+
+after(() => database.close());
 
 test("health endpoint returns status and security headers", async () => {
     const server = app.listen(0);
@@ -50,7 +105,7 @@ test("parking areas endpoint returns database rows as a JSON array", async () =>
         assert.equal(response.headers.get("content-type")?.includes("application/json"), true);
         const parkingAreas = await response.json();
         assert.equal(Array.isArray(parkingAreas), true);
-        assert.equal(parkingAreas.length, 6);
+        assert.equal(parkingAreas.length, 1);
         const visitorsLot = parkingAreas.find(
             (area) => area.Parking_Area_Name === "Hoffman St / Main Gate Visitors",
         );
@@ -74,7 +129,7 @@ test("buildings endpoint returns seeded buildings as JSON", async () => {
 
         assert.equal(response.status, 200);
         assert.equal(Array.isArray(buildings), true);
-        assert.equal(buildings.length, 6);
+        assert.equal(buildings.length, 1);
         assert.equal(
             buildings.some((building) => building.Building_Abbreviation === "F1"),
             true,

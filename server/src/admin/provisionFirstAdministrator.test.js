@@ -1,4 +1,5 @@
 import assert from "node:assert/strict";
+import { randomUUID } from "node:crypto";
 import { readFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import test from "node:test";
@@ -41,7 +42,7 @@ test("first administrator email is normalized and password is stored as a hash",
         );
         const administrator = database
             .prepare("SELECT * FROM ADMINISTRATOR WHERE Administrator_ID = ?")
-            .get(result.lastInsertRowid);
+            .get(result.id);
 
         assert.equal(administrator.Administrator_Email, "admin@example.com");
         assert.notEqual(administrator.Administrator_passwordHash, password);
@@ -124,7 +125,7 @@ test("additional administrator provisioning adds a hashed-password account", asy
         );
         const administrator = database
             .prepare("SELECT * FROM ADMINISTRATOR WHERE Administrator_ID = ?")
-            .get(result.lastInsertRowid);
+            .get(result.id);
 
         assert.equal(administrator.Administrator_Email, "second@example.com");
         assert.equal(
@@ -215,11 +216,12 @@ test("database initialization migrates the old username column and enforces uniq
                 database
                     .prepare(`
                         INSERT INTO ADMINISTRATOR (
+                            Administrator_ID,
                             Administrator_Email,
                             Administrator_passwordHash
-                        ) VALUES (?, ?)
+                        ) VALUES (?, ?, ?)
                     `)
-                    .run("ADMIN@example.com", passwordHash),
+                    .run(randomUUID(), "ADMIN@example.com", passwordHash),
             /UNIQUE constraint failed/,
         );
     } finally {

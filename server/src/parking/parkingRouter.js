@@ -1,11 +1,14 @@
+import { randomUUID } from "node:crypto";
 import express from "express";
 import { isAllowedOrigin } from "../security/origin.js";
 
 const FULL_REPORT_TTL_MS = 30 * 60 * 1000;
 
-function positiveId(value) {
-    const id = Number(value);
-    return Number.isSafeInteger(id) && id > 0 ? id : null;
+function validId(value) {
+    return typeof value === "string" &&
+        /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(value)
+        ? value
+        : null;
 }
 
 function readParkingArea(database, parkingAreaId) {
@@ -108,10 +111,10 @@ export function createParkingRouter({ database, clientOrigin }) {
             });
         }
 
-        const parkingAreaId = positiveId(req.params.id);
+        const parkingAreaId = validId(req.params.id);
         if (!parkingAreaId) {
             return res.status(400).json({
-                error: "Parking area ID must be a positive integer.",
+                error: "Parking area ID must be a valid UUID.",
             });
         }
 
@@ -131,12 +134,14 @@ export function createParkingRouter({ database, clientOrigin }) {
             database
                 .prepare(`
                     INSERT INTO PARKING_FULL_REPORT (
+                        Report_ID,
                         Parking_Area_ID,
                         Report_Submitted_Time,
                         Report_Expiry_Time
-                    ) VALUES (?, ?, ?)
+                    ) VALUES (?, ?, ?, ?)
                 `)
                 .run(
+                    randomUUID(),
                     parkingAreaId,
                     submittedTime.toISOString(),
                     expiryTime.toISOString(),

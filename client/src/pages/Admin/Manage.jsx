@@ -42,7 +42,7 @@ function toParkingPayload(parking) {
         name: parking.name,
         category: parking.category,
         capacity: Number(parking.capacity),
-        buildingId: Number(parking.buildingId),
+        buildingId: parking.buildingId,
         latitude: Number(parking.latitude),
         longitude: Number(parking.longitude),
     };
@@ -357,7 +357,7 @@ function Manage() {
                         value={selectedUpdateParking?.id ?? ""}
                         onChange={(event) => {
                             const parking = parkings.find(
-                                (item) => item.id === Number(event.target.value),
+                                (item) => item.id === event.target.value,
                             );
                             setSelectedUpdateParking(
                                 parking
@@ -400,7 +400,7 @@ function Manage() {
                         onChange={(event) => {
                             setSelectedDeleteParking(
                                 parkings.find(
-                                    (item) => item.id === Number(event.target.value),
+                                    (item) => item.id === event.target.value,
                                 ) ?? null,
                             );
                         }}
@@ -450,7 +450,7 @@ function Manage() {
                         value={selectedUpdateBuilding?.id ?? ""}
                         onChange={(event) => {
                             const building = buildings.find(
-                                (item) => item.id === Number(event.target.value),
+                                (item) => item.id === event.target.value,
                             );
                             setSelectedUpdateBuilding(
                                 building
@@ -490,7 +490,7 @@ function Manage() {
                         onChange={(event) => {
                             setSelectedDeleteBuilding(
                                 buildings.find(
-                                    (item) => item.id === Number(event.target.value),
+                                    (item) => item.id === event.target.value,
                                 ) ?? null,
                             );
                         }}

@@ -1,4 +1,5 @@
 import assert from "node:assert/strict";
+import { randomUUID } from "node:crypto";
 import { readFileSync } from "node:fs";
 import { once } from "node:events";
 import { dirname, join } from "node:path";
@@ -24,21 +25,23 @@ async function createManageTestServer() {
         "admin@example.com",
         "correct horse battery staple",
     );
-    const building = database
+    const buildingId = randomUUID();
+    database
         .prepare(`
             INSERT INTO BUILDING (
+                Building_ID,
                 Administrator_ID,
                 Building_Name,
                 Building_Abbreviation,
                 Building_Latitude,
                 Building_Longitude
-            ) VALUES (?, ?, ?, ?, ?)
+            ) VALUES (?, ?, ?, ?, ?, ?)
         `)
-        .run(administrator.lastInsertRowid, "Engineering", "ENG", -26.68, 27.1);
+        .run(buildingId, administrator.id, "Engineering", "ENG", -26.68, 27.1);
     const token = jwt.sign(
         { email: "admin@example.com" },
         TEST_JWT_SECRET,
-        { algorithm: "HS256", subject: String(administrator.lastInsertRowid), expiresIn: "5m" },
+        { algorithm: "HS256", subject: administrator.id, expiresIn: "5m" },
     );
     const server = createApp({
         database,
@@ -51,7 +54,8 @@ async function createManageTestServer() {
         database,
         server,
         port: server.address().port,
-        buildingId: Number(building.lastInsertRowid),
+        administratorId: administrator.id,
+        buildingId: buildingId,
         cookie: `pukparking_admin_token=${token}`,
     };
 }
@@ -174,23 +178,29 @@ test("admin can create, list, update, and delete buildings and parking areas", a
 
 test("dashboard reports live capacity and occupancy totals for active parking areas", async () => {
     const testServer = await createManageTestServer();
-    const { database, port, cookie, buildingId } = testServer;
+    const { database, port, cookie, buildingId, administratorId } = testServer;
+    const activeParkingId = randomUUID();
+    const closedParkingId = randomUUID();
 
     try {
         database
             .prepare(`
                 INSERT INTO PARKING_AREA (
+                    Parking_Area_ID,
                     Administrator_ID,
                     Building_ID,
                     Parking_Area_Name,
+                    Parking_Area_Latitude,
+                    Parking_Area_Longitude,
+                    Parking_Type,
                     Parking_Area_Capacity,
                     Parking_Area_Occupied_Spaces,
                     Parking_Area_isActive
-                ) VALUES (?, ?, ?, ?, ?, ?), (?, ?, ?, ?, ?, ?)
+                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?), (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
             `)
             .run(
-                1, buildingId, "North Lot", 40, 12, 1,
-                1, buildingId, "Closed Lot", 20, 5, 0,
+                activeParkingId, administratorId, buildingId, "North Lot", -26.681, 27.101, "Student", 40, 12, 1,
+                closedParkingId, administratorId, buildingId, "Closed Lot", -26.682, 27.102, "Staff", 20, 5, 0,
             );
 
         const response = await request(port, "/dashboard", { cookie });
@@ -206,7 +216,7 @@ test("dashboard reports live capacity and occupancy totals for active parking ar
         });
         assert.deepEqual(body.parkingAreas, [
             {
-                id: 1,
+                id: activeParkingId,
                 name: "North Lot",
                 buildingName: "Engineering",
                 capacity: 40,
@@ -222,23 +232,29 @@ test("dashboard reports live capacity and occupancy totals for active parking ar
 
 test("dashboard treats only non-expired full reports as full parking areas", async () => {
     const testServer = await createManageTestServer();
-    const { database, port, cookie, buildingId } = testServer;
+    const { database, port, cookie, buildingId, administratorId } = testServer;
+    const activeParkingId = randomUUID();
+    const expiredParkingId = randomUUID();
 
     try {
         database
             .prepare(`
                 INSERT INTO PARKING_AREA (
+                    Parking_Area_ID,
                     Administrator_ID,
                     Building_ID,
                     Parking_Area_Name,
+                    Parking_Area_Latitude,
+                    Parking_Area_Longitude,
+                    Parking_Type,
                     Parking_Area_Capacity,
                     Parking_Area_Occupied_Spaces,
                     Parking_Area_isActive
-                ) VALUES (?, ?, ?, ?, ?, ?), (?, ?, ?, ?, ?, ?)
+                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?), (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
             `)
             .run(
-                1, buildingId, "Active Report Lot", 40, 7, 1,
-                1, buildingId, "Expired Report Lot", 20, 5, 1,
+                activeParkingId, administratorId, buildingId, "Active Report Lot", -26.681, 27.101, "Student", 40, 7, 1,
+                expiredParkingId, administratorId, buildingId, "Expired Report Lot", -26.682, 27.102, "Staff", 20, 5, 1,
             );
         const activeAreaId = database
             .prepare("SELECT Parking_Area_ID AS id FROM PARKING_AREA WHERE Parking_Area_Name = ?")
@@ -250,15 +266,18 @@ test("dashboard treats only non-expired full reports as full parking areas", asy
         database
             .prepare(`
                 INSERT INTO PARKING_FULL_REPORT (
+                    Report_ID,
                     Parking_Area_ID,
                     Report_Submitted_Time,
                     Report_Expiry_Time
-                ) VALUES (?, ?, ?), (?, ?, ?)
+                ) VALUES (?, ?, ?, ?), (?, ?, ?, ?)
             `)
             .run(
+                randomUUID(),
                 activeAreaId,
                 new Date(now - 60_000).toISOString(),
                 new Date(now + 10 * 60_000).toISOString(),
+                randomUUID(),
                 expiredAreaId,
                 new Date(now - 60 * 60_000).toISOString(),
                 new Date(now - 30 * 60_000).toISOString(),
@@ -326,13 +345,29 @@ test("management validates inputs and prevents deleting a building with parking 
         const parking = database
             .prepare(`
                 INSERT INTO PARKING_AREA (
+                    Parking_Area_ID,
                     Administrator_ID,
                     Building_ID,
-                    Parking_Area_Name
-                ) VALUES (?, ?, ?)
+                    Parking_Area_Name,
+                    Parking_Area_Latitude,
+                    Parking_Area_Longitude,
+                    Parking_Type,
+                    Parking_Area_Capacity,
+                    Parking_Area_Occupied_Spaces
+                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
             `)
-            .run(1, buildingId, "Existing Lot");
-        assert.ok(parking.lastInsertRowid);
+            .run(
+                randomUUID(),
+                testServer.administratorId,
+                buildingId,
+                "Existing Lot",
+                -26.681,
+                27.101,
+                "Student",
+                10,
+                0,
+            );
+        assert.ok(parking.changes);
 
         const deleteBuilding = await request(
             port,
@@ -357,7 +392,7 @@ test("parking-area create rejects a building that does not exist", async () => {
                 name: "Unassigned Lot",
                 category: "Guest",
                 capacity: 5,
-                buildingId: 9999,
+                buildingId: randomUUID(),
                 latitude: 0,
                 longitude: 0,
             },
@@ -374,28 +409,53 @@ test("parking-area create rejects a building that does not exist", async () => {
 
 test("parking areas with reports cannot be deleted", async () => {
     const testServer = await createManageTestServer();
-    const parkingArea = testServer.database
-        .prepare(`
-            INSERT INTO PARKING_AREA (
-                Administrator_ID,
-                Building_ID,
-                Parking_Area_Name
-            ) VALUES (?, ?, ?)
-        `)
-        .run(1, testServer.buildingId, "Reported Lot");
-    testServer.database
-        .prepare(`
-            INSERT INTO PARKING_FULL_REPORT (
-                Parking_Area_ID,
-                Report_Submitted_Time
-            ) VALUES (?, ?)
-        `)
-        .run(parkingArea.lastInsertRowid, "2026-10-09T09:00:00Z");
+    const parkingAreaId = randomUUID();
 
     try {
+        testServer.database
+            .prepare(`
+                INSERT INTO PARKING_AREA (
+                    Parking_Area_ID,
+                    Administrator_ID,
+                    Building_ID,
+                    Parking_Area_Name,
+                    Parking_Area_Latitude,
+                    Parking_Area_Longitude,
+                    Parking_Type,
+                    Parking_Area_Capacity,
+                    Parking_Area_Occupied_Spaces
+                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+            `)
+            .run(
+                parkingAreaId,
+                testServer.administratorId,
+                testServer.buildingId,
+                "Reported Lot",
+                -26.681,
+                27.101,
+                "Student",
+                10,
+                0,
+            );
+        testServer.database
+            .prepare(`
+                INSERT INTO PARKING_FULL_REPORT (
+                    Report_ID,
+                    Parking_Area_ID,
+                    Report_Submitted_Time,
+                    Report_Expiry_Time
+                ) VALUES (?, ?, ?, ?)
+            `)
+            .run(
+                randomUUID(),
+                parkingAreaId,
+                "2026-10-09T09:00:00Z",
+                "2026-10-09T09:30:00Z",
+            );
+
         const response = await request(
             testServer.port,
-            `/parking-areas/${parkingArea.lastInsertRowid}`,
+            `/parking-areas/${parkingAreaId}`,
             { method: "DELETE", cookie: testServer.cookie },
         );
 
