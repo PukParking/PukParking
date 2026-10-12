@@ -12,3 +12,4 @@ dist/
 bin/
 obj/
 /server/data/pukparking.sqlite-*
+/server/data/pukparking.sqlite
