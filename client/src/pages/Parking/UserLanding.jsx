@@ -7,6 +7,7 @@ import {
 import "./UserLanding.css";
 
 import { mockBuildings, mockParkingLots } from "../../data/mockCampusData";
+import { fetchBuildings, fetchParkingAreas } from "../../services/parkingApi";
 import logo from "../../assets/pukparking-logo.png";
 import carIcon from "../../assets/car-icon.png";
 import locationIcon from "../../assets/location-icon.png";
@@ -17,6 +18,8 @@ function UserLanding() {
 
   const [start, setStart] = useState("gps");
   const [destination, setDestination] = useState("");
+  const [buildings, setBuildings] = useState(mockBuildings);
+  const [parkingLots, setParkingLots] = useState(mockParkingLots);
 
   const storedUserType =
     sessionStorage.getItem("selectedUserType");
@@ -53,10 +56,33 @@ function UserLanding() {
   }, [userType]);
 
   useEffect(() => {
-    if (destination === start) {
+    const controller = new AbortController();
+
+    fetchBuildings({ signal: controller.signal }).then(setBuildings).catch((error) => {
+      if (error.name !== "AbortError") {
+        console.error("Unable to load buildings.", error);
+      }
+    });
+
+    fetchParkingAreas({ signal: controller.signal })
+      .then(setParkingLots)
+      .catch((error) => {
+        if (error.name !== "AbortError") {
+          console.error("Unable to load parking areas.", error);
+        }
+      });
+
+    return () => controller.abort();
+  }, []);
+
+  const handleStartChange = (event) => {
+    const nextStart = event.target.value;
+    setStart(nextStart);
+
+    if (destination === nextStart) {
       setDestination("");
     }
-  }, [start, destination]);
+  };
 
   const handleFind = (event) => {
     event.preventDefault();
@@ -203,9 +229,7 @@ function UserLanding() {
                   id="start"
                   value={start}
                   required
-                  onChange={(event) =>
-                    setStart(event.target.value)
-                  }
+                  onChange={handleStartChange}
                 >
                   <option
                     value="gps"
@@ -213,7 +237,7 @@ function UserLanding() {
                     My Current Location (GPS)
                   </option>
 
-                  {mockParkingLots.map((lot) => (
+                  {parkingLots.map((lot) => (
                     <option key={lot.id} value={lot.id}>
                       {lot.name} — {lot.accessGate}
                     </option>
@@ -266,7 +290,7 @@ function UserLanding() {
                     Select destination
                   </option>
 
-                  {mockBuildings.map((building) => (
+                  {buildings.map((building) => (
                     <option key={building.id} value={building.id}>
                       {building.name} ({building.code})
                     </option>

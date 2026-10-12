@@ -8,6 +8,7 @@ import {
   defaultZoom,
   mockBuildings,
 } from "../data/mockCampusData";
+import { normalizeLocation } from "../data/dataUtils";
 import { getWalkingRoute } from "../services/mapboxDirections";
 import "./NavigationPage.css";
 
@@ -26,45 +27,17 @@ function normalizeCategory(value) {
   return userCategories.find((item) => item.toLowerCase() === category);
 }
 
-function parseCoordinates(value) {
-  let coordinates = value;
-
-  if (typeof coordinates === "string") {
-    coordinates = coordinates.split(",").map((coordinate) => Number(coordinate.trim()));
-  } else if (
-    coordinates &&
-    !Array.isArray(coordinates) &&
-    typeof coordinates === "object"
-  ) {
-    coordinates = [
-      coordinates.longitude ?? coordinates.lng,
-      coordinates.latitude ?? coordinates.lat,
-    ];
+function clearRouteLayer(map) {
+  if (map.getLayer("walking-route-line")) {
+    map.removeLayer("walking-route-line");
   }
 
-  if (
-    !Array.isArray(coordinates) ||
-    coordinates.length !== 2 ||
-    !coordinates.every(
-      (coordinate) =>
-        coordinate !== null &&
-        coordinate !== undefined &&
-        coordinate !== "" &&
-        Number.isFinite(Number(coordinate)),
-    )
-  ) {
-    return null;
+  if (map.getSource("walking-route")) {
+    map.removeSource("walking-route");
   }
-
-  const [longitude, latitude] = coordinates.map(Number);
-  if (longitude < -180 || longitude > 180 || latitude < -90 || latitude > 90) {
-    return null;
-  }
-
-  return [longitude, latitude];
 }
 
-function getInitialSelection(location) {
+function getInitialSelection(location, buildings = mockBuildings) {
   const state = location.state || {};
   const searchParams = new URLSearchParams(location.search);
   const category =
@@ -78,7 +51,7 @@ function getInitialSelection(location) {
   const destinationLabel =
     typeof destinationValue === "string" ? destinationValue : state.destination?.name;
   const normalizedDestination = normalizeLabel(destinationLabel || destinationValue || "");
-  const matchedBuilding = mockBuildings.find(
+  const matchedBuilding = buildings.find(
     (building) =>
       normalizeLabel(building.id) === normalizedDestination ||
       normalizeLabel(building.code) === normalizedDestination ||
@@ -119,13 +92,13 @@ function getInitialSelection(location) {
       : typeof destinationValue === "string"
         ? destinationValue
         : null);
-  const coordinates = parseCoordinates(coordinateValue);
+  const coordinates = normalizeLocation(coordinateValue);
 
   if (!coordinates) {
     return { category, destinationId: "", customDestination: null };
   }
 
-  const buildingAtCoordinates = mockBuildings.find(
+  const buildingAtCoordinates = buildings.find(
     (building) =>
       building.coordinates[0] === coordinates[0] &&
       building.coordinates[1] === coordinates[1],
@@ -302,6 +275,19 @@ function NavigationPage() {
       showUserHeading: true,
     });
     map.addControl(geolocate, "top-right");
+    geolocate.on("error", (event) => {
+      const code = event?.code ?? event?.error?.code;
+      const permissionDenied =
+        code === "PERMISSION_DENIED" || code === 1 || event?.error?.message?.toLowerCase().includes("permission");
+
+      if (permissionDenied) {
+        console.warn("User denied geolocation access for navigation.");
+        return;
+      }
+
+      console.error("Geolocation error:", event?.error ?? event);
+    });
+
     map.on("error", (event) => {
       const error = event.error;
       const message =
@@ -322,6 +308,7 @@ function NavigationPage() {
     return () => {
       markersRef.current.forEach((marker) => marker.remove());
       markersRef.current = [];
+      clearRouteLayer(map);
       map.remove();
       mapRef.current = null;
       setMapReady(false);
@@ -342,7 +329,7 @@ function NavigationPage() {
         building.id === destinationId ? " is-selected" : ""
       }`;
       element.textContent = building.code;
-      element.title = `${building.name} — ${building.category}: ${building.description}`;
+      element.title = `${building.name} — ${building.category || "Campus building"}: ${building.description}`;
       element.setAttribute("aria-label", `Set destination to ${building.name}`);
       element.addEventListener("click", () => {
         setDestinationId(building.id);
@@ -396,25 +383,30 @@ function NavigationPage() {
     const map = mapRef.current;
     if (!mapReady || !map) return undefined;
 
-    const source = map.getSource("walking-route");
     if (!destination || !activeLot) {
-      source?.setData({ type: "FeatureCollection", features: [] });
+      clearRouteLayer(map);
+      queueMicrotask(() => {
+        setRoute(null);
+        setRouteError("");
+        setRouteStatus("idle");
+      });
       return undefined;
     }
 
     const controller = new AbortController();
-    source?.setData({ type: "FeatureCollection", features: [] });
+    clearRouteLayer(map);
+    queueMicrotask(() => {
+      setRoute(null);
+      setRouteError("");
+      setRouteStatus("loading");
+    });
 
     Promise.resolve()
-      .then(() => {
-        if (controller.signal.aborted) return null;
-        setRoute(null);
-        setRouteError("");
-        setRouteStatus("loading");
-        return getWalkingRoute(activeLot.coordinates, destination.coordinates, {
+      .then(() =>
+        getWalkingRoute(activeLot.coordinates, destination.coordinates, {
           signal: controller.signal,
-        });
-      })
+        }),
+      )
       .then((nextRoute) => {
         if (controller.signal.aborted || !nextRoute) return;
 
@@ -458,7 +450,8 @@ function NavigationPage() {
       })
       .catch((error) => {
         if (controller.signal.aborted) return;
-        setRouteError(error.message || "Unable to calculate this walking route.");
+        const message = error.message || "Unable to calculate this walking route.";
+        setRouteError(message);
         setRouteStatus("error");
       });
 

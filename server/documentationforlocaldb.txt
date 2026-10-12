@@ -69,15 +69,17 @@ unexpired-report rule.
 ## SQLite database
 
 Starting the server opens `data/pukparking.sqlite` (creating the file if needed)
-and applies the table definitions in `data/table structure.sql`. The tables are
-created if they do not already exist. The old `Administrator_Username` column is
-migrated to `Administrator_Email` for an existing local database, and email
-uniqueness is enforced without case sensitivity. No building, parking-area,
-report, or feedback records are inserted automatically.
+and applies the table definitions in `data/table structure.sql`. Existing
+integer-ID database rows are migrated to UUID-based IDs while preserving
+building, parking-area, and full-report relationships. Legacy administrator
+usernames are mapped to the email column; update those values to real email
+addresses before using those accounts to sign in. Email uniqueness is enforced
+without case sensitivity. No records are inserted automatically; `npm run seed`
+can add the sample buildings and parking areas to an empty database.
 
-Parking areas reference a building. Existing parking-area rows are preserved
-when this relationship is added and remain unassigned until an administrator
-edits the row and selects a building.
+Parking areas may remain unassigned when migrated from a legacy database;
+new parking areas created through the admin interface must reference an
+existing building.
 
 Run the utility tests with:
 

@@ -1,17 +1,14 @@
-/server/node_modules/
-/server/.env
-/server/.env.*
-!/server/.env.example
-/.env
-/.env.*
-!/.env.example
+*.db
+*.sqlite
+*.sqlite3
+.env
+.env.*
+!.env.example
+!**/.env.example
+
 node_modules/
 dist/
-
-# .NET build and IDE artifacts
-**/bin/
-**/obj/
-**/.vs/
-
-# Local SQLite database
-/server/data/pukparking.sqlite
+.vs/
+bin/
+obj/
+/server/data/pukparking.sqlite-*
