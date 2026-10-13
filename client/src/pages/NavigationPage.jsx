@@ -10,6 +10,7 @@ import {
 } from "../data/mockCampusData";
 import { normalizeLocation } from "../data/dataUtils";
 import { getWalkingRoute } from "../services/mapboxDirections";
+import { fetchBuildings } from "../services/parkingApi";
 import "./NavigationPage.css";
 
 const accessToken = import.meta.env.VITE_MAPBOX_ACCESS_TOKEN;
@@ -150,6 +151,7 @@ function NavigationPage() {
   const [customDestination, setCustomDestination] = useState(
     initialSelection.customDestination,
   );
+  const [buildings, setBuildings] = useState(mockBuildings);
   const [parkingLots, setParkingLots] = useState([]);
   const [parkingLoadError, setParkingLoadError] = useState("");
   const [isLoadingParking, setIsLoadingParking] = useState(true);
@@ -161,7 +163,29 @@ function NavigationPage() {
 
   const destination =
     customDestination ||
-    mockBuildings.find((building) => building.id === destinationId);
+    buildings.find((building) => building.id === destinationId);
+
+  useEffect(() => {
+    const controller = new AbortController();
+
+    fetchBuildings({ signal: controller.signal })
+      .then((nextBuildings) => {
+        setBuildings(nextBuildings);
+
+        const nextSelection = getInitialSelection(location, nextBuildings);
+        if (nextSelection.destinationId) {
+          setDestinationId(nextSelection.destinationId);
+          setCustomDestination(nextSelection.customDestination);
+        }
+      })
+      .catch((error) => {
+        if (error.name !== "AbortError") {
+          console.error("Unable to load buildings.", error);
+        }
+      });
+
+    return () => controller.abort();
+  }, [location]);
   useEffect(() => {
     let isCurrent = true;
 
@@ -322,7 +346,7 @@ function NavigationPage() {
     markersRef.current.forEach((marker) => marker.remove());
     markersRef.current = [];
 
-    mockBuildings.forEach((building) => {
+    buildings.forEach((building) => {
       const element = document.createElement("button");
       element.type = "button";
       element.className = `campus-marker campus-marker--building${
@@ -377,7 +401,7 @@ function NavigationPage() {
           .addTo(map),
       );
     }
-  }, [activeLot, category, customDestination, destinationId, mapReady, parkingLots]);
+  }, [activeLot, buildings, category, customDestination, destinationId, mapReady, parkingLots]);
 
   useEffect(() => {
     const map = mapRef.current;
@@ -552,7 +576,7 @@ function NavigationPage() {
             {customDestination && (
               <option value={CUSTOM_DESTINATION_ID}>{customDestination.name}</option>
             )}
-            {mockBuildings.map((building) => (
+            {buildings.map((building) => (
               <option key={building.id} value={building.id}>
                 {building.name}
               </option>
