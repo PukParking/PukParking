@@ -16,7 +16,7 @@ const TEST_CLIENT_ORIGIN = "http://localhost:5173";
 const currentDirectory = dirname(fileURLToPath(import.meta.url));
 const schemaPath = join(
     currentDirectory,
-    "../../data/table structure.sql",
+    "../../data/tableStructure.sql",
 );
 
 async function createAuthTestServer() {

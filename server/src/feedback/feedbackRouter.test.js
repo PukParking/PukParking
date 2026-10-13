@@ -14,7 +14,7 @@ import { createApp } from "../app.js";
 const TEST_JWT_SECRET = "test-only-signing-secret-at-least-32-bytes";
 const TEST_CLIENT_ORIGIN = "http://localhost:5173";
 const currentDirectory = dirname(fileURLToPath(import.meta.url));
-const schemaPath = join(currentDirectory, "../../data/table structure.sql");
+const schemaPath = join(currentDirectory, "../../data/tableStructure.sql");
 
 async function createFeedbackTestServer() {
     const database = new Database(":memory:");

@@ -11,7 +11,7 @@ process.env.CLIENT_ORIGIN = process.env.CLIENT_ORIGIN ?? "http://localhost:5173"
 const database = new Database(":memory:");
 initializeDatabase(
     database,
-    readFileSync(new URL("../data/table structure.sql", import.meta.url), "utf8"),
+    readFileSync(new URL("../data/tableStructure.sql", import.meta.url), "utf8"),
 );
 
 const administratorId = randomUUID();

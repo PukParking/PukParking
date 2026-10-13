@@ -6,7 +6,7 @@ import { initializeDatabase } from "./initialize.js";
 
 const dataDirectory = dirname(fileURLToPath(import.meta.url));
 const databasePath = join(dataDirectory, "pukparking.sqlite");
-const schemaPath = join(dataDirectory, "table structure.sql");
+const schemaPath = join(dataDirectory, "tableStructure.sql");
 
 if (!existsSync(databasePath)) {
     mkdirSync(dataDirectory, { recursive: true });

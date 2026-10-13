@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import mapboxgl from "mapbox-gl";
-import { useLocation } from "react-router-dom";
+import {Link, useLocation } from "react-router-dom";
 
 import {
   campusBounds,
@@ -504,10 +504,10 @@ function NavigationPage() {
   return (
     <main className="navigation-page">
       <header className="navigation-header">
-        <a className="navigation-brand" href="/home" aria-label="PukParking home">
+        <Link className="navigation-brand" to="/home" aria-label="PukParking home">
           <span className="navigation-brand-mark">P</span>
           <span>PukParking</span>
-        </a>
+        </Link>
         <div className="navigation-campus-label">
           <span className="navigation-live-dot" />
           NWU Potchefstroom Campus

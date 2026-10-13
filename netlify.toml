@@ -4,3 +4,8 @@
   # folder committed to the repo.
   command = "npm ci --prefix client --include=dev && npm run build --prefix client"
   publish = "client/dist"
+  
+  [[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200

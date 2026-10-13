@@ -73,7 +73,7 @@ unexpired-report rule.
 ## SQLite database
 
 Starting the server opens `data/pukparking.sqlite` (creating the file if needed)
-and applies the table definitions in `data/table structure.sql`. Existing
+and applies the table definitions in `data/tableStructure.sql`. Existing
 integer-ID database rows are migrated to UUID-based IDs while preserving
 building, parking-area, and full-report relationships. Legacy administrator
 usernames are mapped to the email column; update those values to real email
