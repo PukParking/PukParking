@@ -249,7 +249,7 @@ test("parking full report records UTC timestamps with a 30-minute expiry and is 
     }
 });
 
-test("full-report submission rejects invalid IDs, inactive areas, and untrusted origins", async () => {
+test("full-report submission rejects invalid IDs and inactive areas from any origin", async () => {
     const testServer = await createParkingTestServer();
 
     try {
@@ -263,19 +263,19 @@ test("full-report submission rejects invalid IDs, inactive areas, and untrusted 
         );
         const invalidId = await request("not-an-id");
         const inactive = await request(testServer.inactiveAreaId);
-        const untrustedOrigin = await request(
+        const otherOrigin = await request(
             testServer.activeAreaId,
             "https://untrusted.example",
         );
 
         assert.equal(invalidId.status, 400);
         assert.equal(inactive.status, 404);
-        assert.equal(untrustedOrigin.status, 403);
+        assert.equal(otherOrigin.status, 200);
         assert.equal(
             testServer.database
                 .prepare("SELECT COUNT(*) AS count FROM PARKING_FULL_REPORT")
                 .get().count,
-            0,
+            1,
         );
     } finally {
         await closeParkingTestServer(testServer);

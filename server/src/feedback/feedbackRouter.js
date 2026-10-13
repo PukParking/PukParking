@@ -1,5 +1,4 @@
 import express from "express";
-import { isAllowedOrigin } from "../security/origin.js";
 
 const USER_TYPES = new Set(["Student", "Staff", "Guest"]);
 const MAX_COMMENT_LENGTH = 1000;
@@ -39,7 +38,7 @@ function feedbackValues(body) {
     };
 }
 
-export function createFeedbackRouter({ database, clientOrigin }) {
+export function createFeedbackRouter({ database }) {
     if (!database) {
         throw new Error("Feedback routes require a database.");
     }
@@ -47,12 +46,6 @@ export function createFeedbackRouter({ database, clientOrigin }) {
     const router = express.Router();
 
     router.post("/", (req, res) => {
-        if (!isAllowedOrigin(req.get("origin"), clientOrigin)) {
-            return res.status(403).json({
-                error: "Request origin not allowed",
-            });
-        }
-
         let values;
         try {
             values = feedbackValues(req.body ?? {});

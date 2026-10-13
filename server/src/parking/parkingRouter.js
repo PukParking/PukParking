@@ -1,6 +1,5 @@
 import { randomUUID } from "node:crypto";
 import express from "express";
-import { isAllowedOrigin } from "../security/origin.js";
 
 const FULL_REPORT_TTL_MS = 30 * 60 * 1000;
 
@@ -79,7 +78,7 @@ function readParkingArea(database, parkingAreaId) {
     };
 }
 
-export function createParkingRouter({ database, clientOrigin }) {
+export function createParkingRouter({ database }) {
     if (!database) {
         throw new Error("Parking routes require a database.");
     }
@@ -105,12 +104,6 @@ export function createParkingRouter({ database, clientOrigin }) {
     });
 
     router.post("/areas/:id/full-report", (req, res) => {
-        if (!isAllowedOrigin(req.get("origin"), clientOrigin)) {
-            return res.status(403).json({
-                error: "Request origin not allowed",
-            });
-        }
-
         const parkingAreaId = validId(req.params.id);
         if (!parkingAreaId) {
             return res.status(400).json({

@@ -89,13 +89,13 @@ function buildingExists(database, buildingId) {
     );
 }
 
-export function createManageRouter({ database, jwtSecret, clientOrigin }) {
+export function createManageRouter({ database, jwtSecret }) {
     if (!database || !jwtSecret) {
         throw new Error("Admin management routes require a database and JWT secret.");
     }
 
     const router = express.Router();
-    const requireAdmin = createRequireAdmin({ database, jwtSecret, clientOrigin });
+    const requireAdmin = createRequireAdmin({ database, jwtSecret });
 
     router.use(requireAdmin);
 
