@@ -49,7 +49,7 @@ function validatePasswordInput(password) {
     }
 }
 
-export async function hashPassword(password) {
+export function validatePasswordPolicy(password) {
     validatePasswordInput(password);
 
     if (Array.from(password).length < MIN_PASSWORD_CHARACTERS) {
@@ -65,7 +65,10 @@ export async function hashPassword(password) {
             "Choose a password that is not commonly used.",
         );
     }
+}
 
+export async function hashPassword(password) {
+    validatePasswordPolicy(password);
     return bcrypt.hash(password, BCRYPT_ROUNDS);
 }
 

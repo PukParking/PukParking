@@ -1,6 +1,33 @@
 import { StringDecoder } from "node:string_decoder";
 import readline from "node:readline/promises";
 import { stdin, stdout } from "node:process";
+import {
+    PasswordPolicyError,
+    validatePasswordPolicy,
+} from "../src/auth/password.js";
+import { normalizeAdministratorEmail } from "../src/admin/provisionFirstAdministrator.js";
+
+async function promptForEmail() {
+    while (true) {
+        const prompts = readline.createInterface({ input: stdin, output: stdout });
+        let email;
+
+        try {
+            email = await prompts.question("Administrator email: ");
+        } finally {
+            prompts.close();
+        }
+
+        try {
+            return normalizeAdministratorEmail(email);
+        } catch (error) {
+            if (!(error instanceof TypeError)) {
+                throw error;
+            }
+            stdout.write(`${error.message}\n`);
+        }
+    }
+}
 
 function promptForHiddenPassword(prompt) {
     if (!stdin.isTTY || typeof stdin.setRawMode !== "function") {
@@ -73,25 +100,36 @@ export async function promptForAdministratorCredentials() {
         );
     }
 
-    const prompts = readline.createInterface({ input: stdin, output: stdout });
-    let email;
+    const email = await promptForEmail();
 
-    try {
-        email = await prompts.question("Administrator email: ");
-    } finally {
-        prompts.close();
+    while (true) {
+        const password = await promptForHiddenPassword(
+            "Administrator password (input hidden): ",
+        );
+
+        try {
+            validatePasswordPolicy(password);
+        } catch (error) {
+            if (
+                !(error instanceof TypeError) &&
+                !(error instanceof PasswordPolicyError)
+            ) {
+                throw error;
+            }
+            stdout.write(`${error.message}\n`);
+            continue;
+        }
+
+        while (true) {
+            const confirmation = await promptForHiddenPassword(
+                "Confirm password (input hidden): ",
+            );
+
+            if (password === confirmation) {
+                return { email, password };
+            }
+
+            stdout.write("Passwords do not match. Please try again.\n");
+        }
     }
-
-    const password = await promptForHiddenPassword(
-        "Administrator password (input hidden): ",
-    );
-    const confirmation = await promptForHiddenPassword(
-        "Confirm password (input hidden): ",
-    );
-
-    if (password !== confirmation) {
-        throw new Error("Passwords do not match.");
-    }
-
-    return { email, password };
 }
