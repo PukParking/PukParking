@@ -30,7 +30,7 @@ export function createAdminAuthRouter({
     }
 
     const router = express.Router();
-    const requireAdmin = createRequireAdmin({ jwtSecret, clientOrigin });
+    const requireAdmin = createRequireAdmin({ database, jwtSecret, clientOrigin });
     const cookieOptions = {
         httpOnly: true,
         secure: process.env.NODE_ENV === "production",
@@ -108,7 +108,8 @@ export function createAdminAuthRouter({
                     Administrator_ID AS id,
                     Administrator_Email AS email,
                     Administrator_passwordHash AS passwordHash,
-                    Administrator_Permissions AS permissions
+                    Administrator_Permissions AS permissions,
+                    Administrator_SessionVersion AS sessionVersion
                 FROM ADMINISTRATOR
                 WHERE Administrator_Email = ? COLLATE NOCASE
             `)
@@ -143,7 +144,10 @@ export function createAdminAuthRouter({
             }
 
             const accessToken = jwt.sign(
-                { email: administrator.email },
+                {
+                    email: administrator.email,
+                    sessionVersion: administrator.sessionVersion,
+                },
                 jwtSecret,
                 {
                     algorithm: "HS256",
@@ -233,7 +237,9 @@ export function createAdminAuthRouter({
             database
                 .prepare(`
                     UPDATE ADMINISTRATOR
-                    SET Administrator_passwordHash = ?
+                    SET
+                        Administrator_passwordHash = ?,
+                        Administrator_SessionVersion = Administrator_SessionVersion + 1
                     WHERE Administrator_ID = ?
                 `)
                 .run(passwordHash, administratorId);
@@ -265,6 +271,19 @@ export function createAdminAuthRouter({
         }
 
         return res.status(200).json({ administrator });
+    });
+
+    router.post("/logout-all", requireTrustedOrigin, requireAdmin, (req, res) => {
+        database
+            .prepare(`
+                UPDATE ADMINISTRATOR
+                SET Administrator_SessionVersion = Administrator_SessionVersion + 1
+                WHERE Administrator_ID = ?
+            `)
+            .run(req.admin.sub);
+
+        res.clearCookie(ADMIN_SESSION_COOKIE, cookieOptions);
+        return res.status(204).end();
     });
 
     router.post("/logout", (req, res) => {

@@ -2,6 +2,18 @@ import { migrateErdSchema } from "./erdSchemaMigration.js";
 
 export function initializeDatabase(database, schema) {
     database.exec(schema);
+
+    const existingAdministratorColumns = database
+        .prepare("PRAGMA table_info(ADMINISTRATOR)")
+        .all()
+        .map((column) => column.name);
+    if (!existingAdministratorColumns.includes("Administrator_SessionVersion")) {
+        database.exec(`
+            ALTER TABLE ADMINISTRATOR
+            ADD COLUMN Administrator_SessionVersion INTEGER NOT NULL DEFAULT 0
+        `);
+    }
+
     migrateErdSchema(database, schema);
 
     const administratorColumns = database

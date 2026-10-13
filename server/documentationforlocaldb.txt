@@ -26,7 +26,10 @@ administrator-registration endpoint.
 `POST /api/auth/login` accepts an email and password and sets a 15-minute HS256
 JWT in an HttpOnly, SameSite=Strict cookie. The token is not exposed to
 JavaScript or returned in the response body. `GET /api/auth/me` returns the
-current administrator profile, and `POST /api/auth/logout` clears the cookie.
+current administrator profile, and `POST /api/auth/logout` clears the current
+browser's cookie. `POST /api/auth/logout-all` increments the administrator's
+session version and clears the current cookie, immediately invalidating every
+previously issued token for that administrator.
 The endpoints reject untrusted browser origins and return the same 401 response
 for an unknown email and an incorrect password. Login allows five failed
 attempts per IP address in a rolling 15-minute window; successful logins do not
@@ -36,9 +39,10 @@ permits loopback origins so Vite can use an alternate port.
 Signed-in administrators can change their password with
 `POST /api/auth/change-password`, supplying `currentPassword` and `newPassword`.
 The current password is verified before the existing password policy is applied
-and only a bcrypt hash is stored. A successful change clears the current
-session cookie; the administrator must sign in again. Other already-issued
-sessions remain valid until their 15-minute JWT expiry.
+and only a bcrypt hash is stored. A successful change increments the session
+version and clears the current session cookie, invalidating all sessions; the
+administrator must sign in again. Every protected request checks the token's
+session version against the administrator record in SQLite.
 
 Authenticated management endpoints are available under `/api/admin`:
 `/buildings` and `/parking-areas` support GET and POST, while individual records
@@ -74,7 +78,8 @@ integer-ID database rows are migrated to UUID-based IDs while preserving
 building, parking-area, and full-report relationships. Legacy administrator
 usernames are mapped to the email column; update those values to real email
 addresses before using those accounts to sign in. Email uniqueness is enforced
-without case sensitivity. No records are inserted automatically; `npm run seed`
+without case sensitivity. Existing databases receive the administrator session
+version column with a default of zero. No records are inserted automatically; `npm run seed`
 can add the sample buildings and parking areas to an empty database.
 
 Parking areas may remain unassigned when migrated from a legacy database;

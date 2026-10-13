@@ -62,6 +62,16 @@ async function postPasswordChange(port, cookie, payload) {
     });
 }
 
+async function postLogoutAll(port, cookie, origin = TEST_CLIENT_ORIGIN) {
+    return fetch(`http://localhost:${port}/api/auth/logout-all`, {
+        method: "POST",
+        headers: {
+            Origin: origin,
+            Cookie: cookie,
+        },
+    });
+}
+
 async function loginCookie(port, password = "correct horse battery staple") {
     const response = await postLogin(port, {
         email: "admin@example.com",
@@ -285,6 +295,7 @@ test("administrator can change their password and must sign in again", async () 
 
     try {
         const cookie = await loginCookie(port);
+        const otherSessionCookie = await loginCookie(port);
         const response = await postPasswordChange(port, cookie, {
             currentPassword: "correct horse battery staple",
             newPassword: "a much stronger password phrase",
@@ -299,6 +310,11 @@ test("administrator can change their password and must sign in again", async () 
             response.headers.get("set-cookie"),
             /Expires=Thu, 01 Jan 1970 00:00:00 GMT/i,
         );
+        const otherSession = await fetch(
+            `http://localhost:${port}/api/auth/me`,
+            { headers: { Cookie: otherSessionCookie } },
+        );
+        assert.equal(otherSession.status, 401);
 
         const storedPasswordHash = database
             .prepare(`
@@ -323,6 +339,76 @@ test("administrator can change their password and must sign in again", async () 
 
         assert.equal(oldPasswordLogin.status, 401);
         assert.equal(newPasswordLogin.status, 200);
+    } finally {
+        await new Promise((resolve, reject) => {
+            server.close((error) => (error ? reject(error) : resolve()));
+        });
+        database.close();
+    }
+});
+
+test("administrator can revoke every active session", async () => {
+    const { database, server, port, administratorId } = await createAuthTestServer();
+
+    try {
+        const currentSession = await loginCookie(port);
+        const otherSession = await loginCookie(port);
+        const response = await postLogoutAll(port, currentSession);
+
+        assert.equal(response.status, 204);
+        assert.match(
+            response.headers.get("set-cookie"),
+            /Expires=Thu, 01 Jan 1970 00:00:00 GMT/i,
+        );
+        assert.equal(
+            database
+                .prepare(`
+                    SELECT Administrator_SessionVersion
+                    FROM ADMINISTRATOR
+                    WHERE Administrator_ID = ?
+                `)
+                .get(administratorId).Administrator_SessionVersion,
+            1,
+        );
+
+        const revokedSessions = await Promise.all(
+            [currentSession, otherSession].map((cookie) =>
+                fetch(`http://localhost:${port}/api/auth/me`, {
+                    headers: { Cookie: cookie },
+                }),
+            ),
+        );
+        assert.deepEqual(
+            revokedSessions.map((session) => session.status),
+            [401, 401],
+        );
+
+        const newSessionCookie = await loginCookie(port);
+        const newSession = await fetch(`http://localhost:${port}/api/auth/me`, {
+            headers: { Cookie: newSessionCookie },
+        });
+        assert.equal(newSession.status, 200);
+    } finally {
+        await new Promise((resolve, reject) => {
+            server.close((error) => (error ? reject(error) : resolve()));
+        });
+        database.close();
+    }
+});
+
+test("session revocation requires an authenticated trusted-origin request", async () => {
+    const { database, server, port } = await createAuthTestServer();
+
+    try {
+        const unauthenticated = await postLogoutAll(port, "");
+        const untrustedOrigin = await postLogoutAll(
+            port,
+            await loginCookie(port),
+            "https://untrusted.example",
+        );
+
+        assert.equal(unauthenticated.status, 401);
+        assert.equal(untrustedOrigin.status, 403);
     } finally {
         await new Promise((resolve, reject) => {
             server.close((error) => (error ? reject(error) : resolve()));

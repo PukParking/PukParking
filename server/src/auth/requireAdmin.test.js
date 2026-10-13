@@ -3,14 +3,27 @@ import { once } from "node:events";
 import express from "express";
 import jwt from "jsonwebtoken";
 import test from "node:test";
+import Database from "better-sqlite3";
 
-import { requireAdmin } from "./requireAdmin.js";
+import { createRequireAdmin } from "./requireAdmin.js";
 
 const TEST_SECRET = "test-only-secret-do-not-use-in-production";
 process.env.JWT_SECRET = TEST_SECRET;
 
 async function requestProtectedRoute(token) {
+    const database = new Database(":memory:");
+    database.exec(`
+        CREATE TABLE ADMINISTRATOR (
+            Administrator_ID TEXT PRIMARY KEY,
+            Administrator_SessionVersion INTEGER NOT NULL DEFAULT 0
+        );
+        INSERT INTO ADMINISTRATOR (Administrator_ID) VALUES ('admin-1');
+    `);
     const app = express();
+    const requireAdmin = createRequireAdmin({
+        database,
+        jwtSecret: TEST_SECRET,
+    });
 
     app.get("/protected", requireAdmin, (req, res) => {
         res.json({ adminId: req.admin.sub });
@@ -30,6 +43,7 @@ async function requestProtectedRoute(token) {
         await new Promise((resolve, reject) => {
             server.close((error) => (error ? reject(error) : resolve()));
         });
+        database.close();
     }
 }
 
@@ -53,7 +67,7 @@ test("invalid token is rejected", async () => {
 
 test("expired token is rejected", async () => {
     const token = jwt.sign(
-        { sub: "admin-1" },
+        { sub: "admin-1", sessionVersion: 0 },
         TEST_SECRET,
         { algorithm: "HS256", expiresIn: -1 },
     );
@@ -67,7 +81,7 @@ test("expired token is rejected", async () => {
 
 test("valid token reaches the protected route", async () => {
     const token = jwt.sign(
-        { sub: "admin-1" },
+        { sub: "admin-1", sessionVersion: 0 },
         TEST_SECRET,
         { algorithm: "HS256", expiresIn: "5m" },
     );
@@ -75,4 +89,18 @@ test("valid token reaches the protected route", async () => {
 
     assert.equal(response.status, 200);
     assert.deepEqual(await response.json(), { adminId: "admin-1" });
+});
+
+test("revoked administrator session version is rejected", async () => {
+    const token = jwt.sign(
+        { sub: "admin-1", sessionVersion: 1 },
+        TEST_SECRET,
+        { algorithm: "HS256", expiresIn: "5m" },
+    );
+    const response = await requestProtectedRoute(token);
+
+    assert.equal(response.status, 401);
+    assert.deepEqual(await response.json(), {
+        error: "Authentication required",
+    });
 });

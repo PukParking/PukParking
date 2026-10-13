@@ -4,9 +4,14 @@ import { isAllowedOrigin } from "../security/origin.js";
 export const ADMIN_SESSION_COOKIE = "pukparking_admin_token";
 
 export function createRequireAdmin({
+    database,
     jwtSecret = process.env.JWT_SECRET,
     clientOrigin = process.env.CLIENT_ORIGIN,
 } = {}) {
+    if (!database) {
+        throw new Error("Admin authentication requires a database.");
+    }
+
     return function requireAdmin(req, res, next) {
         if (!jwtSecret) {
             return next(new Error("JWT_SECRET is not configured."));
@@ -41,7 +46,25 @@ export function createRequireAdmin({
                 typeof claims !== "object" ||
                 claims === null ||
                 typeof claims.sub !== "string" ||
-                typeof claims.exp !== "number"
+                typeof claims.exp !== "number" ||
+                !Number.isSafeInteger(claims.sessionVersion) ||
+                claims.sessionVersion < 0
+            ) {
+                return res
+                    .status(401)
+                    .json({ error: "Authentication required" });
+            }
+
+            const administrator = database
+                .prepare(`
+                    SELECT Administrator_SessionVersion AS sessionVersion
+                    FROM ADMINISTRATOR
+                    WHERE Administrator_ID = ?
+                `)
+                .get(claims.sub);
+            if (
+                !administrator ||
+                administrator.sessionVersion !== claims.sessionVersion
             ) {
                 return res
                     .status(401)
@@ -60,8 +83,4 @@ export function createRequireAdmin({
             return next(error);
         }
     };
-}
-
-export function requireAdmin(req, res, next) {
-    return createRequireAdmin()(req, res, next);
 }

@@ -39,7 +39,7 @@ async function createManageTestServer() {
         `)
         .run(buildingId, administrator.id, "Engineering", "ENG", -26.68, 27.1);
     const token = jwt.sign(
-        { email: "admin@example.com" },
+        { email: "admin@example.com", sessionVersion: 0 },
         TEST_JWT_SECRET,
         { algorithm: "HS256", subject: administrator.id, expiresIn: "5m" },
     );

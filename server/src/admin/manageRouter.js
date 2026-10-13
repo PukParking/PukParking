@@ -95,7 +95,7 @@ export function createManageRouter({ database, jwtSecret, clientOrigin }) {
     }
 
     const router = express.Router();
-    const requireAdmin = createRequireAdmin({ jwtSecret, clientOrigin });
+    const requireAdmin = createRequireAdmin({ database, jwtSecret, clientOrigin });
 
     router.use(requireAdmin);
 

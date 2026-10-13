@@ -89,6 +89,12 @@ test("database migration preserves existing parking rows and adds the building r
             .get("Existing Lot");
         assert.equal(migratedArea.Parking_Area_Name, "Existing Lot");
         assert.equal(migratedArea.Building_ID, null);
+        assert.equal(
+            database
+                .prepare("SELECT Administrator_SessionVersion FROM ADMINISTRATOR")
+                .get().Administrator_SessionVersion,
+            0,
+        );
 
         assert.throws(
             () =>
@@ -106,6 +112,44 @@ test("database migration preserves existing parking rows and adds the building r
                     .run(randomUUID(), randomUUID(), "Invalid FK", "BAD", 0, 0),
             /FOREIGN KEY constraint failed/,
         );
+    } finally {
+        database.close();
+    }
+});
+
+test("adding administrator session versions preserves canonical administrator IDs", () => {
+    const database = new Database(":memory:");
+    const currentSchema = readFileSync(schemaPath, "utf8");
+    const previousSchema = currentSchema.replace(
+        ",\n    Administrator_SessionVersion INTEGER NOT NULL DEFAULT 0",
+        "",
+    );
+    const administratorId = randomUUID();
+
+    try {
+        database.exec(previousSchema);
+        database
+            .prepare(`
+                INSERT INTO ADMINISTRATOR (
+                    Administrator_ID,
+                    Administrator_Email,
+                    Administrator_passwordHash
+                ) VALUES (?, ?, ?)
+            `)
+            .run(administratorId, "existing@example.com", "stored-hash");
+
+        initializeDatabase(database, currentSchema);
+
+        const administrator = database
+            .prepare(`
+                SELECT Administrator_ID, Administrator_SessionVersion
+                FROM ADMINISTRATOR
+            `)
+            .get();
+        assert.deepEqual(administrator, {
+            Administrator_ID: administratorId,
+            Administrator_SessionVersion: 0,
+        });
     } finally {
         database.close();
     }

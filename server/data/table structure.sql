@@ -4,7 +4,8 @@ CREATE TABLE IF NOT EXISTS ADMINISTRATOR (
     Administrator_ID TEXT PRIMARY KEY NOT NULL,
     Administrator_Email TEXT NOT NULL COLLATE NOCASE,
     Administrator_passwordHash TEXT NOT NULL,
-    Administrator_Permissions TEXT
+    Administrator_Permissions TEXT,
+    Administrator_SessionVersion INTEGER NOT NULL DEFAULT 0
 );
 
 CREATE TABLE IF NOT EXISTS BUILDING (

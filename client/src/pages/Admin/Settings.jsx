@@ -11,6 +11,9 @@ function Settings() {
     const [error, setError] = useState("");
     const [success, setSuccess] = useState("");
     const [isSubmitting, setIsSubmitting] = useState(false);
+    const [sessionError, setSessionError] = useState("");
+    const [sessionsRevoked, setSessionsRevoked] = useState(false);
+    const [isRevokingSessions, setIsRevokingSessions] = useState(false);
 
     async function handlePasswordChange(event) {
         event.preventDefault();
@@ -45,6 +48,30 @@ function Settings() {
             setError("Unable to reach the password service. Please try again.");
         } finally {
             setIsSubmitting(false);
+        }
+    }
+
+    async function handleRevokeSessions() {
+        setSessionError("");
+        setIsRevokingSessions(true);
+
+        try {
+            const response = await fetch("/api/auth/logout-all", {
+                method: "POST",
+                credentials: "include",
+            });
+
+            if (!response.ok) {
+                const result = await response.json();
+                setSessionError(result.error || "Unable to sign out all sessions.");
+                return;
+            }
+
+            setSessionsRevoked(true);
+        } catch {
+            setSessionError("Unable to reach the session service. Please try again.");
+        } finally {
+            setIsRevokingSessions(false);
         }
     }
 
@@ -130,6 +157,41 @@ function Settings() {
                             {isSubmitting ? "Updating..." : "Update password"}
                         </button>
                     </form>
+                )}
+            </section>
+
+            <section className="settings-card" aria-labelledby="sessions-heading">
+                <h2 id="sessions-heading">Active sessions</h2>
+                <p>
+                    Sign out this account on every device. You will need to sign
+                    in again.
+                </p>
+                {sessionsRevoked ? (
+                    <div className="settings-success" role="status">
+                        <p>All sessions have been signed out.</p>
+                        <button
+                            type="button"
+                            onClick={() => navigate("/admin", { replace: true })}
+                        >
+                            Continue to sign in
+                        </button>
+                    </div>
+                ) : (
+                    <div className="session-revoke-actions">
+                        {sessionError && (
+                            <p className="settings-error" role="alert">
+                                {sessionError}
+                            </p>
+                        )}
+                        <button
+                            type="button"
+                            className="revoke-sessions-button"
+                            onClick={handleRevokeSessions}
+                            disabled={isRevokingSessions}
+                        >
+                            {isRevokingSessions ? "Signing out..." : "Sign out all sessions"}
+                        </button>
+                    </div>
                 )}
             </section>
         </div>

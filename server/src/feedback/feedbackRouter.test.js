@@ -25,7 +25,7 @@ async function createFeedbackTestServer() {
         "correct horse battery staple",
     );
     const token = jwt.sign(
-        { email: "admin@example.com" },
+        { email: "admin@example.com", sessionVersion: 0 },
         TEST_JWT_SECRET,
         {
             algorithm: "HS256",

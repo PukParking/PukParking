@@ -6,6 +6,7 @@ const canonicalColumns = {
         "Administrator_Email",
         "Administrator_passwordHash",
         "Administrator_Permissions",
+        "Administrator_SessionVersion",
     ],
     BUILDING: [
         "Building_ID",
