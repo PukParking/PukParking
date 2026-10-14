@@ -1,0 +1,930 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "F5 Law Building",
+        "type": "building",
+        "code": "F5"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          27.0909447,
+          -26.6886867
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Ferdinand Postma-Library",
+        "type": "building",
+        "code": "E7"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          27.0918175,
+          -26.6890547
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "F6 Totius hall",
+        "type": "building",
+        "code": "F6"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          27.0912021,
+          -26.6882167
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Joon van Rooy- building",
+        "type": "building",
+        "code": "F1"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          27.0927595,
+          -26.6881884
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Sanlam Auditorium",
+        "type": "building",
+        "code": "F12"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          27.0930965,
+          -26.6874211
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Klipoog Cafeteria",
+        "type": "amenity"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          27.0929467,
+          -26.6871099
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Amphi theater",
+        "type": "amenity"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          27.0927183,
+          -26.6870129
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "E9 Frans du Toit Building",
+        "type": "building",
+        "code": "E9"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          27.0925949,
+          -26.6894611
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Heimat Building",
+        "type": "building"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          27.0915678,
+          -26.6873408
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Drakenstein",
+        "type": "building",
+        "code": "F14"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          27.0918689,
+          -26.6864294
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "G1",
+        "type": "building",
+        "code": "G1"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          27.0932994,
+          -26.6859593
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "G6",
+        "type": "building",
+        "code": "G6"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          27.0931334,
+          -26.686308
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "G7",
+        "type": "building",
+        "code": "G7"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          27.0928415,
+          -26.6861103
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "G8",
+        "type": "building",
+        "code": "G8"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          27.0928784,
+          -26.6858605
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "G4",
+        "type": "building",
+        "code": "G4"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          27.0938279,
+          -26.6860692
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "G5",
+        "type": "building",
+        "code": "G5"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          27.0937449,
+          -26.686459
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "G20",
+        "type": "building",
+        "code": "G20"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          27.0938264,
+          -26.6850419
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Second entrance",
+        "type": "gate"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          27.0950679,
+          -26.6844122
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Main entrance",
+        "type": "gate"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          27.0931286,
+          -26.6904062
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "NWU Botanical Garden",
+        "type": "amenity"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          27.0948123,
+          -26.6827232
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Engineering campus entrance",
+        "type": "gate"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          27.0960485,
+          -26.6777884
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Engineering campus parking",
+        "type": "parking",
+        "capacity": 50
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          27.0932391,
+          -26.6815521
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "N3D",
+        "type": "building",
+        "code": "N3D"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          27.0939292,
+          -26.6809927
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "N2B",
+        "type": "building",
+        "code": "N2B"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          27.0935877,
+          -26.6807575
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "N2A",
+        "type": "building",
+        "code": "N2A"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          27.0937087,
+          -26.6804078
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "N1",
+        "type": "building",
+        "code": "N1"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          27.094318,
+          -26.6798688
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "N3C",
+        "type": "building",
+        "code": "N3C"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          27.0943038,
+          -26.6806889
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Ratau",
+        "type": "building",
+        "code": "Ratau"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          27.0906662,
+          -26.6915276
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "N3B",
+        "type": "building",
+        "code": "N3B"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          27.0946524,
+          -26.680441
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "NWU Astro",
+        "type": "amenity"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          27.0968438,
+          -26.6835725
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "NWU Astro parking",
+        "type": "parking",
+        "capacity": 45
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          27.096979,
+          -26.6842909
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "J6",
+        "type": "building",
+        "code": "J6"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          27.0891321,
+          -26.6892803
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Main entrance parking",
+        "capacity": 65,
+        "type": "parking"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              27.0937949,
+              -26.6895291
+            ],
+            [
+              27.0937398,
+              -26.6901308
+            ],
+            [
+              27.0940717,
+              -26.6901719
+            ],
+            [
+              27.0940901,
+              -26.6899358
+            ],
+            [
+              27.094846,
+              -26.6899825
+            ],
+            [
+              27.0948829,
+              -26.6894444
+            ],
+            [
+              27.0941485,
+              -26.6893923
+            ],
+            [
+              27.0941362,
+              -26.6895487
+            ],
+            [
+              27.0937949,
+              -26.6895291
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Veritas entrance parking",
+        "capacity": 70,
+        "type": "parking"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              27.0948807,
+              -26.6846158
+            ],
+            [
+              27.0944935,
+              -26.684959
+            ],
+            [
+              27.0944597,
+              -26.6854367
+            ],
+            [
+              27.0952125,
+              -26.6854724
+            ],
+            [
+              27.0952586,
+              -26.6851512
+            ],
+            [
+              27.0952279,
+              -26.6850825
+            ],
+            [
+              27.0951787,
+              -26.6850798
+            ],
+            [
+              27.0952002,
+              -26.6849205
+            ],
+            [
+              27.0952494,
+              -26.6849205
+            ],
+            [
+              27.0953078,
+              -26.6847009
+            ],
+            [
+              27.0951652,
+              -26.6845998
+            ],
+            [
+              27.0948807,
+              -26.6846158
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Villagers parking",
+        "capacity": 40,
+        "type": "parking"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              27.0898245,
+              -26.6902038
+            ],
+            [
+              27.0899043,
+              -26.6902065
+            ],
+            [
+              27.0899043,
+              -26.6902312
+            ],
+            [
+              27.0900672,
+              -26.6902642
+            ],
+            [
+              27.0898921,
+              -26.6908242
+            ],
+            [
+              27.0897415,
+              -26.6908132
+            ],
+            [
+              27.0897384,
+              -26.690783
+            ],
+            [
+              27.0898367,
+              -26.6905058
+            ],
+            [
+              27.0897446,
+              -26.6904783
+            ],
+            [
+              27.0898245,
+              -26.6902038
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Ratau parking",
+        "capacity": 35,
+        "type": "parking"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              27.0901588,
+              -26.6912312
+            ],
+            [
+              27.0901465,
+              -26.6917473
+            ],
+            [
+              27.0904138,
+              -26.6917638
+            ],
+            [
+              27.0904599,
+              -26.69133
+            ],
+            [
+              27.0905797,
+              -26.6913437
+            ],
+            [
+              27.0906013,
+              -26.6912504
+            ],
+            [
+              27.0901588,
+              -26.6912312
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Bridge parking",
+        "capacity": 30,
+        "type": "parking"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              27.0901058,
+              -26.6909901
+            ],
+            [
+              27.0901243,
+              -26.6911713
+            ],
+            [
+              27.0909478,
+              -26.6912345
+            ],
+            [
+              27.0909509,
+              -26.6911109
+            ],
+            [
+              27.0909263,
+              -26.6911082
+            ],
+            [
+              27.0909293,
+              -26.6910642
+            ],
+            [
+              27.0901058,
+              -26.6909901
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "E9 Parking",
+        "capacity": 35,
+        "type": "parking"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              27.0925,
+              -26.6895079
+            ],
+            [
+              27.0924907,
+              -26.6896727
+            ],
+            [
+              27.0925798,
+              -26.6897852
+            ],
+            [
+              27.0928257,
+              -26.6898044
+            ],
+            [
+              27.0930223,
+              -26.6896534
+            ],
+            [
+              27.0930254,
+              -26.6895326
+            ],
+            [
+              27.0925,
+              -26.6895079
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Protection services parking",
+        "capacity": 30,
+        "type": "parking"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              27.0940543,
+              -26.6876316
+            ],
+            [
+              27.0939775,
+              -26.6876289
+            ],
+            [
+              27.0939683,
+              -26.6877359
+            ],
+            [
+              27.0940205,
+              -26.6878512
+            ],
+            [
+              27.0940051,
+              -26.6882301
+            ],
+            [
+              27.0941742,
+              -26.6882521
+            ],
+            [
+              27.0942049,
+              -26.6879199
+            ],
+            [
+              27.0942018,
+              -26.6878512
+            ],
+            [
+              27.0941834,
+              -26.6877634
+            ],
+            [
+              27.0940543,
+              -26.6876316
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Protection services",
+        "type": "amenity"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          27.0941926,
+          -26.6876371
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "G5 Parking",
+        "capacity": 50,
+        "type": "parking"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              27.0933683,
+              -26.6864339
+            ],
+            [
+              27.0933345,
+              -26.6867524
+            ],
+            [
+              27.0936356,
+              -26.6867826
+            ],
+            [
+              27.0936449,
+              -26.686703
+            ],
+            [
+              27.0939552,
+              -26.6867304
+            ],
+            [
+              27.0939614,
+              -26.6866041
+            ],
+            [
+              27.0936971,
+              -26.6865959
+            ],
+            [
+              27.093694,
+              -26.6864449
+            ],
+            [
+              27.0933683,
+              -26.6864339
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Science building parking",
+        "capacity": 60,
+        "type": "parking"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              27.0941955,
+              -26.6851097
+            ],
+            [
+              27.0943768,
+              -26.6851179
+            ],
+            [
+              27.0942819,
+              -26.6865338
+            ],
+            [
+              27.0941283,
+              -26.6865393
+            ],
+            [
+              27.0941955,
+              -26.6851097
+            ]
+          ]
+        ]
+      }
+    }
+  ]
+}

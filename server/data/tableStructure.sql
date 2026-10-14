@@ -21,6 +21,17 @@ CREATE TABLE IF NOT EXISTS BUILDING (
         REFERENCES ADMINISTRATOR(Administrator_ID)
 );
 
+CREATE TABLE IF NOT EXISTS CAMPUS_FEATURE (
+    Campus_Feature_ID TEXT PRIMARY KEY NOT NULL,
+    Campus_Feature_Name TEXT NOT NULL,
+    Campus_Feature_Type TEXT NOT NULL CHECK (
+        lower(Campus_Feature_Type) IN ('building', 'amenity', 'gate', 'parking')
+    ),
+    Campus_Feature_Code TEXT,
+    Campus_Feature_Capacity INTEGER,
+    Campus_Feature_GeoJSON TEXT NOT NULL
+);
+
 CREATE TABLE IF NOT EXISTS PARKING_AREA (
     Parking_Area_ID TEXT PRIMARY KEY NOT NULL,
     Administrator_ID TEXT NOT NULL,
@@ -68,5 +79,4 @@ CREATE TABLE IF NOT EXISTS PARKING_FEEDBACK (
 
 CREATE INDEX IF NOT EXISTS idx_parking_feedback_submitted_time
     ON PARKING_FEEDBACK (Submitted_Time DESC);
-
 

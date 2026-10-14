@@ -1,15 +1,16 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import mapboxgl from "mapbox-gl";
-import {Link, useLocation } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 
 import {
   campusBounds,
   campusCenter,
+  campusFeaturesCollection,
   defaultZoom,
   mockBuildings,
 } from "../data/mockCampusData";
 import { normalizeLocation } from "../data/dataUtils";
-import { getWalkingRoute } from "../services/mapboxDirections";
+import { getDrivingRoute, getWalkingRoute } from "../services/mapboxDirections";
 import "./NavigationPage.css";
 
 const accessToken = import.meta.env.VITE_MAPBOX_ACCESS_TOKEN;
@@ -27,14 +28,142 @@ function normalizeCategory(value) {
   return userCategories.find((item) => item.toLowerCase() === category);
 }
 
+const FALLBACK_ORIGIN = campusCenter;
+
 function clearRouteLayer(map) {
-  if (map.getLayer("walking-route-line")) {
-    map.removeLayer("walking-route-line");
+  ["walking", "driving"].forEach((routeType) => {
+    const layerId = `${routeType}-route-line`;
+    const sourceId = `${routeType}-route`;
+
+    if (map.getLayer(layerId)) {
+      map.removeLayer(layerId);
+    }
+
+    if (map.getSource(sourceId)) {
+      map.removeSource(sourceId);
+    }
+  });
+}
+
+function drawRoute(map, geometry, routeType = "walking") {
+  clearRouteLayer(map);
+
+  const sourceId = `${routeType}-route`;
+  const layerId = `${routeType}-route-line`;
+
+  if (map.getSource(sourceId)) {
+    map.getSource(sourceId).setData({
+      type: "Feature",
+      properties: {},
+      geometry,
+    });
+    return;
   }
 
-  if (map.getSource("walking-route")) {
-    map.removeSource("walking-route");
-  }
+  map.addSource(sourceId, {
+    type: "geojson",
+    data: {
+      type: "Feature",
+      properties: {},
+      geometry,
+    },
+  });
+
+  map.addLayer({
+    id: layerId,
+    type: "line",
+    source: sourceId,
+    layout: { "line-join": "round", "line-cap": "round" },
+    paint: {
+      "line-color": routeType === "driving" ? "#f59e0b" : "#1479d1",
+      "line-width": 5,
+      "line-opacity": 0.9,
+    },
+  });
+}
+
+function addCampusFeatureLayers(map) {
+  map.addSource("campus-features", {
+    type: "geojson",
+    data: campusFeaturesCollection,
+  });
+
+  map.addLayer({
+    id: "campus-parking-areas",
+    type: "fill",
+    source: "campus-features",
+    filter: [
+      "all",
+      ["==", ["geometry-type"], "Polygon"],
+      ["==", ["get", "type"], "parking"],
+    ],
+    paint: {
+      "fill-color": "#238d76",
+      "fill-opacity": 0.22,
+    },
+  });
+
+  map.addLayer({
+    id: "campus-parking-outlines",
+    type: "line",
+    source: "campus-features",
+    filter: [
+      "all",
+      ["==", ["geometry-type"], "Polygon"],
+      ["==", ["get", "type"], "parking"],
+    ],
+    paint: {
+      "line-color": "#19745f",
+      "line-width": 2,
+    },
+  });
+
+  map.addLayer({
+    id: "campus-amenities-and-gates",
+    type: "circle",
+    source: "campus-features",
+    filter: [
+      "all",
+      ["==", ["geometry-type"], "Point"],
+      ["in", ["get", "type"], ["literal", ["amenity", "gate"]]],
+    ],
+    paint: {
+      "circle-color": [
+        "match",
+        ["get", "type"],
+        "gate",
+        "#6756a5",
+        "#d98e2f",
+      ],
+      "circle-radius": 6,
+      "circle-stroke-color": "#ffffff",
+      "circle-stroke-width": 2,
+    },
+  });
+
+  map.addLayer({
+    id: "campus-amenity-and-gate-labels",
+    type: "symbol",
+    source: "campus-features",
+    minzoom: 15,
+    filter: [
+      "all",
+      ["==", ["geometry-type"], "Point"],
+      ["in", ["get", "type"], ["literal", ["amenity", "gate"]]],
+    ],
+    layout: {
+      "text-field": ["get", "name"],
+      "text-size": 11,
+      "text-offset": [0, 1.2],
+      "text-anchor": "top",
+      "text-optional": true,
+    },
+    paint: {
+      "text-color": "#35413c",
+      "text-halo-color": "#ffffff",
+      "text-halo-width": 1.5,
+    },
+  });
 }
 
 function getInitialSelection(location, buildings = mockBuildings) {
@@ -156,12 +285,56 @@ function NavigationPage() {
   const [isReportingFull, setIsReportingFull] = useState(false);
   const [fullReportError, setFullReportError] = useState("");
   const [route, setRoute] = useState(null);
+  const [routePhase, setRoutePhase] = useState("driving");
   const [routeStatus, setRouteStatus] = useState("idle");
   const [routeError, setRouteError] = useState("");
+  const [originCoordinates, setOriginCoordinates] = useState(FALLBACK_ORIGIN);
+  const [arrivalDialogOpen, setArrivalDialogOpen] = useState(false);
+  const [arrivalError, setArrivalError] = useState("");
+  const [isProcessingArrival, setIsProcessingArrival] = useState(false);
 
   const destination =
     customDestination ||
     mockBuildings.find((building) => building.id === destinationId);
+
+  useEffect(() => {
+    setRoutePhase("driving");
+    setArrivalDialogOpen(false);
+    setArrivalError("");
+  }, [category, customDestination, destinationId]);
+
+  useEffect(() => {
+    if (typeof navigator === "undefined" || !("geolocation" in navigator)) {
+      setOriginCoordinates(FALLBACK_ORIGIN);
+      return undefined;
+    }
+
+    let isCurrent = true;
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        if (!isCurrent) return;
+        setOriginCoordinates([
+          position.coords.longitude,
+          position.coords.latitude,
+        ]);
+      },
+      (error) => {
+        if (!isCurrent) return;
+        console.warn("Geolocation unavailable; using campus fallback.", error);
+        setOriginCoordinates(FALLBACK_ORIGIN);
+      },
+      {
+        enableHighAccuracy: true,
+        timeout: 10_000,
+        maximumAge: 60_000,
+      },
+    );
+
+    return () => {
+      isCurrent = false;
+    };
+  }, []);
+
   useEffect(() => {
     let isCurrent = true;
 
@@ -255,7 +428,18 @@ function NavigationPage() {
         ),
     [category, destination, parkingLots],
   );
-  const activeLot = destination ? availableLots[0] : undefined;
+  const recommendedLot = destination ? availableLots[0] : undefined;
+  const [selectedLotId, setSelectedLotId] = useState("");
+  const activeLot =
+    routePhase === "walking" && selectedLotId
+      ? parkingLots.find((lot) => lot.id === selectedLotId) || recommendedLot
+      : recommendedLot;
+
+  useEffect(() => {
+    if (recommendedLot && recommendedLot.id !== selectedLotId) {
+      setSelectedLotId(recommendedLot.id);
+    }
+  }, [recommendedLot, selectedLotId]);
 
   useEffect(() => {
     if (!mapContainerRef.current || !accessToken) return undefined;
@@ -302,7 +486,14 @@ function NavigationPage() {
       });
     });
     map.addControl(new mapboxgl.NavigationControl(), "top-right");
-    map.on("style.load", () => setMapReady(true));
+    map.on("style.load", () => {
+      addCampusFeatureLayers(map);
+      map.fitBounds(campusBounds, {
+        padding: 40,
+        maxZoom: defaultZoom,
+      });
+      setMapReady(true);
+    });
     mapRef.current = map;
 
     return () => {
@@ -394,48 +585,21 @@ function NavigationPage() {
     }
 
     const controller = new AbortController();
-    clearRouteLayer(map);
-    queueMicrotask(() => {
-      setRoute(null);
-      setRouteError("");
-      setRouteStatus("loading");
-    });
+    const routeType = routePhase === "walking" ? "walking" : "driving";
+    const origin = routePhase === "walking" ? activeLot.coordinates : originCoordinates;
+    const target = routePhase === "walking" ? destination.coordinates : activeLot.coordinates;
+    const routeRequest = routePhase === "walking" ? getWalkingRoute : getDrivingRoute;
 
-    Promise.resolve()
-      .then(() =>
-        getWalkingRoute(activeLot.coordinates, destination.coordinates, {
-          signal: controller.signal,
-        }),
-      )
+    clearRouteLayer(map);
+    setRoute(null);
+    setRouteError("");
+    setRouteStatus("loading");
+
+    routeRequest(origin, target, { signal: controller.signal })
       .then((nextRoute) => {
         if (controller.signal.aborted || !nextRoute) return;
 
-        const feature = {
-          type: "Feature",
-          properties: {},
-          geometry: nextRoute.geometry,
-        };
-        const routeSource = map.getSource("walking-route");
-
-        if (routeSource) {
-          routeSource.setData(feature);
-        } else {
-          map.addSource("walking-route", {
-            type: "geojson",
-            data: feature,
-          });
-          map.addLayer({
-            id: "walking-route-line",
-            type: "line",
-            source: "walking-route",
-            layout: { "line-join": "round", "line-cap": "round" },
-            paint: {
-              "line-color": "#1479d1",
-              "line-width": 5,
-              "line-opacity": 0.9,
-            },
-          });
-        }
+        drawRoute(map, nextRoute.geometry, routeType);
 
         const bounds = nextRoute.geometry.coordinates.reduce(
           (result, coordinate) => result.extend(coordinate),
@@ -444,19 +608,78 @@ function NavigationPage() {
             nextRoute.geometry.coordinates[0],
           ),
         );
-        map.fitBounds(bounds, { padding: { top: 70, bottom: 90, left: 50, right: 50 }, maxZoom: 17 });
+        map.fitBounds(bounds, {
+          padding: { top: 70, bottom: 90, left: 50, right: 50 },
+          maxZoom: routeType === "driving" ? 15 : 17,
+        });
+
         setRoute(nextRoute);
         setRouteStatus("ready");
       })
       .catch((error) => {
         if (controller.signal.aborted) return;
-        const message = error.message || "Unable to calculate this walking route.";
+        const message = error.message || "Unable to calculate this route.";
         setRouteError(message);
         setRouteStatus("error");
       });
 
     return () => controller.abort();
-  }, [activeLot, destination, mapReady]);
+  }, [activeLot, destination, mapReady, originCoordinates, routePhase]);
+
+  useEffect(() => {
+    if (!activeLot || routePhase !== "driving") return;
+    if (distanceBetween(originCoordinates, activeLot.coordinates) <= 70) {
+      setArrivalDialogOpen(true);
+    }
+  }, [activeLot, originCoordinates, routePhase]);
+
+  async function handleConfirmArrival() {
+    if (!activeLot) return;
+
+    setIsProcessingArrival(true);
+    setArrivalError("");
+
+    try {
+      const response = await fetch(
+        `/api/parking/areas/${encodeURIComponent(activeLot.id)}/occupy`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({}),
+        },
+      );
+      const result = await response.json();
+
+      if (!response.ok) {
+        throw new Error(result.error || "Unable to update parking occupancy.");
+      }
+
+      setParkingLots((current) =>
+        current.map((lot) =>
+          lot.id === activeLot.id
+            ? {
+              ...lot,
+              availableBays: result.availableBays,
+              isFull: result.availableBays <= 0,
+              status: result.availableBays <= 0 ? "full" : "open",
+            }
+            : lot,
+        ),
+      );
+
+      setArrivalDialogOpen(false);
+      setRoutePhase("walking");
+    } catch (error) {
+      setArrivalError(error.message || "Unable to confirm arrival.");
+    } finally {
+      setIsProcessingArrival(false);
+    }
+  }
+
+  function handleArrivalPrompt() {
+    setArrivalError("");
+    setArrivalDialogOpen(true);
+  }
 
   async function markActiveLotFull() {
     if (!activeLot || isReportingFull) return;
@@ -588,6 +811,16 @@ function NavigationPage() {
             )}
           </section>
 
+          {activeLot && routePhase === "driving" && (
+            <button
+              className="navigation-arrive-button"
+              type="button"
+              onClick={handleArrivalPrompt}
+            >
+              I Have Arrived
+            </button>
+          )}
+
           <button
             className="navigation-full-button"
             type="button"
@@ -618,7 +851,7 @@ function NavigationPage() {
           )}
         </aside>
 
-        <section className="navigation-map-panel" aria-label="Campus map and walking route">
+        <section className="navigation-map-panel" aria-label="Campus map and navigation route">
           <div ref={mapContainerRef} className="navigation-map" />
 
           {!accessToken && (
@@ -631,24 +864,35 @@ function NavigationPage() {
             <div className="navigation-route-hud" aria-live="polite">
               <div className="navigation-route-hud-heading">
                 <span className="navigation-route-line-icon" />
-                <span>WALKING ROUTE</span>
+                <span>{routePhase === "walking" ? "WALKING ROUTE" : "DRIVING ROUTE"}</span>
               </div>
               {routeStatus === "loading" && <strong>Calculating route...</strong>}
               {routeStatus === "error" && <p className="navigation-route-error">{routeError}</p>}
               {routeStatus === "ready" && route && (
-                <div className="navigation-route-metrics">
-                  <div>
-                    <strong>{route.durationMinutes}</strong>
-                    <span>minutes</span>
+                <>
+                  <div className="navigation-route-metrics">
+                    <div>
+                      <strong>{route.durationMinutes}</strong>
+                      <span>{routePhase === "walking" ? "minutes" : "mins"}</span>
+                    </div>
+                    <div>
+                      <strong>{Math.round(route.distanceMeters)}</strong>
+                      <span>meters</span>
+                    </div>
                   </div>
-                  <div>
-                    <strong>{Math.round(route.distanceMeters)}</strong>
-                    <span>meters</span>
-                  </div>
-                </div>
+                  {routePhase === "walking" && route.steps?.length > 0 && (
+                    <ol className="navigation-route-steps">
+                      {route.steps.slice(0, 3).map((step, index) => (
+                        <li key={`${step.instruction}-${index}`}>
+                          {step.instruction}
+                        </li>
+                      ))}
+                    </ol>
+                  )}
+                </>
               )}
               <p className="navigation-route-endpoints">
-                {activeLot.name} <span>to</span> {destination.name}
+                {routePhase === "walking" ? `${activeLot.name} to ${destination.name}` : `${originCoordinates.join(", ")} to ${activeLot.name}`}
               </p>
             </div>
           )}
@@ -656,10 +900,32 @@ function NavigationPage() {
           <div className="navigation-map-legend">
             <span><i className="legend-building" /> Buildings</span>
             <span><i className="legend-parking" /> Parking</span>
+            <span><i className="legend-campus-feature" /> Amenities</span>
+            <span><i className="legend-campus-gate" /> Gates</span>
             <span><i className="legend-full" /> Full</span>
           </div>
         </section>
       </div>
+
+      {arrivalDialogOpen && activeLot && (
+        <div className="navigation-arrival-modal-overlay" role="dialog" aria-modal="true">
+          <div className="navigation-arrival-modal">
+            <h2>You've arrived at {activeLot.name}.</h2>
+            <p>Confirm you have parked and continue on foot to {destination?.name}.</p>
+            {arrivalError && (
+              <p className="navigation-arrival-error" role="alert">{arrivalError}</p>
+            )}
+            <div className="navigation-arrival-actions">
+              <button type="button" className="navigation-cancel-button" onClick={() => setArrivalDialogOpen(false)}>
+                Cancel
+              </button>
+              <button type="button" className="navigation-confirm-button" onClick={handleConfirmArrival} disabled={isProcessingArrival}>
+                {isProcessingArrival ? "Confirming..." : "Confirm arrival"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </main>
   );
 }
