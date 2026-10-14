@@ -1,6 +1,6 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import mapboxgl from "mapbox-gl";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 
 import {
   campusBounds,
@@ -269,6 +269,7 @@ function distanceBetween(first, second) {
 
 function NavigationPage() {
   const location = useLocation();
+  const navigate = useNavigate();
   const [initialSelection] = useState(() => getInitialSelection(location));
   const mapContainerRef = useRef(null);
   const mapRef = useRef(null);
@@ -288,6 +289,7 @@ function NavigationPage() {
   const [routePhase, setRoutePhase] = useState("driving");
   const [routeStatus, setRouteStatus] = useState("idle");
   const [routeError, setRouteError] = useState("");
+  const [selectedLotId, setSelectedLotId] = useState("");
   const [originCoordinates, setOriginCoordinates] = useState(FALLBACK_ORIGIN);
   const [arrivalDialogOpen, setArrivalDialogOpen] = useState(false);
   const [arrivalError, setArrivalError] = useState("");
@@ -297,15 +299,15 @@ function NavigationPage() {
     customDestination ||
     mockBuildings.find((building) => building.id === destinationId);
 
-  useEffect(() => {
+  const resetNavigationForSelection = useCallback(() => {
     setRoutePhase("driving");
+    setSelectedLotId("");
     setArrivalDialogOpen(false);
     setArrivalError("");
-  }, [category, customDestination, destinationId]);
+  }, []);
 
   useEffect(() => {
     if (typeof navigator === "undefined" || !("geolocation" in navigator)) {
-      setOriginCoordinates(FALLBACK_ORIGIN);
       return undefined;
     }
 
@@ -429,17 +431,10 @@ function NavigationPage() {
     [category, destination, parkingLots],
   );
   const recommendedLot = destination ? availableLots[0] : undefined;
-  const [selectedLotId, setSelectedLotId] = useState("");
   const activeLot =
     routePhase === "walking" && selectedLotId
       ? parkingLots.find((lot) => lot.id === selectedLotId) || recommendedLot
       : recommendedLot;
-
-  useEffect(() => {
-    if (recommendedLot && recommendedLot.id !== selectedLotId) {
-      setSelectedLotId(recommendedLot.id);
-    }
-  }, [recommendedLot, selectedLotId]);
 
   useEffect(() => {
     if (!mapContainerRef.current || !accessToken) return undefined;
@@ -523,6 +518,7 @@ function NavigationPage() {
       element.title = `${building.name} — ${building.category || "Campus building"}: ${building.description}`;
       element.setAttribute("aria-label", `Set destination to ${building.name}`);
       element.addEventListener("click", () => {
+        resetNavigationForSelection();
         setDestinationId(building.id);
         setCustomDestination(null);
       });
@@ -568,7 +564,15 @@ function NavigationPage() {
           .addTo(map),
       );
     }
-  }, [activeLot, category, customDestination, destinationId, mapReady, parkingLots]);
+  }, [
+    activeLot,
+    category,
+    customDestination,
+    destinationId,
+    mapReady,
+    parkingLots,
+    resetNavigationForSelection,
+  ]);
 
   useEffect(() => {
     const map = mapRef.current;
@@ -576,12 +580,16 @@ function NavigationPage() {
 
     if (!destination || !activeLot) {
       clearRouteLayer(map);
+      let isCurrent = true;
       queueMicrotask(() => {
+        if (!isCurrent) return;
         setRoute(null);
         setRouteError("");
         setRouteStatus("idle");
       });
-      return undefined;
+      return () => {
+        isCurrent = false;
+      };
     }
 
     const controller = new AbortController();
@@ -591,9 +599,12 @@ function NavigationPage() {
     const routeRequest = routePhase === "walking" ? getWalkingRoute : getDrivingRoute;
 
     clearRouteLayer(map);
-    setRoute(null);
-    setRouteError("");
-    setRouteStatus("loading");
+    queueMicrotask(() => {
+      if (controller.signal.aborted) return;
+      setRoute(null);
+      setRouteError("");
+      setRouteStatus("loading");
+    });
 
     routeRequest(origin, target, { signal: controller.signal })
       .then((nextRoute) => {
@@ -629,8 +640,15 @@ function NavigationPage() {
   useEffect(() => {
     if (!activeLot || routePhase !== "driving") return;
     if (distanceBetween(originCoordinates, activeLot.coordinates) <= 70) {
-      setArrivalDialogOpen(true);
+      let isCurrent = true;
+      queueMicrotask(() => {
+        if (isCurrent) setArrivalDialogOpen(true);
+      });
+      return () => {
+        isCurrent = false;
+      };
     }
+    return undefined;
   }, [activeLot, originCoordinates, routePhase]);
 
   async function handleConfirmArrival() {
@@ -667,6 +685,7 @@ function NavigationPage() {
         ),
       );
 
+      setSelectedLotId(activeLot.id);
       setArrivalDialogOpen(false);
       setRoutePhase("walking");
     } catch (error) {
@@ -720,8 +739,20 @@ function NavigationPage() {
 
   function handleDestinationChange(event) {
     const nextDestinationId = event.target.value;
+    resetNavigationForSelection();
     setDestinationId(nextDestinationId);
     setCustomDestination(null);
+  }
+
+  function handleReachedDestination() {
+    if (!activeLot) return;
+
+    navigate("/parking/confirmation", {
+      state: {
+        parkingAreaId: activeLot.id,
+        parkingAreaName: activeLot.name,
+      },
+    });
   }
 
   return (
@@ -752,7 +783,10 @@ function NavigationPage() {
                 <button
                   className={category === item ? "is-active" : ""}
                   key={item}
-                  onClick={() => setCategory(item)}
+                  onClick={() => {
+                    resetNavigationForSelection();
+                    setCategory(item);
+                  }}
                   type="button"
                   aria-pressed={category === item}
                 >
@@ -818,6 +852,15 @@ function NavigationPage() {
               onClick={handleArrivalPrompt}
             >
               I Have Arrived
+            </button>
+          )}
+          {activeLot && routePhase === "walking" && (
+            <button
+              className="navigation-arrive-button"
+              type="button"
+              onClick={handleReachedDestination}
+            >
+              Reached Destination
             </button>
           )}
 
