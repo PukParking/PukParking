@@ -103,6 +103,65 @@ export function createParkingRouter({ database }) {
         return res.json({ parkingAreas });
     });
 
+    router.post("/areas/:id/occupy", (req, res) => {
+        const parkingAreaId = validId(req.params.id);
+        if (!parkingAreaId) {
+            return res.status(400).json({
+                error: "Parking area ID must be a valid UUID.",
+            });
+        }
+
+        const area = database
+            .prepare(`
+                SELECT Parking_Area_ID AS id,
+                    Parking_Area_Name AS name,
+                    Parking_Area_Capacity AS capacity,
+                    Parking_Area_Occupied_Spaces AS occupied
+                FROM PARKING_AREA
+                WHERE Parking_Area_ID = ?
+                    AND COALESCE(Parking_Area_isActive, 1) = 1
+                    AND Parking_Area_Occupied_Spaces < Parking_Area_Capacity
+            `)
+            .get(parkingAreaId);
+
+        if (!area) {
+            const alreadyFull = database
+                .prepare(`
+                    SELECT Parking_Area_ID AS id,
+                        Parking_Area_Capacity AS capacity,
+                        Parking_Area_Occupied_Spaces AS occupied
+                    FROM PARKING_AREA
+                    WHERE Parking_Area_ID = ?
+                        AND COALESCE(Parking_Area_isActive, 1) = 1
+                `)
+                .get(parkingAreaId);
+
+            if (!alreadyFull) {
+                return res.status(404).json({
+                    error: "Active parking area not found.",
+                });
+            }
+
+            return res.status(400).json({
+                error: "Parking area is already full.",
+            });
+        }
+
+        database
+            .prepare(`
+                UPDATE PARKING_AREA
+                SET Parking_Area_Occupied_Spaces = Parking_Area_Occupied_Spaces + 1
+                WHERE Parking_Area_ID = ?
+            `)
+            .run(parkingAreaId);
+
+        const updatedArea = readParkingArea(database, parkingAreaId);
+        return res.status(200).json({
+            success: true,
+            availableBays: updatedArea?.available ?? 0,
+        });
+    });
+
     router.post("/areas/:id/full-report", (req, res) => {
         const parkingAreaId = validId(req.params.id);
         if (!parkingAreaId) {

@@ -478,6 +478,14 @@ button.campus-marker {
   background: #238d76;
 }
 
+.legend-campus-feature {
+  background: #d98e2f;
+}
+
+.legend-campus-gate {
+  background: #6756a5;
+}
+
 .legend-full {
   background: #8b9692;
 }
