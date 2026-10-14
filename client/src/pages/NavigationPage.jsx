@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import mapboxgl from "mapbox-gl";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 
 import {
   campusBounds,
@@ -12,6 +12,7 @@ import { normalizeLocation } from "../data/dataUtils";
 import { getWalkingRoute } from "../services/mapboxDirections";
 import { fetchBuildings } from "../services/parkingApi";
 import "./NavigationPage.css";
+import "./NavigationPageExtras.css";
 
 const accessToken = import.meta.env.VITE_MAPBOX_ACCESS_TOKEN;
 const CUSTOM_DESTINATION_ID = "custom-destination";
@@ -141,6 +142,7 @@ function distanceBetween(first, second) {
 
 function NavigationPage() {
   const location = useLocation();
+  const navigate = useNavigate();
   const [initialSelection] = useState(() => getInitialSelection(location));
   const mapContainerRef = useRef(null);
   const mapRef = useRef(null);
@@ -525,6 +527,27 @@ function NavigationPage() {
     setCustomDestination(null);
   }
 
+  function handleArrived() {
+    if (!activeLot) return;
+
+    sessionStorage.setItem(
+      "selectedParking",
+      JSON.stringify(activeLot),
+    );
+
+    sessionStorage.setItem(
+      "selectedUserType",
+      category,
+    );
+
+    navigate("/parking-confirmation", {
+      state: {
+        selectedParking: activeLot,
+        userType: category,
+      },
+    });
+  }
+
   return (
     <main className="navigation-page">
       <header className="navigation-header">
@@ -611,6 +634,16 @@ function NavigationPage() {
               </p>
             )}
           </section>
+
+          <button
+            className="navigation-arrived-button"
+            type="button"
+            onClick={handleArrived}
+            disabled={!activeLot}
+          >
+            <span aria-hidden="true">✓</span>
+            I've Arrived
+          </button>
 
           <button
             className="navigation-full-button"
