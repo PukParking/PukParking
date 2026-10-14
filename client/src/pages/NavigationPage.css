@@ -226,6 +226,23 @@
   line-height: 1.5;
 }
 
+.navigation-arrive-button {
+  width: 100%;
+  min-height: 43px;
+  margin-top: 14px;
+  border: 0;
+  border-radius: 6px;
+  color: #fff;
+  background: #197b66;
+  font-size: 12px;
+  font-weight: 750;
+  cursor: pointer;
+}
+
+.navigation-arrive-button:hover {
+  background: #146a58;
+}
+
 .navigation-full-button {
   width: 100%;
   min-height: 43px;

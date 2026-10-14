@@ -6,9 +6,9 @@ import {
 
 import Home from "../pages/Home/Home";
 import AboutUs from "../pages/Home/AboutUs";
-import ParkingStats from "../pages/Home/ParkingStats";
 
 import UserLanding from "../pages/Parking/UserLanding";
+import ParkingConfirmation from "../pages/ParkingConfirmation/ParkingConfirmation";
 import NavigationPage from "../pages/NavigationPage";
 
 import AdminLogin from "../pages/Admin/AdminLogin";
@@ -27,10 +27,10 @@ function AppRoutes() {
 
       <Route path="/home" element={<Home />} />
       <Route path="/about" element={<AboutUs />} />
-      <Route path="/parking-stats" element={<ParkingStats />} />
 
       <Route path="/parking" element={<UserLanding />} />
       <Route path="/parking/navigation" element={<NavigationPage />} />
+      <Route path="/parking/confirmation" element={<ParkingConfirmation />} />
       <Route path="/navigation" element={<NavigationPage />} />
 
       <Route path="/admin" element={<AdminLogin />} />
@@ -42,6 +42,8 @@ function AppRoutes() {
         <Route path="/admin/ratings" element={<RatingsComments />} />
         <Route path="/admin/settings" element={<Settings />} />
       </Route>
+
+      <Route path="*" element={<Navigate to="/home" replace />} />
     </Routes>
   );
 }
