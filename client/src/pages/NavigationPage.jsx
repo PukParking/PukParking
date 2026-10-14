@@ -2,6 +2,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import mapboxgl from "mapbox-gl";
 import { useLocation, useNavigate } from "react-router-dom";
 
+import pukParkingLogo from "../assets/pukparking-logo.png";
 import {
   campusBounds,
   campusCenter,
@@ -552,8 +553,16 @@ function NavigationPage() {
     <main className="navigation-page">
       <header className="navigation-header">
         <a className="navigation-brand" href="/home" aria-label="PukParking home">
-          <span className="navigation-brand-mark">P</span>
-          <span>PukParking</span>
+          <img
+            src={pukParkingLogo}
+            alt="PukParking"
+            style={{
+              width: "95px",
+              height: "50px",
+              objectFit: "contain",
+              display: "block",
+            }}
+          />
         </a>
         <div className="navigation-campus-label">
           <span className="navigation-live-dot" />
