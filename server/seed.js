@@ -7,6 +7,20 @@ const campusFeatures = JSON.parse(
     readFileSync(new URL("../client/src/data/campusFeatures.json", import.meta.url), "utf8"),
 ).features;
 
+const parkingAccessTypes = new Map([
+    ["Villagers parking", "student"],
+    ["Ratau parking", "student"],
+    ["Bridge parking", "student"],
+    ["Veritas entrance parking", "student"],
+    ["Engineering campus parking", "student"],
+    ["G5 Parking", "staff"],
+    ["Science building parking", "staff"],
+    ["E9 Parking", "staff"],
+    ["Protection services parking", "staff"],
+    ["Main entrance parking", "visitor"],
+    ["NWU Astro parking", "visitor"],
+]);
+
 function getCampusFeatureId(feature) {
     const slug = feature.properties.name
         .toLowerCase()
@@ -67,12 +81,19 @@ const parkingAreas = campusFeatures
             throw new Error(`Parking feature "${feature.properties.name}" has invalid capacity.`);
         }
 
+        const type = parkingAccessTypes.get(feature.properties.name);
+        if (!type) {
+            throw new Error(
+                `Parking feature "${feature.properties.name}" has no configured access type.`,
+            );
+        }
+
         return {
             name: feature.properties.name,
             latitude,
             longitude,
             capacity,
-            type: "visitor",
+            type,
             restrictions: "Access restrictions are not specified in the campus dataset.",
         };
     });
@@ -139,12 +160,10 @@ const seed = database.transaction(() => {
             );
     }
 
-    const findBuilding = database.prepare(`
-        SELECT Building_ID
-        FROM BUILDING
-        WHERE Administrator_ID = ? AND Building_Abbreviation = ?
-        LIMIT 1
-    `);
+    database.prepare("DELETE FROM PARKING_FULL_REPORT").run();
+    database.prepare("DELETE FROM PARKING_AREA").run();
+    database.prepare("DELETE FROM BUILDING").run();
+
     const insertBuilding = database.prepare(`
         INSERT INTO BUILDING (
             Building_ID,
@@ -156,51 +175,19 @@ const seed = database.transaction(() => {
             Building_Longitude
         ) VALUES (?, ?, ?, ?, ?, ?, ?)
     `);
-    const updateBuilding = database.prepare(`
-        UPDATE BUILDING
-        SET Building_Name = ?,
-            Building_Description = COALESCE(NULLIF(?, ''), Building_Description),
-            Building_Latitude = ?,
-            Building_Longitude = ?
-        WHERE Building_ID = ?
-    `);
-    let insertedBuildings = 0;
-    let updatedBuildings = 0;
 
     for (const building of buildings) {
-        const existing = findBuilding.get(
+        insertBuilding.run(
+            randomUUID(),
             administrator.Administrator_ID,
+            building.name,
             building.abbreviation,
+            building.description,
+            building.latitude,
+            building.longitude,
         );
-        if (existing) {
-            updateBuilding.run(
-                building.name,
-                building.description,
-                building.latitude,
-                building.longitude,
-                existing.Building_ID,
-            );
-            updatedBuildings += 1;
-        } else {
-            insertBuilding.run(
-                randomUUID(),
-                administrator.Administrator_ID,
-                building.name,
-                building.abbreviation,
-                building.description,
-                building.latitude,
-                building.longitude,
-            );
-            insertedBuildings += 1;
-        }
     }
 
-    const findParkingArea = database.prepare(`
-        SELECT Parking_Area_ID
-        FROM PARKING_AREA
-        WHERE Administrator_ID = ? AND Parking_Area_Name = ?
-        LIMIT 1
-    `);
     const insertParkingArea = database.prepare(`
         INSERT INTO PARKING_AREA (
             Parking_Area_ID,
@@ -216,66 +203,31 @@ const seed = database.transaction(() => {
             Parking_Area_IsActive
         ) VALUES (?, ?, ?, ?, ?, ?, ?, 0, ?, 0, 1)
     `);
-    const updateParkingArea = database.prepare(`
-        UPDATE PARKING_AREA
-        SET Parking_Area_Latitude = ?,
-            Parking_Area_Longitude = ?,
-            Parking_Type = ?,
-            Parking_Area_Capacity = ?,
-            Parking_Area_Occupied_Spaces = MIN(Parking_Area_Occupied_Spaces, ?),
-            Parking_Area_Restrictions = ?,
-            Parking_Area_IsActive = 1
-        WHERE Parking_Area_ID = ?
-    `);
-    let insertedParkingAreas = 0;
-    let updatedParkingAreas = 0;
 
     for (const area of parkingAreas) {
-        const existing = findParkingArea.get(
+        insertParkingArea.run(
+            randomUUID(),
             administrator.Administrator_ID,
             area.name,
+            area.latitude,
+            area.longitude,
+            area.type,
+            area.capacity,
+            area.restrictions,
         );
-        if (existing) {
-            updateParkingArea.run(
-                area.latitude,
-                area.longitude,
-                area.type,
-                area.capacity,
-                area.capacity,
-                area.restrictions,
-                existing.Parking_Area_ID,
-            );
-            updatedParkingAreas += 1;
-        } else {
-            insertParkingArea.run(
-                randomUUID(),
-                administrator.Administrator_ID,
-                area.name,
-                area.latitude,
-                area.longitude,
-                area.type,
-                area.capacity,
-                area.restrictions,
-            );
-            insertedParkingAreas += 1;
-        }
     }
 
     return {
         campusFeatures: campusFeatures.length,
-        insertedBuildings,
-        updatedBuildings,
-        insertedParkingAreas,
-        updatedParkingAreas,
+        buildings: buildings.length,
+        parkingAreas: parkingAreas.length,
     };
 });
 
 const seeded = seed();
 console.log(
     `Campus dataset synchronized: ${seeded.campusFeatures} GeoJSON features stored; ` +
-    `${seeded.insertedBuildings} buildings inserted, ` +
-    `${seeded.updatedBuildings} updated; ${seeded.insertedParkingAreas} parking areas inserted, ` +
-    `${seeded.updatedParkingAreas} updated.`,
+    `${seeded.buildings} buildings and ${seeded.parkingAreas} parking areas seeded.`,
 );
 
 database.close();
