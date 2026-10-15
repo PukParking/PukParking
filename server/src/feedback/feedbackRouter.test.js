@@ -14,7 +14,7 @@ import { createApp } from "../app.js";
 const TEST_JWT_SECRET = "test-only-signing-secret-at-least-32-bytes";
 const TEST_CLIENT_ORIGIN = "http://localhost:5173";
 const currentDirectory = dirname(fileURLToPath(import.meta.url));
-const schemaPath = join(currentDirectory, "../../data/table structure.sql");
+const schemaPath = join(currentDirectory, "../../data/tableStructure.sql");
 
 async function createFeedbackTestServer() {
     const database = new Database(":memory:");
@@ -129,7 +129,7 @@ test("public feedback submission validates its rating, category, area, and comme
     }
 });
 
-test("public feedback accepts Visitor as Guest and rejects an untrusted origin", async () => {
+test("public feedback accepts Visitor as Guest from any origin", async () => {
     const testServer = await createFeedbackTestServer();
 
     try {
@@ -138,7 +138,7 @@ test("public feedback accepts Visitor as Guest and rejects an untrusted origin",
             userType: "Visitor",
             rating: 3,
         });
-        const rejected = await submitFeedback(
+        const otherOrigin = await submitFeedback(
             testServer.port,
             {
                 parkingAreaName: "Gate 1",
@@ -149,11 +149,14 @@ test("public feedback accepts Visitor as Guest and rejects an untrusted origin",
         );
         const stored = testServer.database
             .prepare("SELECT User_Type FROM PARKING_FEEDBACK")
-            .get();
+            .all();
 
         assert.equal(accepted.status, 201);
-        assert.equal(rejected.status, 403);
-        assert.equal(stored.User_Type, "Guest");
+        assert.equal(otherOrigin.status, 201);
+        assert.deepEqual(
+            stored.map((row) => row.User_Type),
+            ["Guest", "Guest"],
+        );
     } finally {
         await closeFeedbackTestServer(testServer);
     }

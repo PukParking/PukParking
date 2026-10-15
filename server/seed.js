@@ -1,118 +1,139 @@
 import bcrypt from "bcrypt";
 import { randomBytes, randomUUID } from "node:crypto";
+import { readFileSync } from "node:fs";
 import database from "./data/db.js";
 
-const buildings = [
-    {
-        abbreviation: "F1",
-        name: "Joon van Rooy Building (F1)",
-        description: "Main Administrative Center & Registrar",
-        latitude: -26.6882,
-        longitude: 27.0929,
-    },
-    {
-        abbreviation: "E7",
-        name: "Ferdinand Postma Library (E7)",
-        description: "Main Campus Library & Study Commons",
-        latitude: -26.689,
-        longitude: 27.0918,
-    },
-    {
-        abbreviation: "G3",
-        name: "Natural Sciences & IT (G3)",
-        description: "Computer Science, Mathematics & Information Technology",
-        latitude: -26.6885,
-        longitude: 27.0952,
-    },
-    {
-        abbreviation: "F14",
-        name: "Student Centre / Drakenstein (F14)",
-        description: "Cafeterias, Student Council, & Amenities",
-        latitude: -26.6871,
-        longitude: 27.0928,
-    },
-    {
-        abbreviation: "F12",
-        name: "Sanlam Auditorium (F12)",
-        description: "Campus Hall & Event Auditorium",
-        latitude: -26.688,
-        longitude: 27.0938,
-    },
-    {
-        abbreviation: "N1",
-        name: "Faculty of Engineering (N1)",
-        description: "Engineering Lecture Halls & Laboratories",
-        latitude: -26.682,
-        longitude: 27.0942,
-    },
-];
+const campusFeatures = JSON.parse(
+    readFileSync(new URL("../client/src/data/campusFeatures.json", import.meta.url), "utf8"),
+).features;
 
-const parkingAreas = [
-    {
-        name: "Hoffman St / Main Gate Visitors",
-        latitude: -26.6905,
-        longitude: 27.0936,
-        capacity: 35,
-        available: 11,
-        type: "visitor",
-        restrictions: "Gate 1 (Hoffman Street)",
-    },
-    {
-        name: "Lovers' Lane Student Parking",
-        latitude: -26.6878,
-        longitude: 27.0945,
-        capacity: 120,
-        available: 18,
-        type: "student",
-        restrictions: "Hoffman / Meyer Street Entrances",
-    },
-    {
-        name: "Library & E-Block Parking",
-        latitude: -26.6895,
-        longitude: 27.0912,
-        capacity: 45,
-        available: 4,
-        type: "staff",
-        restrictions: "Borcherd Street Entrance",
-    },
-    {
-        name: "Wasgoedpen Student Parking",
-        latitude: -26.6918,
-        longitude: 27.095,
-        capacity: 160,
-        available: 42,
-        type: "student",
-        restrictions: "Esselen Street Gate",
-    },
-    {
-        name: "G3 Natural Sciences Lot",
-        latitude: -26.6889,
-        longitude: 27.0962,
-        capacity: 50,
-        available: 2,
-        type: "staff",
-        restrictions: "Meyer Street Gate",
-    },
-    {
-        name: "Engineering Complex Parking",
-        latitude: -26.6822,
-        longitude: 27.0948,
-        capacity: 90,
-        available: 0,
-        type: "student",
-        restrictions: "Calderbank Avenue Gate",
-    },
-];
+const parkingAccessTypes = new Map([
+    ["Villagers parking", "student"],
+    ["Ratau parking", "student"],
+    ["Bridge parking", "student"],
+    ["Veritas entrance parking", "student"],
+    ["Engineering campus parking", "student"],
+    ["G5 Parking", "staff"],
+    ["Science building parking", "staff"],
+    ["E9 Parking", "staff"],
+    ["Protection services parking", "staff"],
+    ["Main entrance parking", "visitor"],
+    ["NWU Astro parking", "visitor"],
+]);
+
+function getCampusFeatureId(feature) {
+    const slug = feature.properties.name
+        .toLowerCase()
+        .replace(/[^a-z0-9]+/g, "-")
+        .replace(/^-|-$/g, "");
+
+    return `${feature.properties.type}-${slug}`;
+}
+
+function getFeatureCoordinates(feature) {
+    if (feature.geometry.type === "Point") {
+        return feature.geometry.coordinates;
+    }
+
+    const ring = feature.geometry.coordinates[0];
+    let twiceArea = 0;
+    let longitudeTotal = 0;
+    let latitudeTotal = 0;
+
+    for (let index = 0; index < ring.length - 1; index += 1) {
+        const [longitude, latitude] = ring[index];
+        const [nextLongitude, nextLatitude] = ring[index + 1];
+        const cross = longitude * nextLatitude - nextLongitude * latitude;
+        twiceArea += cross;
+        longitudeTotal += (longitude + nextLongitude) * cross;
+        latitudeTotal += (latitude + nextLatitude) * cross;
+    }
+
+    if (twiceArea === 0) {
+        throw new Error(`Parking polygon "${feature.properties.name}" has no area.`);
+    }
+
+    return [
+        longitudeTotal / (3 * twiceArea),
+        latitudeTotal / (3 * twiceArea),
+    ];
+}
+
+const buildings = campusFeatures
+    .filter((feature) => feature.properties.type === "building")
+    .map((feature) => {
+        const [longitude, latitude] = getFeatureCoordinates(feature);
+        return {
+            abbreviation: feature.properties.code || feature.properties.name,
+            name: feature.properties.name,
+            description: "",
+            latitude,
+            longitude,
+        };
+    });
+
+const parkingAreas = campusFeatures
+    .filter((feature) => feature.properties.type === "parking")
+    .map((feature) => {
+        const [longitude, latitude] = getFeatureCoordinates(feature);
+        const capacity = Number(feature.properties.capacity);
+        if (!Number.isInteger(capacity) || capacity <= 0) {
+            throw new Error(`Parking feature "${feature.properties.name}" has invalid capacity.`);
+        }
+
+        const type = parkingAccessTypes.get(feature.properties.name);
+        if (!type) {
+            throw new Error(
+                `Parking feature "${feature.properties.name}" has no configured access type.`,
+            );
+        }
+
+        return {
+            name: feature.properties.name,
+            latitude,
+            longitude,
+            capacity,
+            type,
+            restrictions: "Access restrictions are not specified in the campus dataset.",
+        };
+    });
 
 const seed = database.transaction(() => {
-    const buildingsEmpty =
-        database.prepare("SELECT COUNT(*) AS count FROM BUILDING").get().count === 0;
-    const parkingAreasEmpty =
-        database.prepare("SELECT COUNT(*) AS count FROM PARKING_AREA").get().count === 0;
+    const insertCampusFeature = database.prepare(`
+        INSERT INTO CAMPUS_FEATURE (
+            Campus_Feature_ID,
+            Campus_Feature_Name,
+            Campus_Feature_Type,
+            Campus_Feature_Code,
+            Campus_Feature_Capacity,
+            Campus_Feature_GeoJSON
+        ) VALUES (?, ?, ?, ?, ?, ?)
+        ON CONFLICT(Campus_Feature_ID) DO UPDATE SET
+            Campus_Feature_Name = excluded.Campus_Feature_Name,
+            Campus_Feature_Type = excluded.Campus_Feature_Type,
+            Campus_Feature_Code = excluded.Campus_Feature_Code,
+            Campus_Feature_Capacity = excluded.Campus_Feature_Capacity,
+            Campus_Feature_GeoJSON = excluded.Campus_Feature_GeoJSON
+    `);
 
-    if (!buildingsEmpty && !parkingAreasEmpty) {
-        return { buildings: 0, parkingAreas: 0 };
+    for (const feature of campusFeatures) {
+        insertCampusFeature.run(
+            getCampusFeatureId(feature),
+            feature.properties.name,
+            feature.properties.type,
+            feature.properties.code ?? null,
+            feature.properties.capacity ?? null,
+            JSON.stringify(feature),
+        );
     }
+
+    const featureIds = campusFeatures.map(getCampusFeatureId);
+    database
+        .prepare(`
+            DELETE FROM CAMPUS_FEATURE
+            WHERE Campus_Feature_ID NOT IN (${featureIds.map(() => "?").join(", ")})
+        `)
+        .run(...featureIds);
 
     let administrator = database
         .prepare("SELECT Administrator_ID FROM ADMINISTRATOR ORDER BY Administrator_ID LIMIT 1")
@@ -139,77 +160,74 @@ const seed = database.transaction(() => {
             );
     }
 
-    if (buildingsEmpty) {
-        const insertBuilding = database.prepare(`
-            INSERT INTO BUILDING (
-                Building_ID,
-                Administrator_ID,
-                Building_Name,
-                Building_Abbreviation,
-                Building_Description,
-                Building_Latitude,
-                Building_Longitude
-            ) VALUES (?, ?, ?, ?, ?, ?, ?)
-        `);
+    database.prepare("DELETE FROM PARKING_FULL_REPORT").run();
+    database.prepare("DELETE FROM PARKING_AREA").run();
+    database.prepare("DELETE FROM BUILDING").run();
 
-        for (const building of buildings) {
-            insertBuilding.run(
-                randomUUID(),
-                administrator.Administrator_ID,
-                building.name,
-                building.abbreviation,
-                building.description,
-                building.latitude,
-                building.longitude,
-            );
-        }
+    const insertBuilding = database.prepare(`
+        INSERT INTO BUILDING (
+            Building_ID,
+            Administrator_ID,
+            Building_Name,
+            Building_Abbreviation,
+            Building_Description,
+            Building_Latitude,
+            Building_Longitude
+        ) VALUES (?, ?, ?, ?, ?, ?, ?)
+    `);
+
+    for (const building of buildings) {
+        insertBuilding.run(
+            randomUUID(),
+            administrator.Administrator_ID,
+            building.name,
+            building.abbreviation,
+            building.description,
+            building.latitude,
+            building.longitude,
+        );
     }
 
-    if (parkingAreasEmpty) {
-        const insertParkingArea = database.prepare(`
-            INSERT INTO PARKING_AREA (
-                Parking_Area_ID,
-                Administrator_ID,
-                Parking_Area_Name,
-                Parking_Area_Latitude,
-                Parking_Area_Longitude,
-                Parking_Type,
-                Parking_Area_Capacity,
-                Parking_Area_Occupied_Spaces,
-                Parking_Area_Restrictions,
-                Parking_Area_Accessible_Spaces,
-                Parking_Area_IsActive
-            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 0, 1)
-        `);
+    const insertParkingArea = database.prepare(`
+        INSERT INTO PARKING_AREA (
+            Parking_Area_ID,
+            Administrator_ID,
+            Parking_Area_Name,
+            Parking_Area_Latitude,
+            Parking_Area_Longitude,
+            Parking_Type,
+            Parking_Area_Capacity,
+            Parking_Area_Occupied_Spaces,
+            Parking_Area_Restrictions,
+            Parking_Area_Accessible_Spaces,
+            Parking_Area_IsActive
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, 0, ?, 0, 1)
+    `);
 
-        for (const area of parkingAreas) {
-            insertParkingArea.run(
-                randomUUID(),
-                administrator.Administrator_ID,
-                area.name,
-                area.latitude,
-                area.longitude,
-                area.type,
-                area.capacity,
-                area.capacity - area.available,
-                area.restrictions,
-            );
-        }
+    for (const area of parkingAreas) {
+        insertParkingArea.run(
+            randomUUID(),
+            administrator.Administrator_ID,
+            area.name,
+            area.latitude,
+            area.longitude,
+            area.type,
+            area.capacity,
+            area.restrictions,
+        );
     }
 
     return {
-        buildings: buildingsEmpty ? buildings.length : 0,
-        parkingAreas: parkingAreasEmpty ? parkingAreas.length : 0,
+        campusFeatures: campusFeatures.length,
+        buildings: buildings.length,
+        parkingAreas: parkingAreas.length,
     };
 });
 
 const seeded = seed();
-if (seeded.buildings || seeded.parkingAreas) {
-    console.log(
-        `Seeded ${seeded.buildings} buildings and ${seeded.parkingAreas} parking areas.`,
-    );
-} else {
-    console.log("BUILDING and PARKING_AREA already contain data; seed skipped.");
-}
+console.log(
+    `Campus dataset synchronized: ${seeded.campusFeatures} GeoJSON features stored; ` +
+    `${seeded.buildings} buildings and ${seeded.parkingAreas} parking areas seeded.`,
+);
 
 database.close();

@@ -16,7 +16,7 @@ const TEST_CLIENT_ORIGIN = "http://localhost:5173";
 const currentDirectory = dirname(fileURLToPath(import.meta.url));
 const schemaPath = join(
     currentDirectory,
-    "../../data/table structure.sql",
+    "../../data/tableStructure.sql",
 );
 
 async function createAuthTestServer() {
@@ -103,7 +103,7 @@ test("login sets a short-lived HttpOnly JWT cookie without exposing the hash", a
         const setCookie = response.headers.get("set-cookie");
         assert.match(setCookie, /pukparking_admin_token=/);
         assert.match(setCookie, /HttpOnly/i);
-        assert.match(setCookie, /SameSite=Strict/i);
+        assert.match(setCookie, /SameSite=Lax/i);
         assert.match(setCookie, /Path=\/api/i);
 
         const cookieToken = setCookie.match(
@@ -185,7 +185,7 @@ test("logout clears the session cookie", async () => {
     }
 });
 
-test("authentication endpoints reject an untrusted browser origin", async () => {
+test("authentication endpoints accept requests from any browser origin", async () => {
     const { database, server, port } = await createAuthTestServer();
 
     try {
@@ -197,11 +197,11 @@ test("authentication endpoints reject an untrusted browser origin", async () => 
             },
         );
 
-        assert.equal(response.status, 403);
-        assert.deepEqual(await response.json(), {
-            error: "Request origin not allowed",
-        });
-        assert.equal(response.headers.get("set-cookie"), null);
+        assert.equal(response.status, 204);
+        assert.equal(
+            response.headers.get("access-control-allow-origin"),
+            "https://untrusted.example",
+        );
     } finally {
         await new Promise((resolve, reject) => {
             server.close((error) => (error ? reject(error) : resolve()));
@@ -396,19 +396,19 @@ test("administrator can revoke every active session", async () => {
     }
 });
 
-test("session revocation requires an authenticated trusted-origin request", async () => {
+test("session revocation requires an authenticated request", async () => {
     const { database, server, port } = await createAuthTestServer();
 
     try {
         const unauthenticated = await postLogoutAll(port, "");
-        const untrustedOrigin = await postLogoutAll(
+        const otherOrigin = await postLogoutAll(
             port,
             await loginCookie(port),
             "https://untrusted.example",
         );
 
         assert.equal(unauthenticated.status, 401);
-        assert.equal(untrustedOrigin.status, 403);
+        assert.equal(otherOrigin.status, 204);
     } finally {
         await new Promise((resolve, reject) => {
             server.close((error) => (error ? reject(error) : resolve()));
@@ -461,7 +461,7 @@ test("password change enforces the existing new-password policy", async () => {
     }
 });
 
-test("password change requires an authenticated trusted-origin request", async () => {
+test("password change requires an authenticated request", async () => {
     const { database, server, port } = await createAuthTestServer();
 
     try {
@@ -469,13 +469,14 @@ test("password change requires an authenticated trusted-origin request", async (
             currentPassword: "correct horse battery staple",
             newPassword: "a much stronger password phrase",
         });
-        const untrustedOrigin = await fetch(
+        const otherOrigin = await fetch(
             `http://localhost:${port}/api/auth/change-password`,
             {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
                     Origin: "https://untrusted.example",
+                    Cookie: await loginCookie(port),
                 },
                 body: JSON.stringify({
                     currentPassword: "correct horse battery staple",
@@ -485,7 +486,7 @@ test("password change requires an authenticated trusted-origin request", async (
         );
 
         assert.equal(unauthenticated.status, 401);
-        assert.equal(untrustedOrigin.status, 403);
+        assert.equal(otherOrigin.status, 200);
     } finally {
         await new Promise((resolve, reject) => {
             server.close((error) => (error ? reject(error) : resolve()));

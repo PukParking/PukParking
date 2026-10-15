@@ -10,9 +10,16 @@ const fallbackParking = {
   name: "Selected Parking",
 };
 
-function loadParking(routeParking) {
-  if (routeParking) {
-    return routeParking;
+function loadParking(routeState) {
+  if (typeof routeState?.parkingAreaName === "string" && routeState.parkingAreaName.trim()) {
+    return {
+      _id: routeState.parkingAreaId || routeState.selectedParking?._id || "selected-parking",
+      name: routeState.parkingAreaName,
+    };
+  }
+
+  if (routeState?.selectedParking && typeof routeState.selectedParking === "object") {
+    return routeState.selectedParking;
   }
 
   const stored = sessionStorage.getItem("selectedParking");
@@ -33,7 +40,7 @@ function ParkingConfirmation() {
   const location = useLocation();
 
   const [parking] = useState(() =>
-    loadParking(location.state?.selectedParking)
+    loadParking(location.state)
   );
 
   const [rating, setRating] = useState(0);

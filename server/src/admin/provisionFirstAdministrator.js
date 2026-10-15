@@ -17,6 +17,13 @@ export function normalizeAdministratorEmail(email) {
     return normalizedEmail;
 }
 
+export class DuplicateAdministratorEmailError extends Error {
+    constructor() {
+        super("An administrator with this email address already exists.");
+        this.name = "DuplicateAdministratorEmailError";
+    }
+}
+
 export async function provisionFirstAdministrator(database, email, password) {
     const normalizedEmail = normalizeAdministratorEmail(email);
     const passwordHash = await hashPassword(password);
@@ -70,9 +77,7 @@ export async function provisionAdditionalAdministrator(
             .get(normalizedEmail);
 
         if (existingAdministrator) {
-            throw new Error(
-                "An administrator with this email address already exists.",
-            );
+            throw new DuplicateAdministratorEmailError();
         }
 
         return createAdministratorWithHash(

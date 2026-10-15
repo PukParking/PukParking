@@ -1,12 +1,10 @@
 import jwt from "jsonwebtoken";
-import { isAllowedOrigin } from "../security/origin.js";
 
 export const ADMIN_SESSION_COOKIE = "pukparking_admin_token";
 
 export function createRequireAdmin({
     database,
     jwtSecret = process.env.JWT_SECRET,
-    clientOrigin = process.env.CLIENT_ORIGIN,
 } = {}) {
     if (!database) {
         throw new Error("Admin authentication requires a database.");
@@ -26,15 +24,6 @@ export function createRequireAdmin({
 
         if (!token) {
             return res.status(401).json({ error: "Authentication required" });
-        }
-
-        if (
-            cookieToken &&
-            ["POST", "PUT", "PATCH", "DELETE"].includes(req.method) &&
-            req.get("origin") &&
-            !isAllowedOrigin(req.get("origin"), clientOrigin)
-        ) {
-            return res.status(403).json({ error: "Request origin not allowed" });
         }
 
         try {

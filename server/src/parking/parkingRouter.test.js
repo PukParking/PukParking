@@ -14,7 +14,7 @@ import { createApp } from "../app.js";
 const TEST_JWT_SECRET = "test-only-signing-secret-at-least-32-bytes";
 const TEST_CLIENT_ORIGIN = "http://localhost:5173";
 const currentDirectory = dirname(fileURLToPath(import.meta.url));
-const schemaPath = join(currentDirectory, "../../data/table structure.sql");
+const schemaPath = join(currentDirectory, "../../data/tableStructure.sql");
 
 async function createParkingTestServer() {
     const database = new Database(":memory:");
@@ -249,7 +249,7 @@ test("parking full report records UTC timestamps with a 30-minute expiry and is 
     }
 });
 
-test("full-report submission rejects invalid IDs, inactive areas, and untrusted origins", async () => {
+test("full-report submission rejects invalid IDs and inactive areas from any origin", async () => {
     const testServer = await createParkingTestServer();
 
     try {
@@ -263,20 +263,57 @@ test("full-report submission rejects invalid IDs, inactive areas, and untrusted 
         );
         const invalidId = await request("not-an-id");
         const inactive = await request(testServer.inactiveAreaId);
-        const untrustedOrigin = await request(
+        const otherOrigin = await request(
             testServer.activeAreaId,
             "https://untrusted.example",
         );
 
         assert.equal(invalidId.status, 400);
         assert.equal(inactive.status, 404);
-        assert.equal(untrustedOrigin.status, 403);
+        assert.equal(otherOrigin.status, 200);
         assert.equal(
             testServer.database
                 .prepare("SELECT COUNT(*) AS count FROM PARKING_FULL_REPORT")
                 .get().count,
-            0,
+            1,
         );
+    } finally {
+        await closeParkingTestServer(testServer);
+    }
+});
+
+test("parking area occupation increments the stored occupied spaces and rejects full lots", async () => {
+    const testServer = await createParkingTestServer();
+
+    try {
+        const response = await fetch(
+            `http://localhost:${testServer.port}/api/parking/areas/${testServer.activeAreaId}/occupy`,
+            { method: "POST", headers: { Origin: TEST_CLIENT_ORIGIN } },
+        );
+        const body = await response.json();
+
+        assert.equal(response.status, 200);
+        assert.equal(body.success, true);
+        assert.equal(body.availableBays, 33);
+        assert.equal(
+            testServer.database
+                .prepare("SELECT Parking_Area_Occupied_Spaces AS occupied FROM PARKING_AREA WHERE Parking_Area_ID = ?")
+                .get(testServer.activeAreaId).occupied,
+            7,
+        );
+
+        testServer.database
+            .prepare("UPDATE PARKING_AREA SET Parking_Area_Occupied_Spaces = Parking_Area_Capacity WHERE Parking_Area_ID = ?")
+            .run(testServer.activeAreaId);
+
+        const fullResponse = await fetch(
+            `http://localhost:${testServer.port}/api/parking/areas/${testServer.activeAreaId}/occupy`,
+            { method: "POST", headers: { Origin: TEST_CLIENT_ORIGIN } },
+        );
+        const fullBody = await fullResponse.json();
+
+        assert.equal(fullResponse.status, 400);
+        assert.equal(fullBody.error, "Parking area is already full.");
     } finally {
         await closeParkingTestServer(testServer);
     }

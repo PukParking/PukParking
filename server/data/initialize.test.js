@@ -8,7 +8,7 @@ import { fileURLToPath } from "node:url";
 import { initializeDatabase } from "./initialize.js";
 
 const currentDirectory = dirname(fileURLToPath(import.meta.url));
-const schemaPath = join(currentDirectory, "table structure.sql");
+const schemaPath = join(currentDirectory, "tableStructure.sql");
 
 const legacySchema = `
     PRAGMA foreign_keys = ON;

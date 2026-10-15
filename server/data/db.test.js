@@ -5,11 +5,11 @@ import test from "node:test";
 
 import { migrateErdSchema } from "./erdSchemaMigration.js";
 
-const schemaSql = readFileSync(new URL("./table structure.sql", import.meta.url), "utf8");
+const schemaSql = readFileSync(new URL("./tableStructure.sql", import.meta.url), "utf8");
 
 function createLegacyDatabase(database) {
     database.exec(`
-        CREATE TABLE ADMINISTRATOR (
+        CREATE TABLE IF NOT EXISTS ADMINISTRATOR (
             Administrator_ID INTEGER PRIMARY KEY AUTOINCREMENT,
             Administrator_Username TEXT NOT NULL,
             Administrator_passwordHash TEXT NOT NULL,
@@ -24,7 +24,7 @@ function createLegacyDatabase(database) {
             Building_Latitude REAL,
             Building_Longitude REAL
         );
-        CREATE TABLE PARKING_AREA (
+        CREATE TABLE IF NOT EXISTS PARKING_AREA (
             Parking_Area_ID INTEGER PRIMARY KEY AUTOINCREMENT,
             Administrator_ID INTEGER NOT NULL,
             Parking_Area_Name TEXT NOT NULL,

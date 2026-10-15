@@ -8,10 +8,6 @@ if (!Number.isInteger(port) || port < 1 || port > 65535) {
     throw new Error("PORT must be a valid port number between 1 and 65535.");
 }
 
-if (!process.env.CLIENT_ORIGIN) {
-    throw new Error("CLIENT_ORIGIN must be set in the server environment.");
-}
-
 if (
     !process.env.JWT_SECRET ||
     Buffer.byteLength(process.env.JWT_SECRET, "utf8") < 32

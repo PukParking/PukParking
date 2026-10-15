@@ -18,10 +18,12 @@ check against every known-compromised password. Run `npm run create-admin` from
 the server directory to create the first local administrator. The password is
 entered without being echoed and is stored only as a bcrypt hash. First-admin
 setup refuses to create another account once one exists; further account
-management can be performed locally with `npm run add-admin` from the server
-directory. Only run this command on a trusted machine with access to the local
-database; it requires an interactive terminal and does not expose a public
-administrator-registration endpoint.
+management can be performed locally with `npm run add-admin` from the project
+root (or the server directory). Only run this command on a trusted machine
+with access to the local database; it requires an interactive terminal and
+does not expose a public administrator-registration endpoint. The administrator
+prompts repeat until the email, password, and confirmation are valid, including
+when the email is already in use.
 
 `POST /api/auth/login` accepts an email and password and sets a 15-minute HS256
 JWT in an HttpOnly, SameSite=Strict cookie. The token is not exposed to
@@ -73,7 +75,7 @@ unexpired-report rule.
 ## SQLite database
 
 Starting the server opens `data/pukparking.sqlite` (creating the file if needed)
-and applies the table definitions in `data/table structure.sql`. Existing
+and applies the table definitions in `data/tableStructure.sql`. Existing
 integer-ID database rows are migrated to UUID-based IDs while preserving
 building, parking-area, and full-report relationships. Legacy administrator
 usernames are mapped to the email column; update those values to real email

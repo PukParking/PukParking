@@ -7,7 +7,6 @@ import { createManageRouter } from "./admin/manageRouter.js";
 import { createAdminAuthRouter } from "./auth/adminRouter.js";
 import { createFeedbackRouter } from "./feedback/feedbackRouter.js";
 import { createParkingRouter } from "./parking/parkingRouter.js";
-import { isAllowedOrigin } from "./security/origin.js";
 
 const FULL_REPORT_TTL_MS = 30 * 60 * 1000;
 const UUID_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
@@ -15,7 +14,6 @@ const UUID_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3
 export function createApp({
     database,
     jwtSecret,
-    clientOrigin = process.env.CLIENT_ORIGIN,
 } = {}) {
     if (Boolean(database) !== Boolean(jwtSecret)) {
         throw new Error(
@@ -29,9 +27,7 @@ export function createApp({
     app.use(helmet());
     app.use(
         cors({
-            origin: (requestOrigin, callback) => {
-                callback(null, isAllowedOrigin(requestOrigin, clientOrigin));
-            },
+            origin: true,
             credentials: true,
             methods: ["GET", "POST", "PUT", "PATCH", "DELETE"],
             allowedHeaders: ["Content-Type", "Authorization"],
@@ -47,19 +43,19 @@ export function createApp({
     if (database && jwtSecret) {
         app.use(
             "/api/auth",
-            createAdminAuthRouter({ database, jwtSecret, clientOrigin }),
+            createAdminAuthRouter({ database, jwtSecret }),
         );
         app.use(
             "/api/admin",
-            createManageRouter({ database, jwtSecret, clientOrigin }),
+            createManageRouter({ database, jwtSecret }),
         );
         app.use(
             "/api/feedback",
-            createFeedbackRouter({ database, clientOrigin }),
+            createFeedbackRouter({ database }),
         );
         app.use(
             "/api/parking",
-            createParkingRouter({ database, clientOrigin }),
+            createParkingRouter({ database }),
         );
 
         app.get("/api/buildings", (_req, res) => {
@@ -106,12 +102,6 @@ export function createApp({
         });
 
         app.post("/api/parking-areas/:id/report-full", (req, res) => {
-            if (!isAllowedOrigin(req.get("origin"), clientOrigin)) {
-                return res.status(403).json({
-                    error: "Request origin not allowed",
-                });
-            }
-
             const parkingAreaId = req.params.id;
             if (!UUID_PATTERN.test(parkingAreaId)) {
                 return res.status(400).json({

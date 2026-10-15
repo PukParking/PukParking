@@ -11,7 +11,7 @@ process.env.CLIENT_ORIGIN = process.env.CLIENT_ORIGIN ?? "http://localhost:5173"
 const database = new Database(":memory:");
 initializeDatabase(
     database,
-    readFileSync(new URL("../data/table structure.sql", import.meta.url), "utf8"),
+    readFileSync(new URL("../data/tableStructure.sql", import.meta.url), "utf8"),
 );
 
 const administratorId = randomUUID();
@@ -270,7 +270,7 @@ test("oversized JSON returns a JSON 413", async () => {
     }
 });
 
-test("CORS does not allow an unconfigured origin", async () => {
+test("CORS allows any browser origin", async () => {
     const server = app.listen(0);
     await once(server, "listening");
 
@@ -285,7 +285,7 @@ test("CORS does not allow an unconfigured origin", async () => {
         assert.equal(response.status, 200);
         assert.equal(
             response.headers.get("access-control-allow-origin"),
-            null,
+            "https://untrusted.example",
         );
     } finally {
         await new Promise((resolve, reject) => {

@@ -10,14 +10,12 @@ import {
     ADMIN_SESSION_COOKIE,
     createRequireAdmin,
 } from "./requireAdmin.js";
-import { isAllowedOrigin } from "../security/origin.js";
 
 const ACCESS_TOKEN_TTL_SECONDS = 15 * 60;
 
 export function createAdminAuthRouter({
     database,
     jwtSecret,
-    clientOrigin,
 }) {
     if (
         !database ||
@@ -30,30 +28,13 @@ export function createAdminAuthRouter({
     }
 
     const router = express.Router();
-    const requireAdmin = createRequireAdmin({ database, jwtSecret, clientOrigin });
+    const requireAdmin = createRequireAdmin({ database, jwtSecret });
     const cookieOptions = {
         httpOnly: true,
         secure: process.env.NODE_ENV === "production",
-        sameSite: "strict",
+        sameSite: "lax",
         path: "/api",
     };
-
-    function rejectUntrustedOrigin(req, res) {
-        const origin = req.get("origin");
-        if (!isAllowedOrigin(origin, clientOrigin)) {
-            res.status(403).json({ error: "Request origin not allowed" });
-            return true;
-        }
-
-        return false;
-    }
-
-    function requireTrustedOrigin(req, res, next) {
-        if (rejectUntrustedOrigin(req, res)) {
-            return;
-        }
-        return next();
-    }
 
     const loginRateLimiter = rateLimit({
         windowMs: 15 * 60 * 1000,
@@ -79,7 +60,6 @@ export function createAdminAuthRouter({
 
     router.post(
         "/login",
-        requireTrustedOrigin,
         loginRateLimiter,
         async (req, res) => {
             const { email, password } = req.body ?? {};
@@ -174,7 +154,6 @@ export function createAdminAuthRouter({
 
     router.post(
         "/change-password",
-        requireTrustedOrigin,
         requireAdmin,
         passwordChangeRateLimiter,
         async (req, res) => {
@@ -273,7 +252,7 @@ export function createAdminAuthRouter({
         return res.status(200).json({ administrator });
     });
 
-    router.post("/logout-all", requireTrustedOrigin, requireAdmin, (req, res) => {
+    router.post("/logout-all", requireAdmin, (req, res) => {
         database
             .prepare(`
                 UPDATE ADMINISTRATOR
@@ -287,10 +266,6 @@ export function createAdminAuthRouter({
     });
 
     router.post("/logout", (req, res) => {
-        if (rejectUntrustedOrigin(req, res)) {
-            return;
-        }
-
         res.clearCookie(ADMIN_SESSION_COOKIE, cookieOptions);
         return res.status(204).end();
     });

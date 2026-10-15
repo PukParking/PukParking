@@ -19,7 +19,7 @@ import { initializeDatabase } from "../../data/initialize.js";
 const currentDirectory = dirname(fileURLToPath(import.meta.url));
 const schemaPath = join(
     currentDirectory,
-    "../../data/table structure.sql",
+    "../../data/tableStructure.sql",
 );
 
 function createTestDatabase(schemaOverride) {
