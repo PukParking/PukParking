@@ -76,7 +76,10 @@ function drawRoute(map, geometry, routeType = "walking") {
     id: layerId,
     type: "line",
     source: sourceId,
-    layout: { "line-join": "round", "line-cap": "round" },
+    layout: {
+      "line-join": "round",
+      "line-cap": "round",
+    },
     paint: {
       "line-color": "#1479d1",
       "line-width": 5,
@@ -86,6 +89,45 @@ function drawRoute(map, geometry, routeType = "walking") {
         : {}),
     },
   });
+}
+
+function createRouteEndpointPin(color, title) {
+  const element = document.createElement("div");
+
+  element.style.position = "relative";
+  element.style.width = "36px";
+  element.style.height = "42px";
+  element.style.zIndex = "5";
+  element.style.pointerEvents = "none";
+
+  element.title = title;
+  element.setAttribute("aria-label", title);
+
+  const pin = document.createElement("div");
+
+  pin.style.position = "absolute";
+  pin.style.top = "10px";
+  pin.style.left = "5px";
+  pin.style.width = "26px";
+  pin.style.height = "26px";
+  pin.style.boxSizing = "border-box";
+  pin.style.border = "2px solid #ffffff";
+  pin.style.borderRadius = "50% 50% 50% 0";
+  pin.style.background = color;
+  pin.style.transform = "rotate(-45deg)";
+  pin.style.boxShadow = "0 2px 6px rgba(20, 35, 45, 0.35)";
+
+  const center = document.createElement("span");
+
+  center.style.position = "absolute";
+  center.style.inset = "6px";
+  center.style.borderRadius = "50%";
+  center.style.background = "#ffffff";
+
+  pin.appendChild(center);
+  element.appendChild(pin);
+
+  return element;
 }
 
 function addCampusFeatureLayers(map) {
@@ -175,8 +217,10 @@ function addCampusFeatureLayers(map) {
 function getInitialSelection(location, buildings = mockBuildings) {
   const state = location.state || {};
   const searchParams = new URLSearchParams(location.search);
+
   const category =
-    normalizeCategory(state.userType ?? searchParams.get("userType")) || "Student";
+    normalizeCategory(state.userType ?? searchParams.get("userType")) ||
+    "Student";
 
   const destinationValue =
     state.destinationId ??
@@ -755,7 +799,24 @@ function NavigationPage() {
 
     markersRef.current = [];
 
+    const hasActiveRoute =
+      Boolean(activeLot) &&
+      Boolean(destination) &&
+      routeStatus === "ready";
+
+    const isWalkingRoute =
+      routePhase === "walking";
+
     buildings.forEach((building) => {
+      const isWalkingDestination =
+        hasActiveRoute &&
+        isWalkingRoute &&
+        building.id === destinationId;
+
+      if (isWalkingDestination) {
+        return;
+      }
+
       const element =
         document.createElement("button");
 
@@ -808,6 +869,14 @@ function NavigationPage() {
     });
 
     parkingLots.forEach((lot) => {
+      const isRouteEndpointParking =
+        hasActiveRoute &&
+        lot.id === activeLot?.id;
+
+      if (isRouteEndpointParking) {
+        return;
+      }
+
       const isFull =
         lot.isFull ||
         lot.availableBays <= 0;
@@ -862,7 +931,10 @@ function NavigationPage() {
       );
     });
 
-    if (customDestination) {
+    if (
+      customDestination &&
+      !(hasActiveRoute && isWalkingRoute)
+    ) {
       const element =
         document.createElement("div");
 
@@ -890,15 +962,80 @@ function NavigationPage() {
           .addTo(map),
       );
     }
+
+    if (hasActiveRoute) {
+      const routeStartCoordinates =
+        isWalkingRoute
+          ? activeLot.coordinates
+          : originCoordinates;
+
+      const routeEndCoordinates =
+        isWalkingRoute
+          ? destination.coordinates
+          : activeLot.coordinates;
+
+      const routeName =
+        isWalkingRoute
+          ? "Walking"
+          : "Driving";
+
+      const startName =
+        isWalkingRoute
+          ? activeLot.name
+          : "Current location";
+
+      const endName =
+        isWalkingRoute
+          ? destination.name
+          : activeLot.name;
+
+      [
+        {
+          color: "#d32f2f",
+          coordinates:
+            routeStartCoordinates,
+          title:
+            `${routeName} route starts here: ${startName}`,
+        },
+        {
+          color: "#1479d1",
+          coordinates:
+            routeEndCoordinates,
+          title:
+            `${routeName} route ends here: ${endName}`,
+        },
+      ].forEach((endpoint) => {
+        const element =
+          createRouteEndpointPin(
+            endpoint.color,
+            endpoint.title,
+          );
+
+        markersRef.current.push(
+          new mapboxgl.Marker({
+            element,
+            anchor: "bottom",
+          })
+            .setLngLat(
+              endpoint.coordinates,
+            )
+            .addTo(map),
+        );
+      });
+    }
   }, [
     activeLot,
     buildings,
     category,
     customDestination,
+    destination,
     destinationId,
     mapReady,
+    originCoordinates,
     parkingLots,
     resetNavigationForSelection,
+    routePhase,
+    routeStatus,
   ]);
 
   useEffect(() => {
