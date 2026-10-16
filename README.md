@@ -54,17 +54,17 @@ Then open the local Vite URL in the browser and navigate to the parking flow, fo
 
 ## Server setup
 
-Create `server/.env` from the example and set a private JWT secret of at least 32 bytes:
+Create `server/.env` from the example and set a private JWT secret of at least 32 bytes, plus the bootstrap administrator email and password:
 
 ```bash
 cd server
 cp .env.example .env
 npm ci
-npm run seed
-npm run dev
+cd ..
+npm run dev --prefix server
 ```
 
-The API listens on `http://localhost:3000` by default. SQLite uses UUID text identifiers and the ERD-aligned `ADMINISTRATOR`, `BUILDING`, `PARKING_AREA`, and `PARKING_FULL_REPORT` tables. `GET /api/buildings` returns campus buildings; `GET /api/parking-areas` computes availability and respects unexpired full reports; `POST /api/parking-areas/:id/report-full` reports a lot full for 30 minutes. The seed command initializes whichever of the buildings or parking tables are empty with the NWU Potchefstroom dataset. If the required administrator foreign key has no owner, it creates a non-privileged seed owner with an inaccessible random password hash. Existing SQLite data is migrated to the ERD schema while preserving its rows and relationships.
+The server automatically seeds the NWU Potchefstroom campus dataset on startup if both the buildings and parking-area tables are empty. If there is no administrator, it creates one from `BOOTSTRAP_ADMIN_EMAIL` and `BOOTSTRAP_ADMIN_PASSWORD`; both values must be set in the ignored `server/.env` file before initializing a new database. Passwords must satisfy the existing administrator password policy. Existing administrator accounts are not replaced. You can also run `npm run seed` from the project root to manually resynchronize the campus dataset; **manual seeding replaces existing buildings, parking areas, and full reports.** The API listens on `http://localhost:3000` by default. SQLite uses UUID text identifiers and the ERD-aligned `ADMINISTRATOR`, `BUILDING`, `PARKING_AREA`, and `PARKING_FULL_REPORT` tables. `GET /api/buildings` returns campus buildings; `GET /api/parking-areas` computes availability and respects unexpired full reports; `POST /api/parking-areas/:id/report-full` reports a lot full for 30 minutes. Existing SQLite data is migrated to the ERD schema while preserving its rows and relationships.
 
 ## Campus data schema
 

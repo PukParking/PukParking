@@ -1,5 +1,9 @@
 import "dotenv/config";
 import database from "../data/db.js";
+import {
+    getBootstrapAdministratorCredentials,
+    seedCampusData,
+} from "../data/seedCampus.js";
 import { createApp } from "./app.js";
 
 const port = Number(process.env.PORT || 3000);
@@ -13,6 +17,17 @@ if (
     Buffer.byteLength(process.env.JWT_SECRET, "utf8") < 32
 ) {
     throw new Error("JWT_SECRET must be set to a secret of at least 32 bytes.");
+}
+
+const seeded = await seedCampusData(database, {
+    onlyIfEmpty: true,
+    administratorCredentials: getBootstrapAdministratorCredentials(),
+});
+if (seeded) {
+    console.log(
+        `Empty campus database seeded: ${seeded.buildings} buildings and ` +
+        `${seeded.parkingAreas} parking areas added.`,
+    );
 }
 
 const app = createApp({

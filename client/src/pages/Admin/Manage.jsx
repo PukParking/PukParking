@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
 import "./Manage.css";
+import "./ManageActions.css";
 
 const EMPTY_PARKING = {
     name: "",
@@ -16,6 +17,41 @@ const EMPTY_BUILDING = {
     latitude: "",
     longitude: "",
 };
+
+const PARKING_CATEGORIES = ["Student", "Staff", "Guest"];
+
+function normalizeParkingCategory(value) {
+    const normalizedValue = String(value || "").trim().toLowerCase();
+
+    if (normalizedValue === "visitor") {
+        return "Guest";
+    }
+
+    return (
+        PARKING_CATEGORIES.find(
+            (category) => category.toLowerCase() === normalizedValue,
+        ) || ""
+    );
+}
+
+function formatParkingForEdit(parking) {
+    return {
+        ...parking,
+        category: normalizeParkingCategory(parking.category),
+        capacity: parking.capacity == null ? "" : String(parking.capacity),
+        buildingId: parking.buildingId == null ? "" : String(parking.buildingId),
+        latitude: parking.latitude == null ? "" : String(parking.latitude),
+        longitude: parking.longitude == null ? "" : String(parking.longitude),
+    };
+}
+
+function formatBuildingForEdit(building) {
+    return {
+        ...building,
+        latitude: building.latitude == null ? "" : String(building.latitude),
+        longitude: building.longitude == null ? "" : String(building.longitude),
+    };
+}
 
 async function apiRequest(path, { method = "GET", body } = {}) {
     const response = await fetch(`/api/admin${path}`, {
@@ -57,120 +93,172 @@ function toBuildingPayload(building) {
     };
 }
 
-function ParkingFields({ value, onChange, buildings }) {
+function ParkingFields({ value, onChange, buildings, showLabels = false }) {
     const update = (field) => (event) => {
         onChange({ ...value, [field]: event.target.value });
     };
 
     return (
         <>
-            <input
-                type="text"
-                placeholder="Parking Name"
-                value={value.name}
-                onChange={update("name")}
-                maxLength={120}
-                required
-            />
-            <select
-                value={value.category}
-                onChange={update("category")}
-                required
-            >
-                <option value="">Select Category</option>
-                <option value="Student">Student</option>
-                <option value="Staff">Staff</option>
-                <option value="Guest">Guest</option>
-            </select>
-            <input
-                type="number"
-                placeholder="Capacity"
-                value={value.capacity}
-                onChange={update("capacity")}
-                min="1"
-                step="1"
-                required
-            />
-            <select
-                value={value.buildingId}
-                onChange={update("buildingId")}
-                required
-                disabled={buildings.length === 0}
-            >
-                <option value="">Select Building / Block</option>
-                {buildings.map((building) => (
-                    <option key={building.id} value={building.id}>
-                        {building.name} - {building.code}
-                    </option>
-                ))}
-            </select>
-            <input
-                type="number"
-                step="any"
-                min="-90"
-                max="90"
-                placeholder="Parking Latitude"
-                value={value.latitude}
-                onChange={update("latitude")}
-                required
-            />
-            <input
-                type="number"
-                step="any"
-                min="-180"
-                max="180"
-                placeholder="Parking Longitude"
-                value={value.longitude}
-                onChange={update("longitude")}
-                required
-            />
+            <div className="manage-field">
+                {showLabels && <label htmlFor="parking-name">Parking Name</label>}
+                <input
+                    id={showLabels ? "parking-name" : undefined}
+                    type="text"
+                    placeholder="Parking Name"
+                    value={value.name}
+                    onChange={update("name")}
+                    maxLength={120}
+                    required
+                />
+            </div>
+
+            <div className="manage-field">
+                {showLabels && <label htmlFor="parking-category">Category</label>}
+                <select
+                    id={showLabels ? "parking-category" : undefined}
+                    value={value.category}
+                    onChange={update("category")}
+                    required
+                >
+                    <option value="">Select Category</option>
+                    {PARKING_CATEGORIES.map((category) => (
+                        <option key={category} value={category}>
+                            {category}
+                        </option>
+                    ))}
+                </select>
+            </div>
+
+            <div className="manage-field">
+                {showLabels && <label htmlFor="parking-capacity">Capacity</label>}
+                <input
+                    id={showLabels ? "parking-capacity" : undefined}
+                    type="number"
+                    placeholder="Capacity"
+                    value={value.capacity}
+                    onChange={update("capacity")}
+                    min="1"
+                    step="1"
+                    required
+                />
+            </div>
+
+            <div className="manage-field">
+                {showLabels && (
+                    <label htmlFor="parking-building">Building / Block</label>
+                )}
+                <select
+                    id={showLabels ? "parking-building" : undefined}
+                    value={value.buildingId}
+                    onChange={update("buildingId")}
+                    required
+                    disabled={buildings.length === 0}
+                >
+                    <option value="">Select Building / Block</option>
+                    {buildings.map((building) => (
+                        <option key={building.id} value={building.id}>
+                            {building.name} - {building.code}
+                        </option>
+                    ))}
+                </select>
+            </div>
+
+            <div className="manage-field">
+                {showLabels && <label htmlFor="parking-latitude">Latitude</label>}
+                <input
+                    id={showLabels ? "parking-latitude" : undefined}
+                    type="number"
+                    step="any"
+                    min="-90"
+                    max="90"
+                    placeholder="Parking Latitude"
+                    value={value.latitude}
+                    onChange={update("latitude")}
+                    required
+                />
+            </div>
+
+            <div className="manage-field">
+                {showLabels && <label htmlFor="parking-longitude">Longitude</label>}
+                <input
+                    id={showLabels ? "parking-longitude" : undefined}
+                    type="number"
+                    step="any"
+                    min="-180"
+                    max="180"
+                    placeholder="Parking Longitude"
+                    value={value.longitude}
+                    onChange={update("longitude")}
+                    required
+                />
+            </div>
         </>
     );
 }
 
-function BuildingFields({ value, onChange }) {
+function BuildingFields({ value, onChange, showLabels = false }) {
     const update = (field) => (event) => {
         onChange({ ...value, [field]: event.target.value });
     };
 
     return (
         <>
-            <input
-                type="text"
-                placeholder="Building Name"
-                value={value.name}
-                onChange={update("name")}
-                maxLength={120}
-                required
-            />
-            <input
-                type="text"
-                placeholder="Building Code"
-                value={value.code}
-                onChange={update("code")}
-                maxLength={32}
-                required
-            />
-            <input
-                type="number"
-                step="any"
-                min="-90"
-                max="90"
-                placeholder="Latitude"
-                value={value.latitude}
-                onChange={update("latitude")}
-                required
-            />
-            <input
-                type="number"
-                step="any"
-                min="-180"
-                max="180"
-                placeholder="Longitude"
-                value={value.longitude}
-                onChange={update("longitude")}
-                required
-            />
+            <div className="manage-field">
+                {showLabels && <label htmlFor="building-name">Building Name</label>}
+                <input
+                    id={showLabels ? "building-name" : undefined}
+                    type="text"
+                    placeholder="Building Name"
+                    value={value.name}
+                    onChange={update("name")}
+                    maxLength={120}
+                    required
+                />
+            </div>
+
+            <div className="manage-field">
+                {showLabels && <label htmlFor="building-code">Building Code</label>}
+                <input
+                    id={showLabels ? "building-code" : undefined}
+                    type="text"
+                    placeholder="Building Code"
+                    value={value.code}
+                    onChange={update("code")}
+                    maxLength={32}
+                    required
+                />
+            </div>
+
+            <div className="manage-field">
+                {showLabels && <label htmlFor="building-latitude">Latitude</label>}
+                <input
+                    id={showLabels ? "building-latitude" : undefined}
+                    type="number"
+                    step="any"
+                    min="-90"
+                    max="90"
+                    placeholder="Latitude"
+                    value={value.latitude}
+                    onChange={update("latitude")}
+                    required
+                />
+            </div>
+
+            <div className="manage-field">
+                {showLabels && <label htmlFor="building-longitude">Longitude</label>}
+                <input
+                    id={showLabels ? "building-longitude" : undefined}
+                    type="number"
+                    step="any"
+                    min="-180"
+                    max="180"
+                    placeholder="Longitude"
+                    value={value.longitude}
+                    onChange={update("longitude")}
+                    required
+                />
+            </div>
         </>
     );
 }
@@ -184,6 +272,7 @@ function Manage() {
     const [selectedDeleteParking, setSelectedDeleteParking] = useState(null);
     const [selectedUpdateBuilding, setSelectedUpdateBuilding] = useState(null);
     const [selectedDeleteBuilding, setSelectedDeleteBuilding] = useState(null);
+    const [deleteConfirmation, setDeleteConfirmation] = useState(null);
     const [notice, setNotice] = useState("");
     const [error, setError] = useState("");
     const [isLoading, setIsLoading] = useState(true);
@@ -242,6 +331,11 @@ function Manage() {
         }
     };
 
+    const clearMessages = () => {
+        setError("");
+        setNotice("");
+    };
+
     const handleAddParking = (event) => {
         event.preventDefault();
         void performAction(async () => {
@@ -251,6 +345,11 @@ function Manage() {
             });
             setAddForm(EMPTY_PARKING);
         }, "Parking area added successfully.");
+    };
+
+    const handleCancelAddParking = () => {
+        setAddForm(EMPTY_PARKING);
+        clearMessages();
     };
 
     const handleEditParking = (event) => {
@@ -267,17 +366,29 @@ function Manage() {
         }, "Parking area updated successfully.");
     };
 
+    const handleCancelEditParking = () => {
+        setSelectedUpdateParking(null);
+        clearMessages();
+    };
+
     const handleDeleteParking = () => {
         if (!selectedDeleteParking) {
             return;
         }
 
-        void performAction(async () => {
-            await apiRequest(`/parking-areas/${selectedDeleteParking.id}`, {
-                method: "DELETE",
-            });
-            setSelectedDeleteParking(null);
-        }, "Parking area deleted successfully.");
+        setDeleteConfirmation({
+            type: "parking",
+            id: selectedDeleteParking.id,
+            name: selectedDeleteParking.name,
+        });
+
+        clearMessages();
+    };
+
+    const handleCancelDeleteParking = () => {
+        setSelectedDeleteParking(null);
+        setDeleteConfirmation(null);
+        clearMessages();
     };
 
     const handleAddBuilding = (event) => {
@@ -289,6 +400,11 @@ function Manage() {
             });
             setAddBuildingForm(EMPTY_BUILDING);
         }, "Building added successfully.");
+    };
+
+    const handleCancelAddBuilding = () => {
+        setAddBuildingForm(EMPTY_BUILDING);
+        clearMessages();
     };
 
     const handleEditBuilding = (event) => {
@@ -305,17 +421,75 @@ function Manage() {
         }, "Building updated successfully.");
     };
 
+    const handleCancelEditBuilding = () => {
+        setSelectedUpdateBuilding(null);
+        clearMessages();
+    };
+
     const handleDeleteBuilding = () => {
         if (!selectedDeleteBuilding) {
             return;
         }
 
+        setDeleteConfirmation({
+            type: "building",
+            id: selectedDeleteBuilding.id,
+            name: selectedDeleteBuilding.name,
+        });
+
+        clearMessages();
+    };
+
+    const handleCancelDeleteBuilding = () => {
+        setSelectedDeleteBuilding(null);
+        setDeleteConfirmation(null);
+        clearMessages();
+    };
+
+    const handleCancelDeleteConfirmation = () => {
+        if (isSaving || !deleteConfirmation) {
+            return;
+        }
+
+        if (deleteConfirmation.type === "parking") {
+            setSelectedDeleteParking(null);
+        } else {
+            setSelectedDeleteBuilding(null);
+        }
+
+        setDeleteConfirmation(null);
+        clearMessages();
+    };
+
+    const handleConfirmDelete = () => {
+        if (!deleteConfirmation) {
+            return;
+        }
+
+        const target = deleteConfirmation;
+        const isParking = target.type === "parking";
+
+        const path = isParking
+            ? `/parking-areas/${target.id}`
+            : `/buildings/${target.id}`;
+
+        const successMessage = isParking
+            ? "Parking area deleted successfully."
+            : "Building deleted successfully.";
+
         void performAction(async () => {
-            await apiRequest(`/buildings/${selectedDeleteBuilding.id}`, {
+            await apiRequest(path, {
                 method: "DELETE",
             });
-            setSelectedDeleteBuilding(null);
-        }, "Building deleted successfully.");
+
+            if (isParking) {
+                setSelectedDeleteParking(null);
+            } else {
+                setSelectedDeleteBuilding(null);
+            }
+
+            setDeleteConfirmation(null);
+        }, successMessage);
     };
 
     if (isLoading) {
@@ -345,50 +519,71 @@ function Manage() {
                             onChange={setAddForm}
                             buildings={buildings}
                         />
-                        <button type="submit" disabled={isSaving || buildings.length === 0}>
-                            Add Parking
-                        </button>
+                        <div className="manage-form-actions">
+                            <button
+                                className="manage-cancel-button"
+                                type="button"
+                                onClick={handleCancelAddParking}
+                                disabled={isSaving}
+                            >
+                                Cancel
+                            </button>
+                            <button
+                                type="submit"
+                                disabled={isSaving || buildings.length === 0}
+                            >
+                                Add Parking
+                            </button>
+                        </div>
                     </form>
                 </section>
 
                 <section className="manage-card">
                     <h3>Edit Parking</h3>
-                    <select
-                        value={selectedUpdateParking?.id ?? ""}
-                        onChange={(event) => {
-                            const parking = parkings.find(
-                                (item) => item.id === event.target.value,
-                            );
-                            setSelectedUpdateParking(
-                                parking
-                                    ? {
-                                        ...parking,
-                                        capacity: String(parking.capacity),
-                                        buildingId: String(parking.buildingId),
-                                        latitude: String(parking.latitude),
-                                        longitude: String(parking.longitude),
-                                    }
-                                    : null,
-                            );
-                        }}
-                    >
-                        <option value="">Select Parking</option>
-                        {parkings.map((parking) => (
-                            <option key={parking.id} value={parking.id}>
-                                {parking.name} - {parking.category}
-                            </option>
-                        ))}
-                    </select>
+                    <div className="manage-selector-field">
+                        <label htmlFor="parking-to-edit">Parking area to edit</label>
+                        <select
+                            id="parking-to-edit"
+                            value={selectedUpdateParking?.id ?? ""}
+                            onChange={(event) => {
+                                const parking = parkings.find(
+                                    (item) => item.id === event.target.value,
+                                );
+                                setSelectedUpdateParking(
+                                    parking ? formatParkingForEdit(parking) : null,
+                                );
+                                clearMessages();
+                            }}
+                        >
+                            <option value="">Select Parking</option>
+                            {parkings.map((parking) => (
+                                <option key={parking.id} value={parking.id}>
+                                    {parking.name} - {parking.category}
+                                </option>
+                            ))}
+                        </select>
+                    </div>
                     {selectedUpdateParking && (
                         <form onSubmit={handleEditParking}>
                             <ParkingFields
                                 value={selectedUpdateParking}
                                 onChange={setSelectedUpdateParking}
                                 buildings={buildings}
+                                showLabels
                             />
-                            <button type="submit" disabled={isSaving}>
-                                Save Changes
-                            </button>
+                            <div className="manage-form-actions">
+                                <button
+                                    className="manage-cancel-button"
+                                    type="button"
+                                    onClick={handleCancelEditParking}
+                                    disabled={isSaving}
+                                >
+                                    Cancel
+                                </button>
+                                <button type="submit" disabled={isSaving}>
+                                    Save Changes
+                                </button>
+                            </div>
                         </form>
                     )}
                 </section>
@@ -403,6 +598,8 @@ function Manage() {
                                     (item) => item.id === event.target.value,
                                 ) ?? null,
                             );
+                            setDeleteConfirmation(null);
+                            clearMessages();
                         }}
                     >
                         <option value="">Select Parking</option>
@@ -418,14 +615,24 @@ function Manage() {
                             <p><strong>Category:</strong> {selectedDeleteParking.category}</p>
                             <p><strong>Capacity:</strong> {selectedDeleteParking.capacity}</p>
                             <p><strong>Location:</strong> {selectedDeleteParking.buildingName}</p>
-                            <button
-                                className="delete-button"
-                                type="button"
-                                onClick={handleDeleteParking}
-                                disabled={isSaving}
-                            >
-                                Delete Parking
-                            </button>
+                            <div className="manage-delete-actions">
+                                <button
+                                    className="manage-cancel-button"
+                                    type="button"
+                                    onClick={handleCancelDeleteParking}
+                                    disabled={isSaving}
+                                >
+                                    Cancel
+                                </button>
+                                <button
+                                    className="delete-button"
+                                    type="button"
+                                    onClick={handleDeleteParking}
+                                    disabled={isSaving}
+                                >
+                                    Delete Parking
+                                </button>
+                            </div>
                         </div>
                     )}
                 </section>
@@ -440,45 +647,67 @@ function Manage() {
                             value={addBuildingForm}
                             onChange={setAddBuildingForm}
                         />
-                        <button type="submit" disabled={isSaving}>Add Building</button>
+                        <div className="manage-form-actions">
+                            <button
+                                className="manage-cancel-button"
+                                type="button"
+                                onClick={handleCancelAddBuilding}
+                                disabled={isSaving}
+                            >
+                                Cancel
+                            </button>
+                            <button type="submit" disabled={isSaving}>
+                                Add Building
+                            </button>
+                        </div>
                     </form>
                 </section>
 
                 <section className="manage-card">
                     <h3>Edit Building</h3>
-                    <select
-                        value={selectedUpdateBuilding?.id ?? ""}
-                        onChange={(event) => {
-                            const building = buildings.find(
-                                (item) => item.id === event.target.value,
-                            );
-                            setSelectedUpdateBuilding(
-                                building
-                                    ? {
-                                        ...building,
-                                        latitude: String(building.latitude),
-                                        longitude: String(building.longitude),
-                                    }
-                                    : null,
-                            );
-                        }}
-                    >
-                        <option value="">Select Building</option>
-                        {buildings.map((building) => (
-                            <option key={building.id} value={building.id}>
-                                {building.name} - {building.code}
-                            </option>
-                        ))}
-                    </select>
+                    <div className="manage-selector-field">
+                        <label htmlFor="building-to-edit">Building to edit</label>
+                        <select
+                            id="building-to-edit"
+                            value={selectedUpdateBuilding?.id ?? ""}
+                            onChange={(event) => {
+                                const building = buildings.find(
+                                    (item) => item.id === event.target.value,
+                                );
+                                setSelectedUpdateBuilding(
+                                    building ? formatBuildingForEdit(building) : null,
+                                );
+                                clearMessages();
+                            }}
+                        >
+                            <option value="">Select Building</option>
+                            {buildings.map((building) => (
+                                <option key={building.id} value={building.id}>
+                                    {building.name} - {building.code}
+                                </option>
+                            ))}
+                        </select>
+                    </div>
                     {selectedUpdateBuilding && (
                         <form onSubmit={handleEditBuilding}>
                             <BuildingFields
                                 value={selectedUpdateBuilding}
                                 onChange={setSelectedUpdateBuilding}
+                                showLabels
                             />
-                            <button type="submit" disabled={isSaving}>
-                                Save Changes
-                            </button>
+                            <div className="manage-form-actions">
+                                <button
+                                    className="manage-cancel-button"
+                                    type="button"
+                                    onClick={handleCancelEditBuilding}
+                                    disabled={isSaving}
+                                >
+                                    Cancel
+                                </button>
+                                <button type="submit" disabled={isSaving}>
+                                    Save Changes
+                                </button>
+                            </div>
                         </form>
                     )}
                 </section>
@@ -493,6 +722,8 @@ function Manage() {
                                     (item) => item.id === event.target.value,
                                 ) ?? null,
                             );
+                            setDeleteConfirmation(null);
+                            clearMessages();
                         }}
                     >
                         <option value="">Select Building</option>
@@ -508,18 +739,79 @@ function Manage() {
                             <p><strong>Code:</strong> {selectedDeleteBuilding.code}</p>
                             <p><strong>Latitude:</strong> {selectedDeleteBuilding.latitude}</p>
                             <p><strong>Longitude:</strong> {selectedDeleteBuilding.longitude}</p>
-                            <button
-                                className="delete-button"
-                                type="button"
-                                onClick={handleDeleteBuilding}
-                                disabled={isSaving}
-                            >
-                                Delete Building
-                            </button>
+                            <div className="manage-delete-actions">
+                                <button
+                                    className="manage-cancel-button"
+                                    type="button"
+                                    onClick={handleCancelDeleteBuilding}
+                                    disabled={isSaving}
+                                >
+                                    Cancel
+                                </button>
+                                <button
+                                    className="delete-button"
+                                    type="button"
+                                    onClick={handleDeleteBuilding}
+                                    disabled={isSaving}
+                                >
+                                    Delete Building
+                                </button>
+                            </div>
                         </div>
                     )}
                 </section>
             </div>
+
+            {deleteConfirmation && (
+                <div className="manage-modal-backdrop">
+                    <div
+                        className="manage-confirm-dialog"
+                        role="alertdialog"
+                        aria-modal="true"
+                        aria-labelledby="manage-delete-title"
+                        aria-describedby="manage-delete-description"
+                    >
+                        <div className="manage-confirm-icon" aria-hidden="true">
+                            !
+                        </div>
+
+                        <h2 id="manage-delete-title">Confirm deletion</h2>
+
+                        <p id="manage-delete-description">
+                            Are you sure you want to delete{" "}
+                            <strong>{deleteConfirmation.name}</strong>?
+                        </p>
+
+                        <p className="manage-confirm-warning">
+                            This action cannot be undone.
+                        </p>
+
+                        <div className="manage-dialog-actions">
+                            <button
+                                className="manage-dialog-cancel-button"
+                                type="button"
+                                onClick={handleCancelDeleteConfirmation}
+                                disabled={isSaving}
+                            >
+                                Cancel
+                            </button>
+
+                            <button
+                                className="manage-confirm-delete-button"
+                                type="button"
+                                onClick={handleConfirmDelete}
+                                disabled={isSaving}
+                            >
+                                {isSaving
+                                    ? "Deleting..."
+                                    : deleteConfirmation.type === "parking"
+                                      ? "Delete Parking"
+                                      : "Delete Building"}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     );
 }

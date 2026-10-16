@@ -6,12 +6,8 @@ import {
 
 import Home from "../pages/Home/Home";
 import AboutUs from "../pages/Home/AboutUs";
-import ParkingStats from "../pages/Home/ParkingStats";
 
 import UserLanding from "../pages/Parking/UserLanding";
-import UserConfirmation from "../pages/Parking/UserConfirmation";
-
-import ParkingDirections from "../pages/ParkingDirections/ParkingDirections";
 import ParkingConfirmation from "../pages/ParkingConfirmation/ParkingConfirmation";
 import NavigationPage from "../pages/NavigationPage";
 
@@ -27,102 +23,27 @@ import AdminLayout from "../components/Admin/AdminLayout";
 function AppRoutes() {
   return (
     <Routes>
-      {/* Default */}
+      <Route path="/" element={<Navigate to="/home" replace />} />
 
-      <Route
-        path="/"
-        element={
-          <Navigate
-            to="/home"
-            replace
-          />
-        }
-      />
+      <Route path="/home" element={<Home />} />
+      <Route path="/about" element={<AboutUs />} />
 
-      {/* Public Pages */}
+      <Route path="/parking" element={<UserLanding />} />
+      <Route path="/parking/navigation" element={<NavigationPage />} />
+      <Route path="/parking/confirmation" element={<ParkingConfirmation />} />
+      <Route path="/navigation" element={<NavigationPage />} />
 
-      <Route
-        path="/home"
-        element={<Home />}
-      />
-
-      <Route
-        path="/about"
-        element={<AboutUs />}
-      />
-
-      <Route
-        path="/parking-stats"
-        element={<ParkingStats />}
-      />
-
-      {/* Parking Flow */}
-
-      <Route
-        path="/parking"
-        element={<UserLanding />}
-      />
-
-      <Route
-        path="/parking/navigation"
-        element={<NavigationPage />}
-      />
-
-      <Route
-        path="/parking/confirmation"
-        element={<UserConfirmation />}
-      />
-
-      <Route
-        path="/parking-directions"
-        element={<ParkingDirections />}
-      />
-
-      <Route
-        path="/parking-confirmation"
-        element={<ParkingConfirmation />}
-      />
-
-      <Route
-        path="/navigation"
-        element={<NavigationPage />}
-      />
-
-      {/* Admin Login */}
-
-      <Route
-        path="/admin"
-        element={<AdminLogin />}
-      />
-
-      {/* Admin Pages */}
+      <Route path="/admin" element={<AdminLogin />} />
 
       <Route element={<AdminLayout />}>
-        <Route
-          path="/admin/dashboard"
-          element={<Dashboard />}
-        />
-
-        <Route
-          path="/admin/manage"
-          element={<Manage />}
-        />
-
-        <Route
-          path="/admin/reports"
-          element={<Reports />}
-        />
-
-        <Route
-          path="/admin/ratings"
-          element={<RatingsComments />}
-        />
-
-        <Route
-          path="/admin/settings"
-          element={<Settings />}
-        />
+        <Route path="/admin/dashboard" element={<Dashboard />} />
+        <Route path="/admin/manage" element={<Manage />} />
+        <Route path="/admin/reports" element={<Reports />} />
+        <Route path="/admin/ratings" element={<RatingsComments />} />
+        <Route path="/admin/settings" element={<Settings />} />
       </Route>
+
+      <Route path="*" element={<Navigate to="/home" replace />} />
     </Routes>
   );
 }

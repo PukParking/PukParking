@@ -281,3 +281,40 @@ test("full-report submission rejects invalid IDs and inactive areas from any ori
         await closeParkingTestServer(testServer);
     }
 });
+
+test("parking area occupation increments the stored occupied spaces and rejects full lots", async () => {
+    const testServer = await createParkingTestServer();
+
+    try {
+        const response = await fetch(
+            `http://localhost:${testServer.port}/api/parking/areas/${testServer.activeAreaId}/occupy`,
+            { method: "POST", headers: { Origin: TEST_CLIENT_ORIGIN } },
+        );
+        const body = await response.json();
+
+        assert.equal(response.status, 200);
+        assert.equal(body.success, true);
+        assert.equal(body.availableBays, 33);
+        assert.equal(
+            testServer.database
+                .prepare("SELECT Parking_Area_Occupied_Spaces AS occupied FROM PARKING_AREA WHERE Parking_Area_ID = ?")
+                .get(testServer.activeAreaId).occupied,
+            7,
+        );
+
+        testServer.database
+            .prepare("UPDATE PARKING_AREA SET Parking_Area_Occupied_Spaces = Parking_Area_Capacity WHERE Parking_Area_ID = ?")
+            .run(testServer.activeAreaId);
+
+        const fullResponse = await fetch(
+            `http://localhost:${testServer.port}/api/parking/areas/${testServer.activeAreaId}/occupy`,
+            { method: "POST", headers: { Origin: TEST_CLIENT_ORIGIN } },
+        );
+        const fullBody = await fullResponse.json();
+
+        assert.equal(fullResponse.status, 400);
+        assert.equal(fullBody.error, "Parking area is already full.");
+    } finally {
+        await closeParkingTestServer(testServer);
+    }
+});

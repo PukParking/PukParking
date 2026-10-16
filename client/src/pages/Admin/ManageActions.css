@@ -1,0 +1,239 @@
+/* Manage fields */
+
+.manage-field,
+.manage-selector-field {
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+}
+
+.manage-field label,
+.manage-selector-field label {
+    font-size: 12px;
+    font-weight: 700;
+    color: #566778;
+}
+
+.manage-selector-field {
+    margin-bottom: 12px;
+}
+
+
+/* Manage form actions */
+
+.manage-form-actions,
+.manage-delete-actions {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+    margin-top: 4px;
+}
+
+.manage-delete-actions {
+    margin-top: 20px;
+}
+
+.manage-card .manage-cancel-button {
+    background: #eef2f6;
+    color: #24364a;
+    border: 1px solid #cbd5df;
+}
+
+.manage-card .manage-cancel-button:hover:not(:disabled) {
+    background: #e2e8f0;
+    opacity: 1;
+}
+
+.manage-card button:disabled,
+.manage-confirm-dialog button:disabled {
+    cursor: not-allowed;
+    opacity: 0.55;
+}
+
+.manage-delete-actions .delete-button {
+    margin-top: 0;
+}
+
+
+/* Delete confirmation */
+
+.manage-modal-backdrop {
+    position: fixed;
+    inset: 0;
+    z-index: 4000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+    background: rgba(5, 12, 20, 0.68);
+    backdrop-filter: blur(4px);
+}
+
+.manage-confirm-dialog {
+    width: min(460px, 100%);
+    padding: 28px;
+    border: 1px solid #d8e1ea;
+    border-radius: 16px;
+    background: #ffffff;
+    color: #1b263b;
+    box-shadow: 0 24px 70px rgba(0, 0, 0, 0.28);
+    text-align: center;
+}
+
+.manage-confirm-icon {
+    width: 52px;
+    height: 52px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 16px;
+    border-radius: 50%;
+    background: #fff0f0;
+    color: #d43f3f;
+    font-size: 28px;
+    font-weight: 800;
+}
+
+.manage-confirm-dialog h2 {
+    margin: 0 0 12px;
+    color: #1b263b;
+    font-size: 24px;
+}
+
+.manage-confirm-dialog p {
+    margin: 0;
+    color: #536273;
+    line-height: 1.6;
+}
+
+.manage-confirm-dialog strong {
+    color: #1b263b;
+}
+
+.manage-confirm-warning {
+    margin-top: 10px !important;
+    color: #a13d3d !important;
+    font-size: 14px;
+}
+
+.manage-dialog-actions {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+    margin-top: 24px;
+}
+
+.manage-dialog-actions button {
+    min-height: 44px;
+    padding: 10px 16px;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.manage-dialog-cancel-button {
+    border: 1px solid #cbd5df;
+    background: #f4f7fa;
+    color: #24364a;
+}
+
+.manage-dialog-cancel-button:hover:not(:disabled) {
+    background: #e7edf3;
+}
+
+.manage-confirm-delete-button {
+    border: 1px solid #d63f3f;
+    background: #e74b4b;
+    color: #ffffff;
+}
+
+.manage-confirm-delete-button:hover:not(:disabled) {
+    background: #cf3e3e;
+}
+
+
+/* Dark mode */
+
+body.dark-mode .manage-field label,
+body.dark-mode .manage-selector-field label {
+    color: #9eb4c6;
+}
+
+body.dark-mode .manage-card .manage-cancel-button {
+    border-color: #35556c;
+    background: #173047;
+    color: #dfeef8;
+}
+
+body.dark-mode .manage-card .manage-cancel-button:hover:not(:disabled) {
+    background: #1d3d57;
+}
+
+body.dark-mode .manage-modal-backdrop {
+    background: rgba(2, 8, 14, 0.78);
+}
+
+body.dark-mode .manage-confirm-dialog {
+    border-color: rgba(76, 184, 239, 0.18);
+    background: #10283a;
+    color: #edf7ff;
+    box-shadow: 0 28px 80px rgba(0, 0, 0, 0.5);
+}
+
+body.dark-mode .manage-confirm-icon {
+    background: rgba(218, 71, 71, 0.16);
+    color: #ff9696;
+}
+
+body.dark-mode .manage-confirm-dialog h2,
+body.dark-mode .manage-confirm-dialog strong {
+    color: #f2f9ff;
+}
+
+body.dark-mode .manage-confirm-dialog p {
+    color: #a7bbcc;
+}
+
+body.dark-mode .manage-confirm-warning {
+    color: #ffaaaa !important;
+}
+
+body.dark-mode .manage-dialog-cancel-button {
+    border-color: #35556c;
+    background: #173047;
+    color: #dfeef8;
+}
+
+body.dark-mode .manage-dialog-cancel-button:hover:not(:disabled) {
+    background: #1d3d57;
+}
+
+body.dark-mode .manage-confirm-delete-button {
+    border-color: #e05b5b;
+    background: #c83f3f;
+    color: #ffffff;
+}
+
+body.dark-mode .manage-confirm-delete-button:hover:not(:disabled) {
+    background: #dc4a4a;
+}
+
+
+/* Mobile */
+
+@media (max-width: 600px) {
+    .manage-form-actions,
+    .manage-delete-actions,
+    .manage-dialog-actions {
+        grid-template-columns: 1fr;
+    }
+
+    .manage-modal-backdrop {
+        padding: 16px;
+    }
+
+    .manage-confirm-dialog {
+        padding: 22px 18px;
+    }
+}

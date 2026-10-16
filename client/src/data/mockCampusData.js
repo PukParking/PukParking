@@ -1,61 +1,42 @@
+import campusFeatures from "./campusFeatures.json";
+
 export const campusCenter = [27.0935, -26.6888];
 export const defaultZoom = 16;
 
 export const campusBounds = [
-  [27.0860, -26.6960],
-  [27.1020, -26.6810],
+  [27.0860, -26.6930],
+  [27.1020, -26.6760],
 ];
 
-export const mockBuildings = [
-  {
-    id: "bld-f1",
-    name: "Joon van Rooy Building (F1)",
-    code: "F1",
-    category: "Administration",
-    description: "Main Administrative Center & Registrar",
-    coordinates: [27.0929, -26.6882],
-  },
-  {
-    id: "bld-e7",
-    name: "Ferdinand Postma Library (E7)",
-    code: "E7",
+export const campusFeaturesCollection = campusFeatures;
+export const campusFeaturesList = campusFeatures.features;
+
+function getBuildingCode(feature) {
+  if (feature.properties.code) return feature.properties.code;
+
+  const leadingCode = feature.properties.name.match(/^([A-Z]\d+[A-Z]?|Ratau)\b/i);
+  if (leadingCode) return leadingCode[1];
+
+  return feature.properties.name
+    .split(/\s+/)
+    .slice(0, 2)
+    .map((word) => word[0])
+    .join("")
+    .toUpperCase();
+}
+
+export const mockBuildings = campusFeaturesList
+  .filter((feature) => feature.properties.type === "building")
+  .map((feature, index) => ({
+    id: `bld-${(feature.properties.code || feature.properties.name)
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, "-")}-${index}`,
+    name: feature.properties.name,
+    code: getBuildingCode(feature),
     category: "Academic",
-    description: "Main Campus Library & Study Commons",
-    coordinates: [27.0918, -26.6890],
-  },
-  {
-    id: "bld-g3",
-    name: "Natural Sciences & IT (G3)",
-    code: "G3",
-    category: "Academic",
-    description: "Computer Science, Mathematics & Information Technology",
-    coordinates: [27.0952, -26.6885],
-  },
-  {
-    id: "bld-student-centre",
-    name: "Student Centre / Drakenstein (F14)",
-    code: "F14",
-    category: "Student Life",
-    description: "Cafeterias, Student Council, & Amenities",
-    coordinates: [27.0928, -26.6871],
-  },
-  {
-    id: "bld-sanlam",
-    name: "Sanlam Auditorium (F12)",
-    code: "F12",
-    category: "Auditorium",
-    description: "Campus Hall & Event Auditorium",
-    coordinates: [27.0938, -26.6880],
-  },
-  {
-    id: "bld-n1",
-    name: "Faculty of Engineering (N1)",
-    code: "N1",
-    category: "Academic",
-    description: "Engineering Lecture Halls & Laboratories",
-    coordinates: [27.0942, -26.6820],
-  },
-];
+    description: "",
+    coordinates: feature.geometry.coordinates,
+  }));
 
 export const mockParkingLots = [
   {
