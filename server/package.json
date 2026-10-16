@@ -9,6 +9,7 @@
     "add-admin": "node scripts/add-admin.js",
     "start": "node src/server.js",
     "dev": "nodemon src/server.js",
+    "import-campus": "node scripts/import-campus-data.js",
     "seed": "node seed.js"
   },
   "dependencies": {

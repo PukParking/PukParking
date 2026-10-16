@@ -1,0 +1,1266 @@
+{
+    "buildings": [
+        {
+            "Building_Abbreviation": "A1",
+            "Building_Name": "De Wilgers",
+            "Building_Description": null,
+            "Building_Latitude": null,
+            "Building_Longitude": null
+        },
+        {
+            "Building_Abbreviation": "A2",
+            "Building_Name": "De Wilgers Residence",
+            "Building_Description": null,
+            "Building_Latitude": null,
+            "Building_Longitude": null
+        },
+        {
+            "Building_Abbreviation": "A3",
+            "Building_Name": "Kom en Gaan",
+            "Building_Description": null,
+            "Building_Latitude": null,
+            "Building_Longitude": null
+        },
+        {
+            "Building_Abbreviation": "A5",
+            "Building_Name": "Malherbestraat 27",
+            "Building_Description": null,
+            "Building_Latitude": null,
+            "Building_Longitude": null
+        },
+        {
+            "Building_Abbreviation": "A6",
+            "Building_Name": "Malherbestraat 29",
+            "Building_Description": null,
+            "Building_Latitude": null,
+            "Building_Longitude": null
+        },
+        {
+            "Building_Abbreviation": "A7",
+            "Building_Name": "Malherbestraat 15",
+            "Building_Description": null,
+            "Building_Latitude": null,
+            "Building_Longitude": null
+        },
+        {
+            "Building_Abbreviation": "B1",
+            "Building_Name": "Hombre",
+            "Building_Description": null,
+            "Building_Latitude": null,
+            "Building_Longitude": null
+        },
+        {
+            "Building_Abbreviation": "B2",
+            "Building_Name": "Bennie Pienaar Hall",
+            "Building_Description": null,
+            "Building_Latitude": null,
+            "Building_Longitude": null
+        },
+        {
+            "Building_Abbreviation": "B3",
+            "Building_Name": "Caput",
+            "Building_Description": null,
+            "Building_Latitude": null,
+            "Building_Longitude": null
+        },
+        {
+            "Building_Abbreviation": "B4",
+            "Building_Name": "Eikenhof",
+            "Building_Description": null,
+            "Building_Latitude": null,
+            "Building_Longitude": null
+        },
+        {
+            "Building_Abbreviation": "B5",
+            "Building_Name": "Storage Buildings",
+            "Building_Description": null,
+            "Building_Latitude": null,
+            "Building_Longitude": null
+        },
+        {
+            "Building_Abbreviation": "B6",
+            "Building_Name": "Faculty of Educational Sciences",
+            "Building_Description": null,
+            "Building_Latitude": null,
+            "Building_Longitude": null
+        },
+        {
+            "Building_Abbreviation": "B7",
+            "Building_Name": "POK Swimmingpool",
+            "Building_Description": null,
+            "Building_Latitude": null,
+            "Building_Longitude": null
+        },
+        {
+            "Building_Abbreviation": "B8",
+            "Building_Name": "Skrynwerk Werkswinkel",
+            "Building_Description": null,
+            "Building_Latitude": null,
+            "Building_Longitude": null
+        },
+        {
+            "Building_Abbreviation": "B9",
+            "Building_Name": "Tegnika House",
+            "Building_Description": null,
+            "Building_Latitude": null,
+            "Building_Longitude": null
+        },
+        {
+            "Building_Abbreviation": "B10",
+            "Building_Name": "School of Curriculum-based Studies",
+            "Building_Description": null,
+            "Building_Latitude": null,
+            "Building_Longitude": null
+        },
+        {
+            "Building_Abbreviation": "B11",
+            "Building_Name": "School of Continuing Education Training",
+            "Building_Description": null,
+            "Building_Latitude": null,
+            "Building_Longitude": null
+        },
+        {
+            "Building_Abbreviation": "B11A",
+            "Building_Name": "School of Continuing Education Training",
+            "Building_Description": null,
+            "Building_Latitude": null,
+            "Building_Longitude": null
+        },
+        {
+            "Building_Abbreviation": "B12",
+            "Building_Name": "Presidentstraat 37",
+            "Building_Description": null,
+            "Building_Latitude": null,
+            "Building_Longitude": null
+        },
+        {
+            "Building_Abbreviation": "B13",
+            "Building_Name": "Carpentry workshop",
+            "Building_Description": null,
+            "Building_Latitude": null,
+            "Building_Longitude": null
+        },
+        {
+            "Building_Abbreviation": "B14",
+            "Building_Name": "Presidentstraat 33",
+            "Building_Description": null,
+            "Building_Latitude": null,
+            "Building_Longitude": null
+        },
+        {
+            "Building_Abbreviation": "C1",
+            "Building_Name": "Institutional office",
+            "Building_Description": null,
+            "Building_Latitude": null,
+            "Building_Longitude": null
+        },
+        {
+            "Building_Abbreviation": "C2",
+            "Building_Name": "Laureus",
+            "Building_Description": null,
+            "Building_Latitude": null,
+            "Building_Longitude": null
+        },
+        {
+            "Building_Abbreviation": "C2C",
+            "Building_Name": "Ampie",
+            "Building_Description": null,
+            "Building_Latitude": null,
+            "Building_Longitude": null
+        },
+        {
+            "Building_Abbreviation": "C3",
+            "Building_Name": "Education Sciences",
+            "Building_Description": null,
+            "Building_Latitude": null,
+            "Building_Longitude": null
+        },
+        {
+            "Building_Abbreviation": "C4",
+            "Building_Name": "Vd Merwehuis",
+            "Building_Description": null,
+            "Building_Latitude": null,
+            "Building_Longitude": null
+        },
+        {
+            "Building_Abbreviation": "C5",
+            "Building_Name": "Lecture Hall Complex",
+            "Building_Description": null,
+            "Building_Latitude": null,
+            "Building_Longitude": null
+        },
+        {
+            "Building_Abbreviation": "C6",
+            "Building_Name": "Faculty of Educational Sciences",
+            "Building_Description": null,
+            "Building_Latitude": null,
+            "Building_Longitude": null
+        },
+        {
+            "Building_Abbreviation": "C7",
+            "Building_Name": "De La Rey Hall",
+            "Building_Description": null,
+            "Building_Latitude": null,
+            "Building_Longitude": null
+        },
+        {
+            "Building_Abbreviation": "C8",
+            "Building_Name": "Ratau Lebone",
+            "Building_Description": null,
+            "Building_Latitude": -26.691528,
+            "Building_Longitude": 27.090666
+        },
+        {
+            "Building_Abbreviation": "C9",
+            "Building_Name": "Huis Republiek",
+            "Building_Description": null,
+            "Building_Latitude": null,
+            "Building_Longitude": null
+        },
+        {
+            "Building_Abbreviation": "C10",
+            "Building_Name": "Minjonet",
+            "Building_Description": null,
+            "Building_Latitude": null,
+            "Building_Longitude": null
+        },
+        {
+            "Building_Abbreviation": "C11",
+            "Building_Name": "Hoffmanstraat 41",
+            "Building_Description": null,
+            "Building_Latitude": null,
+            "Building_Longitude": null
+        },
+        {
+            "Building_Abbreviation": "C12",
+            "Building_Name": "Hoffmanstraat 45 (Wellness house)",
+            "Building_Description": null,
+            "Building_Latitude": null,
+            "Building_Longitude": null
+        },
+        {
+            "Building_Abbreviation": "C13",
+            "Building_Name": "Strydomhuis",
+            "Building_Description": null,
+            "Building_Latitude": null,
+            "Building_Longitude": null
+        },
+        {
+            "Building_Abbreviation": "D1",
+            "Building_Name": "Senrio",
+            "Building_Description": null,
+            "Building_Latitude": null,
+            "Building_Longitude": null
+        },
+        {
+            "Building_Abbreviation": "D2",
+            "Building_Name": "Virgin Active",
+            "Building_Description": null,
+            "Building_Latitude": null,
+            "Building_Longitude": null
+        },
+        {
+            "Building_Abbreviation": "E1",
+            "Building_Name": "Oosterhof",
+            "Building_Description": null,
+            "Building_Latitude": null,
+            "Building_Longitude": null
+        },
+        {
+            "Building_Abbreviation": "E2",
+            "Building_Name": "Klawerhof",
+            "Building_Description": null,
+            "Building_Latitude": null,
+            "Building_Longitude": null
+        },
+        {
+            "Building_Abbreviation": "E3",
+            "Building_Name": "Economic and Management Sciences",
+            "Building_Description": null,
+            "Building_Latitude": null,
+            "Building_Longitude": null
+        },
+        {
+            "Building_Abbreviation": "E4",
+            "Building_Name": "City and Regional Planning",
+            "Building_Description": null,
+            "Building_Latitude": null,
+            "Building_Longitude": null
+        },
+        {
+            "Building_Abbreviation": "E5",
+            "Building_Name": "New Economic and Management Sciences",
+            "Building_Description": null,
+            "Building_Latitude": null,
+            "Building_Longitude": null
+        },
+        {
+            "Building_Abbreviation": "E5A",
+            "Building_Name": "Laboratories for the Department of Soil Science",
+            "Building_Description": null,
+            "Building_Latitude": null,
+            "Building_Longitude": null
+        },
+        {
+            "Building_Abbreviation": "E6",
+            "Building_Name": "J.S. v/d Merwe",
+            "Building_Description": null,
+            "Building_Latitude": null,
+            "Building_Longitude": null
+        },
+        {
+            "Building_Abbreviation": "E7",
+            "Building_Name": "Ferdinand Postma Library",
+            "Building_Description": null,
+            "Building_Latitude": -26.689055,
+            "Building_Longitude": 27.091818
+        },
+        {
+            "Building_Abbreviation": "E8",
+            "Building_Name": "J. Chris Coetzee",
+            "Building_Description": null,
+            "Building_Latitude": null,
+            "Building_Longitude": null
+        },
+        {
+            "Building_Abbreviation": "E9",
+            "Building_Name": "Frans du Toit",
+            "Building_Description": null,
+            "Building_Latitude": -26.689461,
+            "Building_Longitude": 27.092595
+        },
+        {
+            "Building_Abbreviation": "E10",
+            "Building_Name": "PUK Kandelaar (Hoffman str 22)",
+            "Building_Description": null,
+            "Building_Latitude": null,
+            "Building_Longitude": null
+        },
+        {
+            "Building_Abbreviation": "E11",
+            "Building_Name": "International offices (Hoffman str 20)",
+            "Building_Description": null,
+            "Building_Latitude": null,
+            "Building_Longitude": null
+        },
+        {
+            "Building_Abbreviation": "E12",
+            "Building_Name": "Church Office - (Hoffman str 18)",
+            "Building_Description": null,
+            "Building_Latitude": null,
+            "Building_Longitude": null
+        },
+        {
+            "Building_Abbreviation": "E13",
+            "Building_Name": "RCS guesthouse (Jooste str 20)",
+            "Building_Description": null,
+            "Building_Latitude": null,
+            "Building_Longitude": null
+        },
+        {
+            "Building_Abbreviation": "E14",
+            "Building_Name": "RCS guesthouse (Jooste str 20)",
+            "Building_Description": null,
+            "Building_Latitude": null,
+            "Building_Longitude": null
+        },
+        {
+            "Building_Abbreviation": "E15",
+            "Building_Name": "Tom str",
+            "Building_Description": null,
+            "Building_Latitude": null,
+            "Building_Longitude": null
+        },
+        {
+            "Building_Abbreviation": "E16",
+            "Building_Name": "Health Centre",
+            "Building_Description": null,
+            "Building_Latitude": null,
+            "Building_Longitude": null
+        },
+        {
+            "Building_Abbreviation": "F1",
+            "Building_Name": "Joon van Rooy - Admin",
+            "Building_Description": null,
+            "Building_Latitude": -26.688188,
+            "Building_Longitude": 27.09276
+        },
+        {
+            "Building_Abbreviation": "F2",
+            "Building_Name": "Graphic Design",
+            "Building_Description": null,
+            "Building_Latitude": null,
+            "Building_Longitude": null
+        },
+        {
+            "Building_Abbreviation": "F3",
+            "Building_Name": "Bio-chemistry",
+            "Building_Description": null,
+            "Building_Latitude": null,
+            "Building_Longitude": null
+        },
+        {
+            "Building_Abbreviation": "F4",
+            "Building_Name": "L.J. du Plessis",
+            "Building_Description": null,
+            "Building_Latitude": null,
+            "Building_Longitude": null
+        },
+        {
+            "Building_Abbreviation": "F5",
+            "Building_Name": "Main Building",
+            "Building_Description": null,
+            "Building_Latitude": -26.688687,
+            "Building_Longitude": 27.090945
+        },
+        {
+            "Building_Abbreviation": "F6",
+            "Building_Name": "Totius Hall",
+            "Building_Description": null,
+            "Building_Latitude": -26.688217,
+            "Building_Longitude": 27.091202
+        },
+        {
+            "Building_Abbreviation": "F7",
+            "Building_Name": "Nursing",
+            "Building_Description": null,
+            "Building_Latitude": null,
+            "Building_Longitude": null
+        },
+        {
+            "Building_Abbreviation": "F8",
+            "Building_Name": "School of Nursing",
+            "Building_Description": null,
+            "Building_Latitude": null,
+            "Building_Longitude": null
+        },
+        {
+            "Building_Abbreviation": "F9",
+            "Building_Name": "Heimat",
+            "Building_Description": null,
+            "Building_Latitude": -26.687341,
+            "Building_Longitude": 27.091568
+        },
+        {
+            "Building_Abbreviation": "F10",
+            "Building_Name": "Uitspan",
+            "Building_Description": null,
+            "Building_Latitude": null,
+            "Building_Longitude": null
+        },
+        {
+            "Building_Abbreviation": "F11",
+            "Building_Name": "Fanus du Plessis",
+            "Building_Description": null,
+            "Building_Latitude": null,
+            "Building_Longitude": null
+        },
+        {
+            "Building_Abbreviation": "F12",
+            "Building_Name": "Physiology",
+            "Building_Description": null,
+            "Building_Latitude": null,
+            "Building_Longitude": null
+        },
+        {
+            "Building_Abbreviation": "F13",
+            "Building_Name": "Social Sciences",
+            "Building_Description": null,
+            "Building_Latitude": null,
+            "Building_Longitude": null
+        },
+        {
+            "Building_Abbreviation": "F14",
+            "Building_Name": "Hennie Bingle Student Centre",
+            "Building_Description": null,
+            "Building_Latitude": null,
+            "Building_Longitude": null
+        },
+        {
+            "Building_Abbreviation": "F15",
+            "Building_Name": "Consumer Sciences",
+            "Building_Description": null,
+            "Building_Latitude": null,
+            "Building_Longitude": null
+        },
+        {
+            "Building_Abbreviation": "F16",
+            "Building_Name": "PUK Dorp",
+            "Building_Description": null,
+            "Building_Latitude": null,
+            "Building_Longitude": null
+        },
+        {
+            "Building_Abbreviation": "F16A",
+            "Building_Name": "Steve Biko straat 21",
+            "Building_Description": null,
+            "Building_Latitude": null,
+            "Building_Longitude": null
+        },
+        {
+            "Building_Abbreviation": "F16B",
+            "Building_Name": "Steve Biko straat 23",
+            "Building_Description": null,
+            "Building_Latitude": null,
+            "Building_Longitude": null
+        },
+        {
+            "Building_Abbreviation": "F16C",
+            "Building_Name": "Steve Biko straat 23",
+            "Building_Description": null,
+            "Building_Latitude": null,
+            "Building_Longitude": null
+        },
+        {
+            "Building_Abbreviation": "F16D",
+            "Building_Name": "Steve Biko straat 25",
+            "Building_Description": null,
+            "Building_Latitude": null,
+            "Building_Longitude": null
+        },
+        {
+            "Building_Abbreviation": "F16E",
+            "Building_Name": "Steve Biko straat 27",
+            "Building_Description": null,
+            "Building_Latitude": null,
+            "Building_Longitude": null
+        },
+        {
+            "Building_Abbreviation": "F16F",
+            "Building_Name": "Steve Biko straat 29",
+            "Building_Description": null,
+            "Building_Latitude": null,
+            "Building_Longitude": null
+        },
+        {
+            "Building_Abbreviation": "F16G",
+            "Building_Name": "Steve Biko straat 33",
+            "Building_Description": null,
+            "Building_Latitude": null,
+            "Building_Longitude": null
+        },
+        {
+            "Building_Abbreviation": "F16H",
+            "Building_Name": "Steve Biko straat 37",
+            "Building_Description": null,
+            "Building_Latitude": null,
+            "Building_Longitude": null
+        },
+        {
+            "Building_Abbreviation": "F16I",
+            "Building_Name": "Steve Biko straat 35",
+            "Building_Description": null,
+            "Building_Latitude": null,
+            "Building_Longitude": null
+        },
+        {
+            "Building_Abbreviation": "F17",
+            "Building_Name": "Protection Services",
+            "Building_Description": null,
+            "Building_Latitude": -26.687637,
+            "Building_Longitude": 27.094193
+        },
+        {
+            "Building_Abbreviation": "F18",
+            "Building_Name": "Student Counseling",
+            "Building_Description": null,
+            "Building_Latitude": null,
+            "Building_Longitude": null
+        },
+        {
+            "Building_Abbreviation": "F19",
+            "Building_Name": "Student Bureau",
+            "Building_Description": null,
+            "Building_Latitude": null,
+            "Building_Longitude": null
+        },
+        {
+            "Building_Abbreviation": "F20",
+            "Building_Name": "Communication Studies - Perskor",
+            "Building_Description": null,
+            "Building_Latitude": null,
+            "Building_Longitude": null
+        },
+        {
+            "Building_Abbreviation": "F21",
+            "Building_Name": "Marketing and Communication",
+            "Building_Description": null,
+            "Building_Latitude": null,
+            "Building_Longitude": null
+        },
+        {
+            "Building_Abbreviation": "F22",
+            "Building_Name": "Reception House",
+            "Building_Description": null,
+            "Building_Latitude": null,
+            "Building_Longitude": null
+        },
+        {
+            "Building_Abbreviation": "F23",
+            "Building_Name": "Study Guide Storage",
+            "Building_Description": null,
+            "Building_Latitude": null,
+            "Building_Longitude": null
+        },
+        {
+            "Building_Abbreviation": "F24",
+            "Building_Name": "Science Centre",
+            "Building_Description": null,
+            "Building_Latitude": null,
+            "Building_Longitude": null
+        },
+        {
+            "Building_Abbreviation": "F25",
+            "Building_Name": "Steve Bikostraat 39",
+            "Building_Description": null,
+            "Building_Latitude": null,
+            "Building_Longitude": null
+        },
+        {
+            "Building_Abbreviation": "G1",
+            "Building_Name": "Science Block F-125",
+            "Building_Description": null,
+            "Building_Latitude": -26.685959,
+            "Building_Longitude": 27.093299
+        },
+        {
+            "Building_Abbreviation": "G2",
+            "Building_Name": "Science Block G-126",
+            "Building_Description": null,
+            "Building_Latitude": null,
+            "Building_Longitude": null
+        },
+        {
+            "Building_Abbreviation": "G3",
+            "Building_Name": "Science Block H-127",
+            "Building_Description": null,
+            "Building_Latitude": null,
+            "Building_Longitude": null
+        },
+        {
+            "Building_Abbreviation": "G4",
+            "Building_Name": "Science Block I-128",
+            "Building_Description": null,
+            "Building_Latitude": -26.686069,
+            "Building_Longitude": 27.093828
+        },
+        {
+            "Building_Abbreviation": "G5",
+            "Building_Name": "Science Block J-129",
+            "Building_Description": null,
+            "Building_Latitude": -26.686459,
+            "Building_Longitude": 27.093745
+        },
+        {
+            "Building_Abbreviation": "G6",
+            "Building_Name": "Science Block E-124",
+            "Building_Description": null,
+            "Building_Latitude": -26.686308,
+            "Building_Longitude": 27.093133
+        },
+        {
+            "Building_Abbreviation": "G7",
+            "Building_Name": "Science Block D-123",
+            "Building_Description": null,
+            "Building_Latitude": -26.68611,
+            "Building_Longitude": 27.092842
+        },
+        {
+            "Building_Abbreviation": "G8",
+            "Building_Name": "Science Block C-122",
+            "Building_Description": null,
+            "Building_Latitude": -26.68586,
+            "Building_Longitude": 27.092878
+        },
+        {
+            "Building_Abbreviation": "G9",
+            "Building_Name": "Science Block B-121",
+            "Building_Description": null,
+            "Building_Latitude": null,
+            "Building_Longitude": null
+        },
+        {
+            "Building_Abbreviation": "G10",
+            "Building_Name": "Science Block Blok A-120",
+            "Building_Description": null,
+            "Building_Latitude": null,
+            "Building_Longitude": null
+        },
+        {
+            "Building_Abbreviation": "G11",
+            "Building_Name": "Storage",
+            "Building_Description": null,
+            "Building_Latitude": null,
+            "Building_Longitude": null
+        },
+        {
+            "Building_Abbreviation": "G12",
+            "Building_Name": "Restaurant Drakenstein",
+            "Building_Description": null,
+            "Building_Latitude": -26.686429,
+            "Building_Longitude": 27.091869
+        },
+        {
+            "Building_Abbreviation": "G13",
+            "Building_Name": "Fire Station",
+            "Building_Description": null,
+            "Building_Latitude": null,
+            "Building_Longitude": null
+        },
+        {
+            "Building_Abbreviation": "G14",
+            "Building_Name": "Physical Infrastructure and Planning",
+            "Building_Description": null,
+            "Building_Latitude": null,
+            "Building_Longitude": null
+        },
+        {
+            "Building_Abbreviation": "G15",
+            "Building_Name": "Faculty of Engineering",
+            "Building_Description": null,
+            "Building_Latitude": null,
+            "Building_Longitude": null
+        },
+        {
+            "Building_Abbreviation": "G16",
+            "Building_Name": "Biological Complex",
+            "Building_Description": null,
+            "Building_Latitude": null,
+            "Building_Longitude": null
+        },
+        {
+            "Building_Abbreviation": "G17",
+            "Building_Name": "Lipid Clinic",
+            "Building_Description": null,
+            "Building_Latitude": null,
+            "Building_Longitude": null
+        },
+        {
+            "Building_Abbreviation": "G18",
+            "Building_Name": "Zoological Greenhouse",
+            "Building_Description": null,
+            "Building_Latitude": null,
+            "Building_Longitude": null
+        },
+        {
+            "Building_Abbreviation": "G19",
+            "Building_Name": "Animal testing center",
+            "Building_Description": null,
+            "Building_Latitude": null,
+            "Building_Longitude": null
+        },
+        {
+            "Building_Abbreviation": "G20",
+            "Building_Name": "Lecture Halls",
+            "Building_Description": null,
+            "Building_Latitude": -26.685042,
+            "Building_Longitude": 27.093826
+        },
+        {
+            "Building_Abbreviation": "G23",
+            "Building_Name": "Life Sciences",
+            "Building_Description": null,
+            "Building_Latitude": null,
+            "Building_Longitude": null
+        },
+        {
+            "Building_Abbreviation": "H1",
+            "Building_Name": "Veritas",
+            "Building_Description": null,
+            "Building_Latitude": null,
+            "Building_Longitude": null
+        },
+        {
+            "Building_Abbreviation": "H2",
+            "Building_Name": "Patria",
+            "Building_Description": null,
+            "Building_Latitude": null,
+            "Building_Longitude": null
+        },
+        {
+            "Building_Abbreviation": "H3",
+            "Building_Name": "Storage",
+            "Building_Description": null,
+            "Building_Latitude": null,
+            "Building_Longitude": null
+        },
+        {
+            "Building_Abbreviation": "H4",
+            "Building_Name": "Dampad",
+            "Building_Description": null,
+            "Building_Latitude": null,
+            "Building_Longitude": null
+        },
+        {
+            "Building_Abbreviation": "H5",
+            "Building_Name": "Botanical Garden",
+            "Building_Description": null,
+            "Building_Latitude": -26.682723,
+            "Building_Longitude": 27.094812
+        },
+        {
+            "Building_Abbreviation": "J1",
+            "Building_Name": "Opirif",
+            "Building_Description": null,
+            "Building_Latitude": null,
+            "Building_Longitude": null
+        },
+        {
+            "Building_Abbreviation": "J2",
+            "Building_Name": "Over De Voor",
+            "Building_Description": null,
+            "Building_Latitude": null,
+            "Building_Longitude": null
+        },
+        {
+            "Building_Abbreviation": "J3",
+            "Building_Name": "Over De Voor Residence",
+            "Building_Description": null,
+            "Building_Latitude": null,
+            "Building_Longitude": null
+        },
+        {
+            "Building_Abbreviation": "J4",
+            "Building_Name": "Excelsior",
+            "Building_Description": null,
+            "Building_Latitude": null,
+            "Building_Longitude": null
+        },
+        {
+            "Building_Abbreviation": "J5",
+            "Building_Name": "Excelsior Residence",
+            "Building_Description": null,
+            "Building_Latitude": null,
+            "Building_Longitude": null
+        },
+        {
+            "Building_Abbreviation": "J6",
+            "Building_Name": "Weet en Sweet",
+            "Building_Description": null,
+            "Building_Latitude": -26.68928,
+            "Building_Longitude": 27.089132
+        },
+        {
+            "Building_Abbreviation": "J7",
+            "Building_Name": "Karlien",
+            "Building_Description": null,
+            "Building_Latitude": null,
+            "Building_Longitude": null
+        },
+        {
+            "Building_Abbreviation": "J8",
+            "Building_Name": "Heide",
+            "Building_Description": null,
+            "Building_Latitude": null,
+            "Building_Longitude": null
+        },
+        {
+            "Building_Abbreviation": "J9",
+            "Building_Name": "Residences",
+            "Building_Description": null,
+            "Building_Latitude": null,
+            "Building_Longitude": null
+        },
+        {
+            "Building_Abbreviation": "J10",
+            "Building_Name": "Wag-'n-Bietjie",
+            "Building_Description": null,
+            "Building_Latitude": null,
+            "Building_Longitude": null
+        },
+        {
+            "Building_Abbreviation": "J11",
+            "Building_Name": "Vergeet-my-Nie",
+            "Building_Description": null,
+            "Building_Latitude": null,
+            "Building_Longitude": null
+        },
+        {
+            "Building_Abbreviation": "J12",
+            "Building_Name": "Voorhuis",
+            "Building_Description": null,
+            "Building_Latitude": null,
+            "Building_Longitude": null
+        },
+        {
+            "Building_Abbreviation": "J13",
+            "Building_Name": "Kasteel",
+            "Building_Description": null,
+            "Building_Latitude": null,
+            "Building_Longitude": null
+        },
+        {
+            "Building_Abbreviation": "J14",
+            "Building_Name": "Wanda",
+            "Building_Description": null,
+            "Building_Latitude": null,
+            "Building_Longitude": null
+        },
+        {
+            "Building_Abbreviation": "J15",
+            "Building_Name": "Residences",
+            "Building_Description": null,
+            "Building_Latitude": null,
+            "Building_Longitude": null
+        },
+        {
+            "Building_Abbreviation": "J16",
+            "Building_Name": "Weskampus Residences",
+            "Building_Description": null,
+            "Building_Latitude": null,
+            "Building_Longitude": null
+        },
+        {
+            "Building_Abbreviation": "J17",
+            "Building_Name": "Protection Service West Campus",
+            "Building_Description": null,
+            "Building_Latitude": null,
+            "Building_Longitude": null
+        },
+        {
+            "Building_Abbreviation": "J18",
+            "Building_Name": "Emergency Power Generators",
+            "Building_Description": null,
+            "Building_Latitude": null,
+            "Building_Longitude": null
+        },
+        {
+            "Building_Abbreviation": "K1",
+            "Building_Name": "Conservatory",
+            "Building_Description": null,
+            "Building_Latitude": null,
+            "Building_Longitude": null
+        },
+        {
+            "Building_Abbreviation": "K2",
+            "Building_Name": "Piet Malan",
+            "Building_Description": null,
+            "Building_Latitude": null,
+            "Building_Longitude": null
+        },
+        {
+            "Building_Abbreviation": "K3",
+            "Building_Name": "Johannes van der Walt",
+            "Building_Description": null,
+            "Building_Latitude": null,
+            "Building_Longitude": null
+        },
+        {
+            "Building_Abbreviation": "K5",
+            "Building_Name": "Rugby Clubhouse",
+            "Building_Description": null,
+            "Building_Latitude": null,
+            "Building_Longitude": null
+        },
+        {
+            "Building_Abbreviation": "K6",
+            "Building_Name": "Tennis Clubhouse",
+            "Building_Description": null,
+            "Building_Latitude": null,
+            "Building_Longitude": null
+        },
+        {
+            "Building_Abbreviation": "K7",
+            "Building_Name": "Van Rooy str 38",
+            "Building_Description": null,
+            "Building_Latitude": null,
+            "Building_Longitude": null
+        },
+        {
+            "Building_Abbreviation": "K8",
+            "Building_Name": "Bowling Clubhouse",
+            "Building_Description": null,
+            "Building_Latitude": null,
+            "Building_Longitude": null
+        },
+        {
+            "Building_Abbreviation": "K9",
+            "Building_Name": "Cricket Clubhouse",
+            "Building_Description": null,
+            "Building_Latitude": null,
+            "Building_Longitude": null
+        },
+        {
+            "Building_Abbreviation": "K10",
+            "Building_Name": "Rugby Clubhouse",
+            "Building_Description": null,
+            "Building_Latitude": null,
+            "Building_Longitude": null
+        },
+        {
+            "Building_Abbreviation": "K11",
+            "Building_Name": "Theology (Gereformeerde Kerk)",
+            "Building_Description": null,
+            "Building_Latitude": null,
+            "Building_Longitude": null
+        },
+        {
+            "Building_Abbreviation": "K12",
+            "Building_Name": "Soet Dorings",
+            "Building_Description": null,
+            "Building_Latitude": null,
+            "Building_Longitude": null
+        },
+        {
+            "Building_Abbreviation": "K13",
+            "Building_Name": "Dennepark",
+            "Building_Description": null,
+            "Building_Latitude": null,
+            "Building_Longitude": null
+        },
+        {
+            "Building_Abbreviation": "K14",
+            "Building_Name": "Storage",
+            "Building_Description": null,
+            "Building_Latitude": null,
+            "Building_Longitude": null
+        },
+        {
+            "Building_Abbreviation": "K15",
+            "Building_Name": "Ablution Facilities",
+            "Building_Description": null,
+            "Building_Latitude": null,
+            "Building_Longitude": null
+        },
+        {
+            "Building_Abbreviation": "K16",
+            "Building_Name": "Cricket Stadium",
+            "Building_Description": null,
+            "Building_Latitude": null,
+            "Building_Longitude": null
+        },
+        {
+            "Building_Abbreviation": "K17",
+            "Building_Name": "Soccer Facilities",
+            "Building_Description": null,
+            "Building_Latitude": null,
+            "Building_Longitude": null
+        },
+        {
+            "Building_Abbreviation": "K18",
+            "Building_Name": "Pavilion",
+            "Building_Description": null,
+            "Building_Latitude": null,
+            "Building_Longitude": null
+        },
+        {
+            "Building_Abbreviation": "K19",
+            "Building_Name": "Rugby Facilities",
+            "Building_Description": null,
+            "Building_Latitude": null,
+            "Building_Longitude": null
+        },
+        {
+            "Building_Abbreviation": "K20",
+            "Building_Name": "Rag Farm",
+            "Building_Description": null,
+            "Building_Latitude": null,
+            "Building_Longitude": null
+        },
+        {
+            "Building_Abbreviation": "K21",
+            "Building_Name": "FNB Institute for Sport",
+            "Building_Description": null,
+            "Building_Latitude": null,
+            "Building_Longitude": null
+        },
+        {
+            "Building_Abbreviation": "K22",
+            "Building_Name": "NWU Puk Sports Village",
+            "Building_Description": null,
+            "Building_Latitude": null,
+            "Building_Longitude": null
+        },
+        {
+            "Building_Abbreviation": "K23",
+            "Building_Name": "Theology",
+            "Building_Description": null,
+            "Building_Latitude": null,
+            "Building_Longitude": null
+        },
+        {
+            "Building_Abbreviation": "L1",
+            "Building_Name": "Health Facilities",
+            "Building_Description": null,
+            "Building_Latitude": null,
+            "Building_Longitude": null
+        },
+        {
+            "Building_Abbreviation": "L2",
+            "Building_Name": "Pavilion and Changing Rooms",
+            "Building_Description": null,
+            "Building_Latitude": null,
+            "Building_Longitude": null
+        },
+        {
+            "Building_Abbreviation": "L3",
+            "Building_Name": "Hocky Shop",
+            "Building_Description": null,
+            "Building_Latitude": null,
+            "Building_Longitude": null
+        },
+        {
+            "Building_Abbreviation": "L4",
+            "Building_Name": "Conference Facilities",
+            "Building_Description": null,
+            "Building_Latitude": null,
+            "Building_Longitude": null
+        },
+        {
+            "Building_Abbreviation": "L5",
+            "Building_Name": "Spectator Facility",
+            "Building_Description": null,
+            "Building_Latitude": null,
+            "Building_Longitude": null
+        },
+        {
+            "Building_Abbreviation": "L6",
+            "Building_Name": "Hockey Residences",
+            "Building_Description": null,
+            "Building_Latitude": null,
+            "Building_Longitude": null
+        },
+        {
+            "Building_Abbreviation": "M1",
+            "Building_Name": "Eco Rehab",
+            "Building_Description": null,
+            "Building_Latitude": null,
+            "Building_Longitude": null
+        },
+        {
+            "Building_Abbreviation": "N1",
+            "Building_Name": "Engineering Complex",
+            "Building_Description": null,
+            "Building_Latitude": -26.679869,
+            "Building_Longitude": 27.094318
+        }
+    ],
+    "parkingAreas": [
+        {
+            "Parking_Area_Name": "Main entrance parking",
+            "Building_Abbreviation": null,
+            "Parking_Area_Latitude": -26.689742,
+            "Parking_Area_Longitude": 27.094304,
+            "Parking_Type": null,
+            "Parking_Area_Capacity": 65,
+            "Parking_Area_Occupied_Spaces": 0,
+            "Parking_Area_Restrictions": null,
+            "Parking_Area_Operating_Hours": null,
+            "Parking_Area_Accessible_Spaces": 0,
+            "Parking_Area_Image_URL": null,
+            "Parking_Area_IsActive": 1
+        },
+        {
+            "Parking_Area_Name": "Veritas entrance parking",
+            "Building_Abbreviation": null,
+            "Parking_Area_Latitude": -26.685068,
+            "Parking_Area_Longitude": 27.094895,
+            "Parking_Type": null,
+            "Parking_Area_Capacity": 70,
+            "Parking_Area_Occupied_Spaces": 0,
+            "Parking_Area_Restrictions": null,
+            "Parking_Area_Operating_Hours": null,
+            "Parking_Area_Accessible_Spaces": 0,
+            "Parking_Area_Image_URL": null,
+            "Parking_Area_IsActive": 1
+        },
+        {
+            "Parking_Area_Name": "Vilagers parking",
+            "Building_Abbreviation": null,
+            "Parking_Area_Latitude": -26.690493,
+            "Parking_Area_Longitude": 27.089887,
+            "Parking_Type": null,
+            "Parking_Area_Capacity": 40,
+            "Parking_Area_Occupied_Spaces": 0,
+            "Parking_Area_Restrictions": null,
+            "Parking_Area_Operating_Hours": null,
+            "Parking_Area_Accessible_Spaces": 0,
+            "Parking_Area_Image_URL": null,
+            "Parking_Area_IsActive": 1
+        },
+        {
+            "Parking_Area_Name": "Ratau parking",
+            "Building_Abbreviation": "C8",
+            "Parking_Area_Latitude": -26.691475,
+            "Parking_Area_Longitude": 27.090313,
+            "Parking_Type": null,
+            "Parking_Area_Capacity": 35,
+            "Parking_Area_Occupied_Spaces": 0,
+            "Parking_Area_Restrictions": null,
+            "Parking_Area_Operating_Hours": null,
+            "Parking_Area_Accessible_Spaces": 0,
+            "Parking_Area_Image_URL": null,
+            "Parking_Area_IsActive": 1
+        },
+        {
+            "Parking_Area_Name": "Bridge parking",
+            "Building_Abbreviation": null,
+            "Parking_Area_Latitude": -26.691116,
+            "Parking_Area_Longitude": 27.090526,
+            "Parking_Type": null,
+            "Parking_Area_Capacity": 30,
+            "Parking_Area_Occupied_Spaces": 0,
+            "Parking_Area_Restrictions": null,
+            "Parking_Area_Operating_Hours": null,
+            "Parking_Area_Accessible_Spaces": 0,
+            "Parking_Area_Image_URL": null,
+            "Parking_Area_IsActive": 1
+        },
+        {
+            "Parking_Area_Name": "E9 Parking",
+            "Building_Abbreviation": "E9",
+            "Parking_Area_Latitude": -26.689646,
+            "Parking_Area_Longitude": 27.092747,
+            "Parking_Type": null,
+            "Parking_Area_Capacity": 35,
+            "Parking_Area_Occupied_Spaces": 0,
+            "Parking_Area_Restrictions": null,
+            "Parking_Area_Operating_Hours": null,
+            "Parking_Area_Accessible_Spaces": 0,
+            "Parking_Area_Image_URL": null,
+            "Parking_Area_IsActive": 1
+        },
+        {
+            "Parking_Area_Name": "Protection services parking",
+            "Building_Abbreviation": "F17",
+            "Parking_Area_Latitude": -26.687935,
+            "Parking_Area_Longitude": 27.094083,
+            "Parking_Type": null,
+            "Parking_Area_Capacity": 30,
+            "Parking_Area_Occupied_Spaces": 0,
+            "Parking_Area_Restrictions": null,
+            "Parking_Area_Operating_Hours": null,
+            "Parking_Area_Accessible_Spaces": 0,
+            "Parking_Area_Image_URL": null,
+            "Parking_Area_IsActive": 1
+        },
+        {
+            "Parking_Area_Name": "G5 Parking",
+            "Building_Abbreviation": "G5",
+            "Parking_Area_Latitude": -26.686617,
+            "Parking_Area_Longitude": 27.09359,
+            "Parking_Type": null,
+            "Parking_Area_Capacity": 50,
+            "Parking_Area_Occupied_Spaces": 0,
+            "Parking_Area_Restrictions": null,
+            "Parking_Area_Operating_Hours": null,
+            "Parking_Area_Accessible_Spaces": 0,
+            "Parking_Area_Image_URL": null,
+            "Parking_Area_IsActive": 1
+        },
+        {
+            "Parking_Area_Name": "Science building parking",
+            "Building_Abbreviation": null,
+            "Parking_Area_Latitude": -26.685805,
+            "Parking_Area_Longitude": 27.094246,
+            "Parking_Type": null,
+            "Parking_Area_Capacity": 60,
+            "Parking_Area_Occupied_Spaces": 0,
+            "Parking_Area_Restrictions": null,
+            "Parking_Area_Operating_Hours": null,
+            "Parking_Area_Accessible_Spaces": 0,
+            "Parking_Area_Image_URL": null,
+            "Parking_Area_IsActive": 1
+        }
+    ]
+}
