@@ -72,9 +72,21 @@ function MenuBar({ onClose }) {
 
           <button
             type="button"
-            onClick={() => goTo("/admin")}
+            onClick={() => goTo("/parking-stats")}
           >
             <span className="menu-number">03</span>
+
+            <div>
+              <strong>Parking Stats</strong>
+              <small>View live parking availability</small>
+            </div>
+          </button>
+
+          <button
+            type="button"
+            onClick={() => goTo("/admin")}
+          >
+            <span className="menu-number">04</span>
 
             <div>
               <strong>Admin Login</strong>

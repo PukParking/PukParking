@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 import "./ParkingStats.css";
 import MenuBar from "../../components/MenuBar";
@@ -10,25 +10,117 @@ import locationIcon from "../../assets/location-icon.png";
 function ParkingStats() {
   const [menuOpen, setMenuOpen] = useState(false);
 
-  // Temporary frontend demonstration data.
-  // Replace with backend data during integration.
-  const parkingAreas = [
-    {
-      name: "Parking A",
-      availability: 70,
-      status: "Available",
-    },
-    {
-      name: "Parking B",
-      availability: 35,
-      status: "Limited",
-    },
-    {
-      name: "Parking C",
-      availability: 55,
-      status: "Moderate",
-    },
-  ];
+  const [parkingAreas, setParkingAreas] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [loadError, setLoadError] = useState("");
+
+  useEffect(() => {
+    const controller = new AbortController();
+
+    async function loadParkingAreas() {
+      try {
+        setIsLoading(true);
+        setLoadError("");
+
+        const response = await fetch(
+          "/api/parking/areas",
+          {
+            signal: controller.signal,
+          },
+        );
+
+        const result = await response.json();
+
+        if (!response.ok) {
+          throw new Error(
+            result.error ||
+              "Unable to load parking statistics.",
+          );
+        }
+
+        const areas = Array.isArray(result.parkingAreas)
+          ? result.parkingAreas
+          : [];
+
+        const formattedAreas = areas.map((area) => {
+          const capacity = Number(area.capacity) || 0;
+          const available = Number(area.available) || 0;
+
+          const availability =
+            capacity > 0
+              ? Math.round(
+                  (available / capacity) * 100,
+                )
+              : 0;
+
+          let status = "Available";
+
+          if (
+            area.isFull ||
+            available <= 0
+          ) {
+            status = "Full";
+          } else if (availability <= 25) {
+            status = "Limited";
+          } else if (availability <= 50) {
+            status = "Moderate";
+          }
+
+          return {
+            ...area,
+            capacity,
+            available,
+            availability,
+            status,
+          };
+        });
+
+        setParkingAreas(formattedAreas);
+      } catch (error) {
+        if (error.name !== "AbortError") {
+          console.error(
+            "Unable to load parking statistics.",
+            error,
+          );
+
+          setLoadError(
+            error.message ||
+              "Unable to load parking statistics.",
+          );
+        }
+      } finally {
+        if (!controller.signal.aborted) {
+          setIsLoading(false);
+        }
+      }
+    }
+
+    loadParkingAreas();
+
+    return () => controller.abort();
+  }, []);
+
+  const overallAvailability = useMemo(() => {
+    const totalCapacity = parkingAreas.reduce(
+      (total, area) =>
+        total + area.capacity,
+      0,
+    );
+
+    const totalAvailable = parkingAreas.reduce(
+      (total, area) =>
+        total + area.available,
+      0,
+    );
+
+    if (totalCapacity === 0) {
+      return 0;
+    }
+
+    return Math.round(
+      (totalAvailable / totalCapacity) * 100,
+    );
+  }, [parkingAreas]);
 
   return (
     <div className="stats-page">
@@ -73,8 +165,8 @@ function ParkingStats() {
           </h1>
 
           <span>
-            View estimated parking availability across
-            selected parking areas.
+            View live parking availability across
+            campus parking areas.
           </span>
 
         </div>
@@ -131,7 +223,9 @@ function ParkingStats() {
               </span>
 
               <strong>
-                Estimated
+                {isLoading
+                  ? "Loading..."
+                  : `${overallAvailability}%`}
               </strong>
             </div>
 
@@ -146,112 +240,142 @@ function ParkingStats() {
             <div>
 
               <h2>
-                Estimated Availability
+                Live Availability
               </h2>
 
               <p>
-                Frontend demonstration until live backend
-                data is connected.
+                Current parking availability based on
+                campus parking records.
               </p>
 
             </div>
 
             <span>
-              Live integration pending
+              Live data
             </span>
 
           </div>
 
-          <div className="pretty-chart">
+          {isLoading && (
+            <p>
+              Loading parking statistics...
+            </p>
+          )}
 
-            {parkingAreas.map((parking) => (
+          {loadError && (
+            <p role="alert">
+              {loadError}
+            </p>
+          )}
 
-              <div
-                className="pretty-chart-item"
-                key={parking.name}
-              >
-
-                <div className="bar-value">
-                  {parking.availability}%
-                </div>
-
-                <div className="bar-track">
-
-                  <div
-                    className="pretty-bar"
-                    style={{
-                      height:
-                        `${parking.availability}%`,
-                    }}
-                  ></div>
-
-                </div>
-
-                <strong>
-                  {parking.name}
-                </strong>
-
-              </div>
-
-            ))}
-
-          </div>
-
-        </section>
-
-        <section className="stats-parking-grid">
-
-          {parkingAreas.map((parking) => (
-
-            <article
-              className="stats-parking-card"
-              key={parking.name}
-            >
-
-              <div className="parking-card-top">
-
-                <div className="parking-p-icon">
-                  P
-                </div>
-
-                <span>
-                  {parking.status}
-                </span>
-
-              </div>
-
-              <h3>
-                {parking.name}
-              </h3>
-
+          {!isLoading &&
+            !loadError &&
+            parkingAreas.length === 0 && (
               <p>
-                Estimated parking availability
+                No parking records are currently
+                available.
               </p>
+            )}
 
-              <div className="availability-row">
+          {!isLoading &&
+            !loadError &&
+            parkingAreas.length > 0 && (
+              <div className="pretty-chart">
 
-                <strong>
-                  {parking.availability}%
-                </strong>
-
-                <div className="availability-track">
+                {parkingAreas.map((parking) => (
 
                   <div
-                    style={{
-                      width:
-                        `${parking.availability}%`,
-                    }}
-                  ></div>
+                    className="pretty-chart-item"
+                    key={parking.id || parking.name}
+                  >
 
-                </div>
+                    <div className="bar-value">
+                      {parking.availability}%
+                    </div>
+
+                    <div className="bar-track">
+
+                      <div
+                        className="pretty-bar"
+                        style={{
+                          height:
+                            `${parking.availability}%`,
+                        }}
+                      ></div>
+
+                    </div>
+
+                    <strong>
+                      {parking.name}
+                    </strong>
+
+                  </div>
+
+                ))}
 
               </div>
-
-            </article>
-
-          ))}
+            )}
 
         </section>
+
+        {!isLoading &&
+          !loadError &&
+          parkingAreas.length > 0 && (
+            <section className="stats-parking-grid">
+
+              {parkingAreas.map((parking) => (
+
+                <article
+                  className="stats-parking-card"
+                  key={parking.id || parking.name}
+                >
+
+                  <div className="parking-card-top">
+
+                    <div className="parking-p-icon">
+                      P
+                    </div>
+
+                    <span>
+                      {parking.status}
+                    </span>
+
+                  </div>
+
+                  <h3>
+                    {parking.name}
+                  </h3>
+
+                  <p>
+                    {parking.available} of{" "}
+                    {parking.capacity} bays available
+                  </p>
+
+                  <div className="availability-row">
+
+                    <strong>
+                      {parking.availability}%
+                    </strong>
+
+                    <div className="availability-track">
+
+                      <div
+                        style={{
+                          width:
+                            `${parking.availability}%`,
+                        }}
+                      ></div>
+
+                    </div>
+
+                  </div>
+
+                </article>
+
+              ))}
+
+            </section>
+          )}
 
       </main>
 
