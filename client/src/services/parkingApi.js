@@ -1,7 +1,7 @@
 import { mockBuildings, mockParkingLots } from "../data/mockCampusData";
 import { normalizeLocation } from "../data/dataUtils";
 
-const API_BASE_URL = "http://localhost:3000/api";
+const API_BASE_URL = "/api";
 
 function mapBuilding(building, index) {
   const name = building.Building_Name ?? building.name ?? "Unnamed building";

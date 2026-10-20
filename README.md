@@ -64,6 +64,10 @@ cd ..
 npm run dev --prefix server
 ```
 
+When importing environment variables into Render, use `server/.env` and ensure `NODE_ENV=production`. Keep that file private; it is ignored by Git. The example defaults to `development` for local HTTP, where secure production cookies would not be sent by the browser.
+
+For deployment, the Netlify configuration proxies `/api/*` to `https://pukparking.onrender.com` before applying the single-page-app fallback. Update that target if your Render service URL changes. The client uses relative `/api` URLs, which keeps API and admin-cookie requests on the Netlify site origin. The Vite development server proxies those requests to `http://localhost:3000`.
+
 The server automatically seeds the NWU Potchefstroom campus dataset on startup if both the buildings and parking-area tables are empty. If there is no administrator, it creates one from `BOOTSTRAP_ADMIN_EMAIL` and `BOOTSTRAP_ADMIN_PASSWORD`; both values must be set in the ignored `server/.env` file before initializing a new database. Passwords must satisfy the existing administrator password policy. Existing administrator accounts are not replaced. You can also run `npm run seed` from the project root to manually resynchronize the campus dataset; **manual seeding replaces existing buildings, parking areas, and full reports.** The API listens on `http://localhost:3000` by default. SQLite uses UUID text identifiers and the ERD-aligned `ADMINISTRATOR`, `BUILDING`, `PARKING_AREA`, and `PARKING_FULL_REPORT` tables. `GET /api/buildings` returns campus buildings; `GET /api/parking-areas` computes availability and respects unexpired full reports; `POST /api/parking-areas/:id/report-full` reports a lot full for 30 minutes. Existing SQLite data is migrated to the ERD schema while preserving its rows and relationships.
 
 ## Campus data schema
