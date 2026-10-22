@@ -14,7 +14,6 @@ PukParking is a mobile-first Progressive Web Application (PWA) for NWU Potchefst
 - React and Vite for the frontend.
 - Node.js, Express, and SQLite for the parking API.
 - Mapbox GL for maps and walking directions.
-- The repository also contains a separate .NET/MongoDB project under `PukParking/`.
 
 ## Project layout
 
@@ -23,52 +22,40 @@ PukParking is a mobile-first Progressive Web Application (PWA) for NWU Potchefst
 
 ## Environment setup
 
-Create a local `.env` file in the project root (same directory as this README), then add your Mapbox token:
-
-```bash
-VITE_MAPBOX_ACCESS_TOKEN=your_mapbox_access_token_here
-```
-
-You can copy the template from `.env.example`:
+Copy the example environment file to `.env` in the project root (the same directory as this README):
 
 ```bash
 cp .env.example .env
 ```
 
-If the token is missing, the map UI will show a visible warning and the routing flow cannot load the route layer.
+If the token for MapBox is missing, the map UI will show a visible warning and the routing flow cannot load the route layer.
 
 ## Run the app
 
-From the project root:
+Install the dependencies once from the project root:
 
 ```bash
-cd client
 npm install
+npm install --prefix client
+npm ci --prefix server
+```
+
+For a new local database, copy `server/.env.example` to `server/.env` and set
+`BOOTSTRAP_ADMIN_EMAIL` and `BOOTSTRAP_ADMIN_PASSWORD`. Replace the example
+`JWT_SECRET` with a random secret of at least 32 bytes (for example, 64 random
+hexadecimal characters). The root `npm run dev` command creates a JWT secret
+only if one is missing; it does not replace the example placeholder.
+
+Start the frontend and API together from the project root:
+
+```bash
 npm run dev
 ```
 
-Then open the local Vite URL in the browser and navigate to the parking flow, for example:
+Open the local Vite URL in the browser and enjoy the application.
 
-- `/parking/navigation`
-- `/navigation`
-
-## Server setup
-
-Create `server/.env` from the example and set a private JWT secret of at least 32 bytes, plus the bootstrap administrator email and password:
-
-```bash
-cd server
-cp .env.example .env
-npm ci
-cd ..
-npm run dev --prefix server
-```
-
-When importing environment variables into Render, use `server/.env` and ensure `NODE_ENV=production`. Keep that file private; it is ignored by Git. The example defaults to `development` for local HTTP, where secure production cookies would not be sent by the browser.
-
-For deployment, the Netlify configuration proxies `/api/*` to `https://pukparking.onrender.com` before applying the single-page-app fallback. Update that target if your Render service URL changes. The client uses relative `/api` URLs, which keeps API and admin-cookie requests on the Netlify site origin. The Vite development server proxies those requests to `http://localhost:3000`.
-
-The server automatically seeds the NWU Potchefstroom campus dataset on startup if both the buildings and parking-area tables are empty. If there is no administrator, it creates one from `BOOTSTRAP_ADMIN_EMAIL` and `BOOTSTRAP_ADMIN_PASSWORD`; both values must be set in the ignored `server/.env` file before initializing a new database. Passwords must satisfy the existing administrator password policy. Existing administrator accounts are not replaced. You can also run `npm run seed` from the project root to manually resynchronize the campus dataset; **manual seeding replaces existing buildings, parking areas, and full reports.** The API listens on `http://localhost:3000` by default. SQLite uses UUID text identifiers and the ERD-aligned `ADMINISTRATOR`, `BUILDING`, `PARKING_AREA`, and `PARKING_FULL_REPORT` tables. `GET /api/buildings` returns campus buildings; `GET /api/parking-areas` computes availability and respects unexpired full reports; `POST /api/parking-areas/:id/report-full` reports a lot full for 30 minutes. Existing SQLite data is migrated to the ERD schema while preserving its rows and relationships.
+The server automatically seeds the NWU Potchefstroom campus dataset on startup if both the buildings and parking-area tables are empty. If there is no administrator, it creates one from `BOOTSTRAP_ADMIN_EMAIL` and `BOOTSTRAP_ADMIN_PASSWORD`; both values must be set in the ignored `server/.env` file before initializing a new database. Passwords must satisfy the existing administrator password policy. Existing administrator accounts are not replaced. You can also run `npm run seed` from the project root to manually resynchronize the campus dataset; **manual seeding replaces existing buildings, parking areas, and full reports.**
+SQLite uses UUID text identifiers and the ERD-aligned `ADMINISTRATOR`, `BUILDING`, `PARKING_AREA`, and `PARKING_FULL_REPORT` tables. `GET /api/buildings` returns campus buildings; `GET /api/parking-areas` computes availability and respects unexpired full reports; `POST /api/parking-areas/:id/report-full` reports a lot full for 30 minutes. Existing SQLite data is migrated to the ERD schema while preserving its rows and relationships.
 
 ## Campus data schema
 
@@ -98,10 +85,9 @@ Canonical coordinate contract:
 
 ## Build validation
 
-Run the production build before final review:
+Run the production build in root before final review:
 
 ```bash
-cd client
 npm run build
 ```
 
